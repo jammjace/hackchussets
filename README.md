@@ -69,6 +69,7 @@ The system provides estimates, not precise medical measurements. Ingredients wit
                     |
                     v
           [8] Web Application Dashboard
+           - Ingredient timeline (video timestamp per addition)
            - Detected ingredients
            - Estimated quantities
            - Sodium per ingredient
@@ -115,7 +116,8 @@ Scope:
 5. Convert quantities into units suitable for calculation.
 6. Calculate sodium content for each ingredient addition.
 7. Aggregate sodium across ingredient additions.
-8. Return total sodium and per-ingredient breakdowns.
+8. Return total sodium and a per-event breakdown that keeps each event's `event_id`, `timestamp_start` and `timestamp_end`, so the web app can build the ingredient timeline (see Section 7).
+9. Stay stateless: the same events in must always give the same results out, so the web app can resend corrected events and get a recalculated total.
 
 Initial implementation will use a hardcoded database. External food databases may be integrated later.
 
@@ -133,10 +135,11 @@ Scope:
 2. Submit recorded videos to the backend.
 3. Trigger the ingredient detection pipeline.
 4. Pass ingredient events to the sodium calculation engine.
-5. Display detected ingredients and quantities.
+5. Display an ingredient timeline: video timestamp, ingredient, detected quantity and sodium contribution for every addition.
 6. Display estimated sodium per ingredient.
 7. Display total estimated sodium.
 8. Communicate limitations when quantities cannot be determined.
+9. Let users inspect each addition against the video, and (stretch) correct it.
 
 The webapp should provide an intuitive cooking-to-results experience.
 
@@ -372,15 +375,50 @@ Unrecognized ingredients or unsupported units should be flagged rather than sile
 5. The sodium calculator estimates the sodium contribution of each ingredient.
 6. The webapp displays the results.
 
-### Suggested Results Display
+### Results Display: Ingredient Timeline
 
-| Ingredient | Detected Quantity | Estimated Sodium |
+Rather than showing only a final number, the results screen shows **every detected addition in the order it happened in the video**. This has two purposes:
+
+- **Users can inspect results.** Each row links back to the moment in the video, so the user can check what the system saw.
+- **Judges see direct evidence of the AI pipeline.** The timeline shows that sodium totals come from specific detected events, not a guess.
+
+| Video time | Ingredient | Detected quantity | Sodium contribution | Status |
+|---|---|---|---|---|
+| 0:12 | Salt | 0.5 teaspoon | Calculated by Module B | OK |
+| 0:25 | Soy sauce | 2 tablespoons | Calculated by Module B | OK |
+| 1:44 | Oyster sauce | 1 tablespoon | Not calculated | Not in ingredient database |
+
+Below the timeline, show the **total estimated sodium in the recipe**.
+
+#### Where each column comes from
+
+| Column | Source | Notes |
 |---|---|---|
-| Salt | 0.5 teaspoon | Calculated by Module B |
-| Soy sauce | 2 tablespoons | Calculated by Module B |
-| Onion | 1 piece | Calculated by Module B |
+| Video time | `timestamp_start` from Module A | Already in the contract; no change to Module A needed |
+| Ingredient | `ingredient` from Module A | Shown as detected; Module B may add the matched product name |
+| Detected quantity | `quantity` + `unit` from Module A | Shown in the original unit, never converted |
+| Sodium contribution | Module B per-event result | Must be matched to the row by `event_id` |
+| Status | Module B per-event result | `ok`, `unrecognized_ingredient` or `unsupported_unit` |
 
-Below the table, show the **total estimated sodium in the recipe**.
+#### Behavior
+
+1. **Order:** rows sorted by `timestamp_start`. Repeated additions of the same ingredient appear as separate rows.
+2. **Jump to video:** clicking a row's timestamp seeks the video player to that moment.
+3. **Frame thumbnail (optional):** the web app can grab a still from the uploaded video at `timestamp_start` in the browser, so Module A does not need to export images.
+4. **Flagged rows:** events Module B cannot calculate stay visible with a clear status and no sodium value. They are never shown as 0 mg, and they trigger the incomplete-estimate notice.
+5. **Running total (optional):** a cumulative sodium chart over video time, with the same events as points.
+
+#### Corrections (stretch goal)
+
+If time allows, users can edit a row's ingredient or quantity, or remove a row that was a false detection. The web app then resends the corrected event list to Module B and redraws the timeline and total. Corrected rows are marked as user-edited, so detected and corrected values are never confused.
+
+For the hackathon MVP, the timeline is **inspect only**; corrections are added if time allows.
+
+#### Known gap
+
+Module A only exports measurable, confirmed additions (Section 5). Ingredients it saw but could not measure, such as an unmeasured pour, never reach the timeline. If the team wants these shown as "seen but not measured" rows, Module A would need an optional, separate list of skipped observations. That is a contract change and needs agreement from the Module A owner; it is not part of the MVP.
+
+#### Scope
 
 Where relevant, show an incomplete-estimate notice if ingredients or quantities could not be reliably measured.
 
@@ -499,7 +537,7 @@ The hackathon MVP is successful when:
 5. Genuine repeated ingredient additions remain separate events.
 6. Module A exports valid structured JSON.
 7. Module B can consume the JSON without changes to Module A.
-8. The application displays estimated sodium contributions and a total.
+8. The application displays an ingredient timeline (video time, ingredient, quantity, sodium per addition) and a total.
 9. Unknown or excluded quantities are not presented as accurately measured.
 10. The full workflow can be demonstrated using a short cooking video.
 
@@ -526,7 +564,8 @@ Potential future extensions:
 - Better visual quantity estimation.
 - Barcode and branded-product recognition.
 - Larger ingredient and nutrition databases.
-- User review of uncertain detections.
+- User correction of timeline rows, if not completed during the hackathon.
+- Showing detected-but-unmeasured ingredients on the timeline.
 - Serving-size adjustments.
 - Personalized dietary sodium tracking.
 
@@ -545,6 +584,6 @@ Recorded video → VLM → Ingredient Event Tracker → JSON
 Ingredient JSON → Ingredient database → Unit conversion → Sodium estimates
 
 **Module C: Web Application**
-Video upload → Backend processing → Results dashboard
+Video upload → Backend processing → Ingredient timeline and results dashboard
 
 Each module is independently developed and connected through clearly defined data contracts.
