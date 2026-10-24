@@ -59,6 +59,7 @@ tmp/
 outputs/
 logs/
 *.log
+storage/
 
 # =========================
 # IDE / OS files

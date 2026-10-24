@@ -806,3 +806,26 @@ These are outside the current hackathon MVP.
 - Module C joins Module A and B outputs using the session and event IDs.
 
 **One ingredient addition = one event record + at most one corresponding evidence image.**
+
+---
+
+## Module A quick start
+
+Install and test the implementation:
+
+```bash
+pip install -e ".[dev]"
+pytest
+```
+
+Construct `CookingPipeline` with `VideoProcessor`, `SlidingWindowFrameExtractor`,
+`IngredientDetector(OpenAIVisionModel(...))`, and `IngredientEventTracker`, then call:
+
+```python
+result = pipeline.process("storage/recordings/cooking.mp4", session_id="cooking_001")
+```
+
+This writes `storage/sessions/cooking_001/events.json` and at most one JPEG per
+confirmed event under its `evidence/` directory. Existing session directories are
+never overwritten. Set `OPENAI_API_KEY` in a local `.env` or your process environment;
+never commit the key.

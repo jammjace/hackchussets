@@ -15,3 +15,6 @@ class IngredientDetector:
     def detect(self, windows: list[FrameWindow]) -> list[IngredientObservation]:
         ordered = sorted(windows, key=lambda w: w.timestamp_start)
         return [self._vision_model.analyze(w) for w in ordered]
+
+    def detect_one(self, window: FrameWindow) -> IngredientObservation:
+        return self._vision_model.analyze(window)
