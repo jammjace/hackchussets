@@ -22,7 +22,7 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
-from module_a_bridge import run_module_a
+from module_a_bridge import PrerecordedDemoFixtureError, run_module_a
 from sodium_engine import calculate, load_default_pantry
 
 STORAGE = Path(os.environ.get("STORAGE_DIR", Path(__file__).parent / "storage")).resolve()
@@ -127,7 +127,10 @@ def create_session(video: UploadFile = File(...)) -> dict[str, str]:
     with video_path.open("wb") as out:
         shutil.copyfileobj(video.file, out)
 
-    run_module_a(video_path, session_id, session_dir)
+    try:
+        run_module_a(video_path, session_id, session_dir)
+    except PrerecordedDemoFixtureError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
     return {"session_id": session_id}
 
 
@@ -164,7 +167,9 @@ def get_results(session_id: str) -> dict[str, Any]:
             "ingredient": event["ingredient"],
             "quantity": event["quantity"],
             "unit": event["unit"],
-            "estimate_complete": event.get("estimate_complete", True),
+            "estimate_complete": event.get(
+                "estimate_complete", event.get("quantity") is not None
+            ),
             "known_estimated_subtotal_tbsp": event.get(
                 "known_estimated_subtotal_tbsp"
             ),
@@ -184,6 +189,7 @@ def get_results(session_id: str) -> dict[str, Any]:
     total = sodium["total_sodium_mg"]
     return {
         "session_id": session_id,
+        "inference_mode": events_doc.get("inference_mode"),
         "video_url": f"/api/sessions/{session_id}/video" if _find_recording(session_id) else None,
         "timeline": timeline,
         "total_sodium_mg": total,

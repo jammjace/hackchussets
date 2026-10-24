@@ -20,6 +20,9 @@ from pathlib import Path
 from typing import Any
 
 FIXTURE = Path(__file__).parent / "fixtures" / "mock_events.json"
+PRERECORDED_DEMO_FIXTURE = (
+    Path(__file__).parent / "demo_fixtures" / "cooking_40s" / "events.json"
+)
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SAMPLE_FIXTURES = {
     "1f5f7afc4f92c639c5dcf2ad552dd2d01847223900209a90f47a60cc06060512": "P12_101",
@@ -27,17 +30,70 @@ SAMPLE_FIXTURES = {
 }
 
 
+class PrerecordedDemoFixtureError(RuntimeError):
+    """The reviewed prerecorded inference artifact cannot be used safely."""
+
+
 def run_module_a(video_path: Path | None, session_id: str, session_dir: Path) -> None:
     mode = os.environ.get("MODULE_A_MODE", "mock")
     if video_path is None:
         run_fixture(session_id, session_dir)
         return
-    if mode == "real":
+    if mode == "prerecorded_demo":
+        run_prerecorded_demo(session_id, session_dir)
+    elif mode == "real":
         run_real(video_path, session_id, session_dir)
     elif mode == "mock":
         run_mock(video_path, session_id, session_dir)
     else:
         raise ValueError(f"Unsupported MODULE_A_MODE={mode!r}")
+
+
+def run_prerecorded_demo(session_id: str, session_dir: Path) -> None:
+    """Use the reviewed 40-second Qwen result for every uploaded video."""
+    try:
+        doc = json.loads(PRERECORDED_DEMO_FIXTURE.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:
+        raise PrerecordedDemoFixtureError(
+            f"Prerecorded demo fixture not found: {PRERECORDED_DEMO_FIXTURE}"
+        ) from exc
+    except json.JSONDecodeError as exc:
+        raise PrerecordedDemoFixtureError(
+            f"Prerecorded demo fixture is not valid JSON: {PRERECORDED_DEMO_FIXTURE}"
+        ) from exc
+
+    if not isinstance(doc, dict) or not isinstance(doc.get("events"), list):
+        raise PrerecordedDemoFixtureError(
+            "Prerecorded demo fixture must contain an events list"
+        )
+    required = {
+        "event_id",
+        "ingredient",
+        "quantity",
+        "unit",
+        "timestamp_start",
+        "timestamp_end",
+        "timestamp",
+        "addition_confirmed",
+        "evidence_frame",
+    }
+    for index, event in enumerate(doc["events"]):
+        if not isinstance(event, dict):
+            raise PrerecordedDemoFixtureError(
+                f"Prerecorded demo fixture event {index} must be an object"
+            )
+        missing = sorted(required - event.keys())
+        if missing:
+            raise PrerecordedDemoFixtureError(
+                f"Prerecorded demo fixture event {index} is missing: {', '.join(missing)}"
+            )
+
+    doc["session_id"] = session_id
+    doc["inference_mode"] = "prerecorded_demo"
+    session_dir.mkdir(parents=True, exist_ok=True)
+    (session_dir / "events.json").write_text(
+        json.dumps(doc, indent=2) + "\n", encoding="utf-8"
+    )
 
 
 def run_mock(video_path: Path, session_id: str, session_dir: Path) -> None:

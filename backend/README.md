@@ -37,6 +37,12 @@ uploads continue to use the original six-event UI fixture.
 | `STORAGE_DIR` | `backend/storage` | Where recordings and sessions live |
 | `CORS_ORIGINS` | `http://localhost:3000` | Comma-separated frontend origins |
 
+For the hackathon prerecorded-inference demonstration, set
+`MODULE_A_MODE=prerecorded_demo`. Every valid uploaded video remains available
+for playback, while ingredient events come from
+`backend/demo_fixtures/cooking_40s/events.json`. The results API identifies
+this mode so the frontend can disclose that the AI results are prerecorded.
+
 ## Files
 
 | File | What it does | Who changes it |

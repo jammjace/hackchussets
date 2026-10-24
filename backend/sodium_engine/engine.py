@@ -117,7 +117,6 @@ def calculate(events_doc: dict[str, Any], pantry: dict[str, Any]) -> dict[str, A
         row["product_id"] = product["product_id"]
         row["product_name"] = f"{product['brand']} {product['name']}".strip()
 
-        unit = normalise_unit(event["unit"], pantry)
         quantity = event.get("quantity")
         if quantity is None:
             row["status"] = STATUS_INCOMPLETE_QUANTITY
@@ -134,6 +133,7 @@ def calculate(events_doc: dict[str, Any], pantry: dict[str, Any]) -> dict[str, A
             results.append(row)
             continue
 
+        unit = normalise_unit(event.get("unit") or "", pantry)
         mg = sodium_for_quantity(product, float(quantity), unit, pantry)
         if mg is None:
             row["status"] = STATUS_UNSUPPORTED_UNIT

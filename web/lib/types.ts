@@ -17,7 +17,7 @@ export type TimelineRow = {
   timestamp_end: number;
   ingredient: string;
   quantity: number | null;
-  unit: string;
+  unit: string | null;
   estimate_complete: boolean;
   known_estimated_subtotal_tbsp: number | null;
   evidence_url: string | null; // relative; prefix with API base. null => placeholder tile
@@ -29,6 +29,7 @@ export type TimelineRow = {
 
 export type Results = {
   session_id: string;
+  inference_mode: "prerecorded_demo" | null;
   video_url: string | null; // relative; null for demo sessions
   timeline: TimelineRow[]; // never null, may be empty; sorted by timestamp
   total_sodium_mg: number; // whole dish

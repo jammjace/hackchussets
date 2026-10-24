@@ -1,0 +1,27 @@
+{
+  "session_id": "demo-40s-cooking",
+  "events": [
+    {
+      "event_id": "demo-event-001",
+      "ingredient": "olive oil",
+      "quantity": 2.0,
+      "unit": "tablespoon",
+      "timestamp_start": 2.0,
+      "timestamp_end": 6.0,
+      "timestamp": 4.0,
+      "addition_confirmed": true,
+      "evidence_frame": null
+    },
+    {
+      "event_id": "demo-event-002",
+      "ingredient": "salt",
+      "quantity": null,
+      "unit": null,
+      "timestamp_start": 21.0,
+      "timestamp_end": 24.0,
+      "timestamp": 22.5,
+      "addition_confirmed": true,
+      "evidence_frame": null
+    }
+  ]
+}

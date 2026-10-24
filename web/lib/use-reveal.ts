@@ -195,7 +195,12 @@ export function useJourneyProgress({
         if (video && Number.isFinite(video.currentTime)) {
           const p = Math.max(0, Math.min(1, video.currentTime / safeDuration));
           setProgress(p);
-          if (p >= completeAt) setComplete(true);
+          if (video.ended) {
+            setProgress(1);
+            setComplete(true);
+          } else if (p >= completeAt) {
+            setComplete(true);
+          }
         }
         frame.current = requestAnimationFrame(tick);
       };

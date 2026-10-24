@@ -15,6 +15,7 @@ import { TotalCard } from "@/components/results/TotalCard";
 import { Reveal } from "@/components/results/Reveal";
 import { ApiError, apiUrl, getResults } from "@/lib/api";
 import type { Results, TimelineRow } from "@/lib/types";
+import { clampSeekTime } from "@/lib/timeline";
 import { useJourneyProgress, useReducedMotion } from "@/lib/use-reveal";
 
 type LoadState =
@@ -61,11 +62,16 @@ export function ResultsView({
 
   // Track length: video duration when known, else last timestamp + 10s.
   const trackDuration = useMemo(() => {
-    if (videoDuration && videoDuration > 0) return videoDuration;
     if (!results || results.timeline.length === 0) return 1;
     const last = results.timeline[results.timeline.length - 1];
-    return last.timestamp + 10;
+    const fixtureDuration = last.timestamp + 1;
+    return Math.max(videoDuration ?? 0, fixtureDuration);
   }, [videoDuration, results]);
+
+  const hasEventsBeyondVideo = !!(
+    videoDuration &&
+    results?.timeline.some((row) => row.timestamp > videoDuration)
+  );
 
   // Cooking journey: a playhead travels down the spine (video-synced, or
   // self-driving for demo sessions), popping each addition in turn. Once it
@@ -118,7 +124,7 @@ export function ResultsView({
     setSelectedEventId(row.event_id);
     const video = videoRef.current;
     if (video) {
-      video.currentTime = row.timestamp;
+      video.currentTime = clampSeekTime(row.timestamp, video.duration);
       void video.play().catch(() => {
         // Autoplay may be blocked; seeking still succeeded.
       });
@@ -152,6 +158,16 @@ export function ResultsView({
 
       {load.state === "ok" && results && (
         <>
+          {results.inference_mode === "prerecorded_demo" && (
+            <div className="rounded-pill bg-lavender px-3 py-2 text-center text-xs font-medium text-ink ring-1 ring-stone">
+              Demo Mode — Prerecorded AI Results
+              {hasEventsBeyondVideo && (
+                <span className="ml-1 text-ink-soft">
+                  Some events occur after this video ends; selecting them seeks to the end.
+                </span>
+              )}
+            </div>
+          )}
           {/* Video player (the source) shows first (or a placeholder). */}
           {results.video_url ? (
             <SessionVideo

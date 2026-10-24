@@ -8,6 +8,7 @@ import { TimestampPill } from "@/components/ui/timestamp-pill";
 import { apiUrl } from "@/lib/api";
 import { formatMg, formatTime } from "@/lib/format";
 import type { TimelineRow } from "@/lib/types";
+import { formatQuantity } from "@/lib/timeline";
 
 import { isFlagged, statusBadge } from "./status";
 
@@ -266,7 +267,11 @@ function JourneyCard({
           {badgeText && <Badge variant={badgeVariant}>{badgeText}</Badge>}
         </div>
         <p className="mt-0.5 font-ui text-sm text-ink-soft">
-          {row.quantity} {row.unit}
+          {formatQuantity(
+            row.quantity,
+            row.unit,
+            row.known_estimated_subtotal_tbsp,
+          )}
           {row.product_name && row.product_name !== row.ingredient && (
             <span className="capitalize"> · {row.ingredient}</span>
           )}

@@ -120,3 +120,35 @@ def test_sample_upload_runs_recorded_module_a_pipeline(
     )
     assert seek.status_code == 206
     assert len(seek.content) == 100
+
+
+@pytest.mark.parametrize("payload", [b"first arbitrary video", b"completely different"])
+def test_any_upload_uses_prerecorded_fixture_in_demo_mode(monkeypatch, payload):
+    monkeypatch.setenv("MODULE_A_MODE", "prerecorded_demo")
+    response = client.post(
+        "/api/sessions",
+        files={"video": ("anything.mp4", io.BytesIO(payload), "video/mp4")},
+    )
+    assert response.status_code == 200
+    session_id = response.json()["session_id"]
+
+    from app import SESSIONS
+
+    events = json.loads(
+        (SESSIONS / session_id / "events.json").read_text(encoding="utf-8")
+    )
+    assert events["session_id"] == session_id
+    assert events["inference_mode"] == "prerecorded_demo"
+    assert [event["ingredient"] for event in events["events"]] == [
+        "olive oil",
+        "salt",
+    ]
+    assert events["events"][1]["quantity"] is None
+
+    results = client.get(f"/api/sessions/{session_id}/results").json()
+    assert results["inference_mode"] == "prerecorded_demo"
+    assert results["video_url"] == f"/api/sessions/{session_id}/video"
+    assert results["timeline"][1]["quantity"] is None
+    assert results["timeline"][1]["unit"] is None
+    assert results["timeline"][1]["status"] == "incomplete_quantity"
+    assert results["is_incomplete"] is True

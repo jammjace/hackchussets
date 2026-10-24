@@ -84,6 +84,18 @@ def test_null_quantity_is_incomplete_instead_of_crashing(pantry):
     }]}
     result = calculate(doc, pantry)
     assert result["results"][0]["status"] == "incomplete_quantity"
+
+
+def test_null_quantity_does_not_require_a_unit(pantry):
+    doc = {"events": [{
+        "event_id": "e1", "timestamp_start": 0, "timestamp_end": 1,
+        "ingredient": "salt", "quantity": None, "unit": None,
+        "addition_confirmed": True,
+    }]}
+    result = calculate(doc, pantry)
+    assert result["results"][0]["status"] == "incomplete_quantity"
+    assert result["results"][0]["sodium_mg"] is None
+    assert result["total_sodium_mg"] == 0
     assert result["results"][0]["sodium_mg"] is None
     assert result["is_incomplete"] is True
 
