@@ -888,3 +888,26 @@ python examples/run_automatic_discovery.py --video samples/test1.mp4 --evaluate
 Discovery retains `unknown` results with timestamps and confidence but does not
 run ingredient-specific quantity inference for them. This intermediate output
 is printed for experimentation; it is not the production `ingredients.json`.
+
+### Final ingredient quantity export
+
+The automatic-discovery CLI now aggregates consecutive active intervals into
+distinct addition events and writes a frontend-facing `ingredients.json` while
+continuing to print detailed intermediate predictions for debugging:
+
+```bash
+python examples/run_automatic_discovery.py \
+  --video samples/test1.mp4 \
+  --output outputs/test1/ingredients.json
+```
+
+Use `--timestamp-offset <seconds>` only when an original-video offset is
+explicitly available. Mock mode uses the recorded Kaggle fixtures without
+loading Qwen:
+
+```bash
+python examples/run_automatic_discovery.py \
+  --video samples/test1.mp4 \
+  --mode mock \
+  --output outputs/test1/ingredients.json
+```

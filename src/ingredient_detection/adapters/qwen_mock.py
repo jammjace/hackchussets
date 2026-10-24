@@ -15,6 +15,27 @@ RECORDED_PREDICTIONS = {
     "P12_101": ("salt", [0.5, 0.5, 0.5, 0.5, 0, 0, 0, 0]),
 }
 
+RECORDED_DISCOVERIES = {
+    "P12_101": [
+        IngredientDiscovery(
+            ingredient="salt",
+            timestamp_start=0.0,
+            timestamp_end=4.0,
+            addition_confirmed=True,
+            confidence="medium",
+        )
+    ],
+    "P22_113": [
+        IngredientDiscovery(
+            ingredient="oil",
+            timestamp_start=0.0,
+            timestamp_end=3.0,
+            addition_confirmed=True,
+            confidence="medium",
+        )
+    ],
+}
+
 
 class MockQwenVisionModel(IIntervalInference):
     """Recorded Kaggle outputs; these are fixtures, not ground truth."""
