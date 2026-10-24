@@ -863,3 +863,28 @@ python examples/run_qwen_intervals.py --video samples/test1.mp4 --mode qwen
 The real adapter loads `Qwen/Qwen3-VL-2B-Instruct` and its processor once,
 uses deterministic generation with `max_new_tokens=180`, and retains each raw
 model response alongside its validated intermediate prediction.
+
+### Automatic ingredient discovery
+
+The automatic path first asks the same loaded Qwen model to identify generic
+ingredient additions from chronological frames. Each confirmed, non-`unknown`
+name is then passed into the unchanged one-second tablespoon estimator.
+Discovery does not read benchmark metadata or expected ingredient labels.
+
+On Kaggle with a GPU, run real discovery and quantity inference with:
+
+```bash
+python examples/run_automatic_discovery.py --video samples/test1.mp4
+python examples/run_automatic_discovery.py --video samples/test2.mp4
+```
+
+To compare a completed prediction against benchmark labels afterward, add
+`--evaluate`. Evaluation metadata is loaded only after inference finishes:
+
+```bash
+python examples/run_automatic_discovery.py --video samples/test1.mp4 --evaluate
+```
+
+Discovery retains `unknown` results with timestamps and confidence but does not
+run ingredient-specific quantity inference for them. This intermediate output
+is printed for experimentation; it is not the production `ingredients.json`.

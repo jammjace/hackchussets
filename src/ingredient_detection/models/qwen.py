@@ -49,3 +49,43 @@ class IntervalPrediction(QwenResponse):
     original_timestamp_start: float | None = Field(default=None, ge=0)
     original_timestamp_end: float | None = Field(default=None, ge=0)
     raw_response: str
+
+
+class IngredientDiscovery(BaseModel):
+    """One generic ingredient-addition candidate found in a video."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    ingredient: str
+    timestamp_start: float = Field(ge=0)
+    timestamp_end: float = Field(ge=0)
+    addition_confirmed: bool
+    confidence: Literal["low", "medium", "high"]
+
+    @field_validator("ingredient")
+    @classmethod
+    def normalize_ingredient(cls, value: str) -> str:
+        value = value.strip().casefold()
+        if not value:
+            raise ValueError("ingredient must not be empty")
+        return value
+
+    @model_validator(mode="after")
+    def validate_timestamps(self) -> "IngredientDiscovery":
+        if self.timestamp_end < self.timestamp_start:
+            raise ValueError("timestamp_end must not precede timestamp_start")
+        return self
+
+
+class IngredientDiscoveryResponse(BaseModel):
+    """Exact structured discovery response from the model."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    ingredients: list[IngredientDiscovery]
+
+
+class IngredientDiscoveryResult(IngredientDiscoveryResponse):
+    """Validated discovery response with the unmodified model text."""
+
+    raw_response: str
