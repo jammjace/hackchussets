@@ -4,22 +4,36 @@ Sodium engine (Module B) plus the API the web app calls (Module C backend).
 It follows the team README: `session_id` per recording, `event_id` as the join key,
 evidence JPEGs served by URL, video seekable by `timestamp`.
 
-## Run it
+## Run it locally (PowerShell)
 
-```bash
-cd backend
-pip install -r requirements.txt
-uvicorn app:app --reload --port 8000
-pytest            # 22 tests; the mock dish must total 5163.3 mg
+From the repository root:
+
+```powershell
+python -m pip install -e ".[dev]"
+python -m pip install -r backend\requirements.txt
+$env:MODULE_A_MODE = "mock"
+Set-Location backend
+python -m uvicorn app:app --reload --port 8000
 ```
 
-Then `POST http://localhost:8000/api/sessions/demo` gives you a session with
-mock events and evidence images, so you can build the results screen before
-Jace's pipeline is ready.
+In a second PowerShell window:
+
+```powershell
+Set-Location web
+npm ci
+$env:NEXT_PUBLIC_API_BASE = "http://localhost:8000"
+npm run dev
+```
+
+Open `http://localhost:3000` and upload `samples/test1.mp4` (salt) or
+`samples/test2.mp4` (oil). In mock mode those exact videos run through the
+real OpenCV and Module A pipeline using deterministic recorded Qwen responses;
+Qwen is never imported or loaded. `POST /api/sessions/demo` and unrecognised
+uploads continue to use the original six-event UI fixture.
 
 | Env var | Default | Meaning |
 |---|---|---|
-| `MODULE_A_MODE` | `mock` | `mock` writes fixture events + placeholder JPEGs; `real` calls Jace's pipeline (not wired yet) |
+| `MODULE_A_MODE` | `mock` | `mock` uses recorded sample predictions without Qwen/GPU; `real` lazily loads one shared Qwen model |
 | `STORAGE_DIR` | `backend/storage` | Where recordings and sessions live |
 | `CORS_ORIGINS` | `http://localhost:3000` | Comma-separated frontend origins |
 
@@ -29,7 +43,7 @@ Jace's pipeline is ready.
 |---|---|---|
 | `sodium_engine/engine.py` | Module B: events + pantry in, sodium per `event_id` out. Pure functions | You |
 | `sodium_engine/pantry_default.json` | Hardcoded pantry: aliases, units, products, sodium per unit | You |
-| `module_a_bridge.py` | The only place that talks to Module A. Swap mock for real here | You + Jace |
+| `module_a_bridge.py` | Converts Module A `ingredients.json` output into the stable `events.json` contract | You + Jace |
 | `fixtures/mock_events.json` | Fake Module A output in the README section 6 format | Nobody, it's the contract example |
 | `app.py` | FastAPI routes below | You |
 
@@ -97,7 +111,9 @@ Frontend rules:
 - Image and video URLs are relative: prefix them with the backend address (`http://localhost:8000`).
 - `video_url` and `evidence_url` can be `null`: show a placeholder.
 - `sodium_mg: null` means "not counted", never show it as 0. Use `status` for the badge.
-- `status` is one of `ok`, `unrecognised_ingredient`, `unsupported_unit`, `not_confirmed`.
+- `quantity` may be null when the model confirms an addition but cannot estimate its full amount.
+- `status` is one of `ok`, `unrecognised_ingredient`, `unsupported_unit`, `not_confirmed`, `incomplete_quantity`.
+- `incomplete_quantity` is never treated as zero. When a known subtotal exists, sodium and the dish total are lower bounds.
 - The total is for the whole dish, not per person.
 
 ## Agree with Jace before integrating

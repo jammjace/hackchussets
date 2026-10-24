@@ -74,3 +74,29 @@ def test_engine_does_not_modify_input(events, pantry):
     before = json.dumps(events, sort_keys=True)
     calculate(events, pantry)
     assert json.dumps(events, sort_keys=True) == before
+
+
+def test_null_quantity_is_incomplete_instead_of_crashing(pantry):
+    doc = {"events": [{
+        "event_id": "e1", "timestamp_start": 0, "timestamp_end": 1,
+        "ingredient": "salt", "quantity": None, "unit": "tablespoon",
+        "addition_confirmed": True, "estimate_complete": False,
+    }]}
+    result = calculate(doc, pantry)
+    assert result["results"][0]["status"] == "incomplete_quantity"
+    assert result["results"][0]["sodium_mg"] is None
+    assert result["is_incomplete"] is True
+
+
+def test_partial_quantity_counts_only_known_subtotal(pantry):
+    doc = {"events": [{
+        "event_id": "e1", "timestamp_start": 0, "timestamp_end": 2,
+        "ingredient": "salt", "quantity": None, "unit": "tablespoon",
+        "addition_confirmed": True, "estimate_complete": False,
+        "known_estimated_subtotal_tbsp": 0.5,
+    }]}
+    result = calculate(doc, pantry)
+    # 0.5 tablespoon = 1.5 teaspoons of salt.
+    assert result["results"][0]["sodium_mg"] == pytest.approx(3487.5)
+    assert result["total_sodium_mg"] == pytest.approx(3487.5)
+    assert result["is_incomplete"] is True

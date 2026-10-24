@@ -7,7 +7,8 @@ export type TimelineStatus =
   | "ok"
   | "unrecognised_ingredient"
   | "unsupported_unit"
-  | "not_confirmed";
+  | "not_confirmed"
+  | "incomplete_quantity";
 
 export type TimelineRow = {
   event_id: string;
@@ -15,8 +16,10 @@ export type TimelineRow = {
   timestamp_start: number;
   timestamp_end: number;
   ingredient: string;
-  quantity: number;
+  quantity: number | null;
   unit: string;
+  estimate_complete: boolean;
+  known_estimated_subtotal_tbsp: number | null;
   evidence_url: string | null; // relative; prefix with API base. null => placeholder tile
   sodium_mg: number | null; // null => "Not counted", never show 0
   status: TimelineStatus;

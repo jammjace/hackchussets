@@ -13,6 +13,8 @@ export function statusBadge(status: TimelineStatus): string | null {
       return "Can't convert this unit";
     case "not_confirmed":
       return "Unconfirmed";
+    case "incomplete_quantity":
+      return "Quantity incomplete";
     default:
       return null;
   }

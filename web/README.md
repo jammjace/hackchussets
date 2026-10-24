@@ -57,6 +57,32 @@ NEXT_PUBLIC_API_BASE=http://localhost:8000
 
 The API returns relative URLs; `lib/api.ts` prefixes them with this base.
 
+### Running the integrated app with Module A (PowerShell)
+
+To run the full stack against Module A's pipeline, start the backend from the
+repository root in one window:
+
+```powershell
+python -m pip install -e ".[dev]"
+python -m pip install -r backend\requirements.txt
+$env:MODULE_A_MODE = "mock"
+Set-Location backend
+python -m uvicorn app:app --reload --port 8000
+```
+
+Start Next.js in a second window:
+
+```powershell
+Set-Location web
+npm ci
+$env:NEXT_PUBLIC_API_BASE = "http://localhost:8000"
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000), then upload
+`samples/test1.mp4` or `samples/test2.mp4`. Mock mode uses deterministic
+recorded Qwen predictions and does not require Qwen, CUDA, or a GPU.
+
 ## Screens
 
 | Route | What it does |

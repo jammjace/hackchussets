@@ -20,6 +20,7 @@ STATUS_OK = "ok"
 STATUS_UNRECOGNISED = "unrecognised_ingredient"
 STATUS_UNSUPPORTED_UNIT = "unsupported_unit"
 STATUS_NOT_CONFIRMED = "not_confirmed"
+STATUS_INCOMPLETE_QUANTITY = "incomplete_quantity"
 
 
 def normalise_text(text: str) -> str:
@@ -117,7 +118,23 @@ def calculate(events_doc: dict[str, Any], pantry: dict[str, Any]) -> dict[str, A
         row["product_name"] = f"{product['brand']} {product['name']}".strip()
 
         unit = normalise_unit(event["unit"], pantry)
-        mg = sodium_for_quantity(product, float(event["quantity"]), unit, pantry)
+        quantity = event.get("quantity")
+        if quantity is None:
+            row["status"] = STATUS_INCOMPLETE_QUANTITY
+            subtotal = event.get("known_estimated_subtotal_tbsp")
+            if subtotal is not None:
+                mg = sodium_for_quantity(product, float(subtotal), "tablespoon", pantry)
+                if mg is not None:
+                    row["sodium_mg"] = round(mg, 1)
+                    total += mg
+            warnings.append(
+                f"The quantity of {category['display_name']} is incomplete, "
+                "so the displayed total is a lower-bound estimate."
+            )
+            results.append(row)
+            continue
+
+        mg = sodium_for_quantity(product, float(quantity), unit, pantry)
         if mg is None:
             row["status"] = STATUS_UNSUPPORTED_UNIT
             warnings.append(

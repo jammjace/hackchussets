@@ -164,6 +164,10 @@ def get_results(session_id: str) -> dict[str, Any]:
             "ingredient": event["ingredient"],
             "quantity": event["quantity"],
             "unit": event["unit"],
+            "estimate_complete": event.get("estimate_complete", True),
+            "known_estimated_subtotal_tbsp": event.get(
+                "known_estimated_subtotal_tbsp"
+            ),
             "evidence_url": (
                 f"/api/sessions/{session_id}/evidence/{Path(frame).name}" if frame else None
             ),

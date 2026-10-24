@@ -1,4 +1,6 @@
 import io
+import json
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -6,6 +8,7 @@ from fastapi.testclient import TestClient
 from app import app
 
 client = TestClient(app)
+SAMPLES = Path(__file__).resolve().parents[2] / "samples"
 
 
 def test_health():
@@ -76,3 +79,44 @@ def test_pantry_edit_changes_results_then_reset():
     client.post("/api/pantry/reset")
     data = client.get(f"/api/sessions/{sid}/results").json()
     assert data["total_sodium_mg"] == pytest.approx(5163.3, abs=0.1)
+
+
+@pytest.mark.parametrize(
+    ("filename", "ingredient", "quantity", "expected_total"),
+    [
+        ("test1.mp4", "salt", 2.0, 13950.0),
+        ("test2.mp4", "oil", 2.0, 0.0),
+    ],
+)
+def test_sample_upload_runs_recorded_module_a_pipeline(
+    filename, ingredient, quantity, expected_total
+):
+    with (SAMPLES / filename).open("rb") as video:
+        response = client.post(
+            "/api/sessions", files={"video": (filename, video, "video/mp4")}
+        )
+    assert response.status_code == 200
+    session_id = response.json()["session_id"]
+
+    from app import SESSIONS
+
+    events_doc = json.loads(
+        (SESSIONS / session_id / "events.json").read_text(encoding="utf-8")
+    )
+    assert events_doc["session_id"] == session_id
+    assert len(events_doc["events"]) == 1
+    event = events_doc["events"][0]
+    assert event["ingredient"] == ingredient
+    assert event["quantity"] == quantity
+    assert event["timestamp"] == event["timestamp_start"]
+
+    results = client.get(f"/api/sessions/{session_id}/results").json()
+    assert results["timeline"][0]["ingredient"] == ingredient
+    assert results["timeline"][0]["quantity"] == quantity
+    assert results["video_url"] == f"/api/sessions/{session_id}/video"
+    assert results["total_sodium_mg"] == pytest.approx(expected_total)
+    seek = client.get(
+        results["video_url"], headers={"Range": "bytes=0-99"}
+    )
+    assert seek.status_code == 206
+    assert len(seek.content) == 100
