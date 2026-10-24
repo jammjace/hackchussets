@@ -106,12 +106,11 @@ class QwenVisionModel(IIntervalInference):
         raw = self._processor.batch_decode(
             output[:, prompt_tokens:], skip_special_tokens=True
         )[0].strip()
-        
+
         print("\n=== RAW QWEN RESPONSE ===")
         print(raw)
         print("=========================\n")
 
-parsed = parse_interval_response(raw)
         parsed = parse_interval_response(raw)
         return IntervalPrediction(
             **parsed.model_dump(),
