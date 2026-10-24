@@ -117,21 +117,21 @@ export function HeroStage() {
     <div ref={stageRef} className="relative flex flex-wrap items-stretch p-2">
       <Sightline ref={sightRef} />
 
-      <div className="flex min-w-[min(100%,440px)] flex-[1_1_54%] flex-col justify-center gap-[clamp(22px,2.6vw,32px)]">
+      <div className="flex min-w-[min(100%,440px)] flex-[1_1_54%] flex-col justify-center gap-[clamp(14px,2.6vh,28px)]">
         <GlassesViewPanel povRef={panelRef} />
 
         {/* Centred copy + CTAs (§6.2). Copy is exact; no em dashes. */}
         <div className="flex flex-col items-center gap-2.5 px-1 text-center">
-          <p className="m-0 font-display text-[clamp(26px,2.8vw,38px)] leading-[1.08] tracking-[-.01em] text-ink [text-wrap:balance]">
+          <p className="m-0 font-display text-[clamp(22px,min(2.6vw,4vh),34px)] leading-[1.08] tracking-[-.01em] text-ink [text-wrap:balance]">
             Cook like you always do.{" "}
             <em className="italic">We&apos;ll count the salt.</em>
           </p>
-          <p className="m-0 max-w-[600px] font-ui text-[clamp(15px,1.3vw,17px)] leading-[1.45] text-ink-soft [text-wrap:pretty]">
+          <p className="m-0 max-w-[640px] font-ui text-[clamp(13px,min(1.25vw,2.2vh),16px)] leading-[1.45] text-ink-soft [text-wrap:pretty]">
             Wear the glasses and cook. Afterwards, upload the video. Na(h) finds
             every seasoning and adds up the sodium against the 2,300 mg daily
             limit.
           </p>
-          <div className="mt-2 flex flex-wrap items-center justify-center gap-2.5">
+          <div className="mt-1 flex flex-wrap items-center justify-center gap-2.5">
             <Button
               size="sm"
               onClick={() => transition.go("start")}

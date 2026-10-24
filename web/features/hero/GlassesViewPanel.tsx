@@ -191,7 +191,10 @@ export function GlassesViewPanel({ povRef }: GlassesViewPanelProps) {
   return (
     <div
       ref={panelRef}
-      className="relative z-[2] aspect-video w-full overflow-hidden rounded-[18px] bg-stone [container-type:inline-size]"
+      className="relative z-[2] mx-auto aspect-video w-full overflow-hidden rounded-[18px] bg-stone [container-type:inline-size]"
+      // Cap the panel height so the whole hero fits on the first screen; it
+      // stays 16:9 and centred in its column (HERO_HANDOFF fit-to-fold tweak).
+      style={{ maxWidth: "max(300px, calc((100vh - 370px) * 1.778))" }}
     >
       <video
         ref={videoRef}

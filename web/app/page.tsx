@@ -15,7 +15,7 @@ export default function Home() {
       <div className="flex-1 px-4 pt-4 sm:px-6 lg:px-12">
         <NavPill />
         <main className="mx-auto w-full max-w-[1184px]">
-          <section className="flex flex-col gap-[clamp(32px,4vw,56px)] pt-[clamp(40px,6vw,88px)]">
+          <section className="flex flex-col gap-[clamp(14px,3vh,36px)] pt-[clamp(8px,2.2vh,28px)]">
             <HeroHeadline />
             <HeroStage />
           </section>
