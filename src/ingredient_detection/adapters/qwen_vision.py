@@ -42,9 +42,6 @@ Confidence must be low, medium, or high."""
 
 def parse_interval_response(raw_response: str) -> QwenResponse:
     """Parse plain/fenced JSON and validate the exact experimental contract."""
-    print("\n=== RAW QWEN RESPONSE ===")
-    print(raw)
-    print("=========================\n")
     candidate = raw_response.strip()
     fenced = re.search(
         r"```(?:json)?\s*(\{.*?\})\s*```", candidate, re.DOTALL | re.IGNORECASE
@@ -109,6 +106,12 @@ class QwenVisionModel(IIntervalInference):
         raw = self._processor.batch_decode(
             output[:, prompt_tokens:], skip_special_tokens=True
         )[0].strip()
+        
+        print("\n=== RAW QWEN RESPONSE ===")
+        print(raw)
+        print("=========================\n")
+
+parsed = parse_interval_response(raw)
         parsed = parse_interval_response(raw)
         return IntervalPrediction(
             **parsed.model_dump(),
