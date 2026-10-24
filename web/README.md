@@ -1,22 +1,29 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+## Run the integrated app (PowerShell)
 
-First, run the development server:
+Start the FastAPI backend from the repository root in one window:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```powershell
+python -m pip install -e ".[dev]"
+python -m pip install -r backend\requirements.txt
+$env:MODULE_A_MODE = "mock"
+Set-Location backend
+python -m uvicorn app:app --reload --port 8000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Start Next.js in a second window:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```powershell
+Set-Location web
+npm ci
+$env:NEXT_PUBLIC_API_BASE = "http://localhost:8000"
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000), then upload
+`samples/test1.mp4` or `samples/test2.mp4`. The mock mode uses deterministic
+recorded Qwen predictions and does not require Qwen, CUDA, or a GPU.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
