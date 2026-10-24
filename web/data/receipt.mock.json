@@ -1,0 +1,9 @@
+{
+  "store": "H Mart",
+  "items": [
+    { "item_code": "RB-40N-250", "item": "RED BOAT FISH SAUCE 250ML", "category_id": "fish_sauce", "product_id": "redboat_40n", "sodium_text": "1,430 mg per Tbsp" },
+    { "item_code": "KIK-SOY-10", "item": "KIKKOMAN SOY SAUCE 10OZ", "category_id": "soy_sauce", "product_id": "kikkoman_soy", "sodium_text": "960 mg per Tbsp" },
+    { "item_code": "KNR-CHK-24", "item": "KNORR CHKN BOUIL CUBE 24CT", "category_id": "chicken_bouillon", "product_id": "knorr_chicken_cube", "sodium_text": "2,080 mg per cube" },
+    { "item_code": "GOYA-SAZ-08", "item": "GOYA SAZON CILANTRO ACHIOTE", "category_id": "sazon", "product_id": "goya_sazon_coriander_annatto", "sodium_text": "850 mg per packet" }
+  ]
+}
