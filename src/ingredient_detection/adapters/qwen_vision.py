@@ -42,6 +42,9 @@ Confidence must be low, medium, or high."""
 
 def parse_interval_response(raw_response: str) -> QwenResponse:
     """Parse plain/fenced JSON and validate the exact experimental contract."""
+    print("\n=== RAW QWEN RESPONSE ===")
+    print(raw)
+    print("=========================\n")
     candidate = raw_response.strip()
     fenced = re.search(
         r"```(?:json)?\s*(\{.*?\})\s*```", candidate, re.DOTALL | re.IGNORECASE
