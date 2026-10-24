@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { NahWordmark } from "@/components/brand/NahWordmark";
+import { BackButton } from "@/components/ui/back-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { createDemoSession } from "@/lib/api";
@@ -77,6 +78,7 @@ export default function HowToRecord() {
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 space-y-8 p-4 sm:p-6">
+      <BackButton href="/" label="Back to home" />
       <div className="space-y-4">
         <NahWordmark size={48} />
         <h1 className="font-display text-5xl leading-none font-normal tracking-tight sm:text-6xl">

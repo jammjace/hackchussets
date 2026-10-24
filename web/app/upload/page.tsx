@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Film, Upload as UploadIcon } from "lucide-react";
 
+import { BackButton } from "@/components/ui/back-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useVideoFile } from "@/components/upload/video-file-context";
@@ -91,6 +92,7 @@ export default function UploadPage() {
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 space-y-6 p-4 sm:p-6">
+      <BackButton href="/how-to-record" />
       <div className="space-y-1">
         <h1 className="font-heading text-3xl font-normal tracking-tight sm:text-4xl">
           Upload your cooking video

@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
+import { BackButton } from "@/components/ui/back-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -152,6 +153,7 @@ export default function ReceiptPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 space-y-6 p-4 sm:p-6">
+      <BackButton href="/pantry" label="Back to pantry" />
       <div className="space-y-2">
         <Badge variant="secondary">Demo: receipt scanning is simulated</Badge>
         <h1 className="font-heading text-3xl font-normal tracking-tight sm:text-4xl">

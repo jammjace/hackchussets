@@ -15,7 +15,13 @@ type CookingJourneyProps = {
   timeline: TimelineRow[];
   /** Full track length in seconds (video duration, or last ts + tail). */
   duration: number;
-  /** Playhead position along the track, 0 → 1. */
+  /**
+   * Live playhead position (0 → 1), updated every frame without a re-render.
+   * The moving parts (playhead, filled spine, elapsed time, auto-scroll) are
+   * animated directly from this ref for a smooth 60fps glide.
+   */
+  progressRef: React.RefObject<number>;
+  /** Coarse playhead position (≈1% steps) used to gate card pops. */
   progress: number;
   /** True once the journey has finished travelling. */
   complete: boolean;
@@ -49,6 +55,7 @@ const PANEL_H = 540;
 export function CookingJourney({
   timeline,
   duration,
+  progressRef,
   progress,
   complete,
   reduced,
@@ -56,28 +63,63 @@ export function CookingJourney({
   onSelect,
 }: CookingJourneyProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const playheadRef = useRef<HTMLDivElement>(null);
+  const fillRef = useRef<HTMLDivElement>(null);
+  const elapsedRef = useRef<HTMLSpanElement>(null);
 
   const safeDuration = duration > 0 ? duration : 1;
-  const contentHeight = PAD_TOP + timeline.length * ROW_H + PAD_BOTTOM;
-  const playheadY = PAD_TOP + progress * (timeline.length * ROW_H);
-  const elapsedSeconds = progress * safeDuration;
+  const travel = timeline.length * ROW_H;
+  const contentHeight = PAD_TOP + travel + PAD_BOTTOM;
 
   // Even vertical spacing per event (in order), independent of real time gaps,
   // so cards don't overlap when additions cluster together.
   const nodeY = (index: number) => PAD_TOP + (index + 0.5) * ROW_H;
 
-  // Auto-scroll the panel so the playhead stays roughly centred while the
-  // journey is travelling. Disabled for reduced motion and once complete.
+  // Animate the continuously-moving parts directly against the DOM from the
+  // live progress ref — one write per frame, no CSS transition, so the playhead
+  // glides smoothly instead of fighting a per-frame transition. Card pops are
+  // handled separately off the coarse `progress` prop.
   useEffect(() => {
-    if (reduced || complete) return;
+    if (reduced) {
+      // Static: fill the whole spine, no playhead, no auto-scroll.
+      if (fillRef.current) fillRef.current.style.height = `${contentHeight}px`;
+      return;
+    }
+
+    let raf = 0;
+    let lastScroll = 0;
     const panel = panelRef.current;
-    if (!panel) return;
-    const target = playheadY - PANEL_H / 2;
-    panel.scrollTo({
-      top: Math.max(0, target),
-      behavior: "smooth",
-    });
-  }, [playheadY, reduced, complete]);
+
+    const render = () => {
+      raf = requestAnimationFrame(render);
+      const p = progressRef.current ?? 0;
+      const y = PAD_TOP + p * travel;
+
+      if (playheadRef.current) {
+        playheadRef.current.style.transform = `translate(-50%, ${y}px)`;
+      }
+      if (fillRef.current) {
+        fillRef.current.style.height = `${y}px`;
+      }
+      if (elapsedRef.current) {
+        elapsedRef.current.textContent = formatTime(p * safeDuration);
+      }
+      // Keep the playhead roughly centred while travelling; throttle the
+      // smooth scroll so we don't queue a new animation every frame.
+      if (panel && !complete) {
+        const now = performance.now();
+        if (now - lastScroll > 180) {
+          lastScroll = now;
+          panel.scrollTo({ top: Math.max(0, y - PANEL_H / 2), behavior: "smooth" });
+        }
+      }
+    };
+    raf = requestAnimationFrame(render);
+    return () => cancelAnimationFrame(raf);
+  }, [reduced, travel, contentHeight, safeDuration, complete, progressRef]);
+
+  // Elapsed seconds for the discrete "has this card popped?" check.
+  const elapsedSeconds = progress * safeDuration;
 
   if (timeline.length === 0) {
     return (
@@ -100,24 +142,21 @@ export function CookingJourney({
           style={{ height: contentHeight }}
           aria-hidden
         />
-        {/* Filled portion up to the playhead */}
+        {/* Filled portion up to the playhead — height written per frame. */}
         <div
+          ref={fillRef}
           className="absolute left-1/2 top-0 w-0.5 -translate-x-1/2 bg-forest"
-          style={{
-            height: reduced ? contentHeight : playheadY,
-            transition: reduced ? undefined : "height 120ms linear",
-          }}
+          style={{ height: 0, willChange: "height" }}
           aria-hidden
         />
 
-        {/* Travelling playhead */}
+        {/* Travelling playhead — transform written per frame (no transition,
+            so it glides at frame rate instead of chasing a lagging target). */}
         {!reduced && (
           <div
-            className="absolute left-1/2 z-10 flex -translate-x-1/2 items-center justify-center"
-            style={{
-              top: playheadY,
-              transition: "top 120ms linear",
-            }}
+            ref={playheadRef}
+            className="absolute left-1/2 top-0 z-10 flex items-center justify-center"
+            style={{ transform: "translate(-50%, 0px)", willChange: "transform" }}
             aria-hidden
           >
             <span className="relative flex size-4 items-center justify-center">
@@ -126,7 +165,7 @@ export function CookingJourney({
             </span>
             {/* Live elapsed time rides just beside the playhead */}
             <TimestampPill className="absolute left-5 whitespace-nowrap">
-              {formatTime(elapsedSeconds)}
+              <span ref={elapsedRef}>{formatTime(0)}</span>
             </TimestampPill>
           </div>
         )}

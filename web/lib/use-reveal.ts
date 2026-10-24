@@ -130,21 +130,41 @@ type JourneyOptions = {
 };
 
 type JourneyState = {
-  /** Playhead position along the track, 0 → 1. */
+  /**
+   * Live playhead position (0 → 1), updated every animation frame WITHOUT a
+   * React re-render. Read it from an rAF loop and write straight to the DOM
+   * (transform/height) for a smooth 60fps playhead.
+   */
+  progressRef: React.RefObject<number>;
+  /**
+   * Coarse playhead position for React-driven UI (card pop thresholds). Only
+   * changes when it moves a meaningful amount, so it does not re-render the
+   * tree every frame.
+   */
   progress: number;
   /** True once the journey has reached the end. */
   complete: boolean;
 };
 
+// Only re-render for the coarse `progress` when it moves this much (≈1%).
+const PROGRESS_STEP = 0.01;
+
 /**
  * Drive the cooking-journey playhead (0 → 1 along the track).
  *
+ * Smoothness: the continuous position is written to `progressRef` every frame
+ * (no setState), so the consumer can animate the playhead directly against the
+ * DOM at full frame rate. A coarse `progress` state updates only in ~1% steps,
+ * purely to gate discrete things (which cards have popped). This avoids the
+ * per-frame re-render + fighting-CSS-transition that made the old playhead
+ * stutter.
+ *
  * - Reduced motion: jump to 1 immediately (static spine, all cards shown).
  * - With a video: follow `video.currentTime / duration` each frame, so the
- *   playhead tracks play, pause and scrubbing. Marked complete when it reaches
- *   the last event's timestamp (or the video ends).
+ *   playhead tracks play, pause and scrubbing.
  * - Without a video (demo): self-drive, travelling event-to-event at a fixed
- *   pace so pops are evenly spaced regardless of the real time gaps.
+ *   pace so pops are evenly spaced regardless of the real time gaps. Eased per
+ *   segment so the playhead glides rather than jerks between events.
  */
 export function useJourneyProgress({
   active,
@@ -155,6 +175,7 @@ export function useJourneyProgress({
   hasVideo,
   segmentMs = 1400,
 }: JourneyOptions): JourneyState {
+  const progressRef = useRef(0);
   const [progress, setProgress] = useState(0);
   const [complete, setComplete] = useState(false);
   const frame = useRef<number | null>(null);
@@ -170,23 +191,34 @@ export function useJourneyProgress({
       frame.current = null;
     }
 
+    const setLive = (p: number) => {
+      progressRef.current = p;
+      // Throttle the React state to ~1% steps so cards pop without churning
+      // the whole tree every frame.
+      setProgress((prev) => (Math.abs(p - prev) >= PROGRESS_STEP ? p : prev));
+    };
+
     if (!active) {
+      progressRef.current = 0;
       setProgress(0);
       setComplete(false);
       return;
     }
 
     if (reduced || timestamps.length === 0) {
+      progressRef.current = 1;
       setProgress(1);
       setComplete(true);
       return;
     }
 
+    progressRef.current = 0;
     setProgress(0);
     setComplete(false);
 
     // Complete a touch past the last event so its card has popped in.
     const completeAt = Math.min(1, (lastTs + 0.3) / safeDuration);
+    let done = false;
 
     if (hasVideo && videoRef) {
       // Video-synced: read currentTime every frame.
@@ -194,8 +226,11 @@ export function useJourneyProgress({
         const video = videoRef.current;
         if (video && Number.isFinite(video.currentTime)) {
           const p = Math.max(0, Math.min(1, video.currentTime / safeDuration));
-          setProgress(p);
-          if (p >= completeAt) setComplete(true);
+          setLive(p);
+          if (!done && p >= completeAt) {
+            done = true;
+            setComplete(true);
+          }
         }
         frame.current = requestAnimationFrame(tick);
       };
@@ -205,23 +240,25 @@ export function useJourneyProgress({
       };
     }
 
-    // Self-driving demo clock: walk event to event at a fixed pace.
+    // Self-driving demo clock: walk event to event at a fixed pace, easing
+    // within each segment so the glide between events is smooth.
     const start = performance.now();
     const totalMs = timestamps.length * segmentMs;
+    const easeInOut = (x: number) =>
+      x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
     const tick = (now: number) => {
       const elapsed = now - start;
       const t = Math.min(1, elapsed / totalMs);
-      // Map linear t across segments onto the real timestamps so the playhead
-      // stops at each event evenly spaced in time.
       const scaled = t * timestamps.length; // 0 → n
       const idx = Math.min(timestamps.length - 1, Math.floor(scaled));
-      const frac = scaled - idx;
+      const frac = easeInOut(scaled - idx);
       const from = idx === 0 ? 0 : timestamps[idx - 1];
       const to = timestamps[idx];
       const seconds = from + (to - from) * frac;
       const p = Math.max(0, Math.min(1, seconds / safeDuration));
-      setProgress(p);
+      setLive(p);
       if (t >= 1) {
+        progressRef.current = completeAt;
         setProgress(completeAt);
         setComplete(true);
         return;
@@ -235,7 +272,7 @@ export function useJourneyProgress({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, reduced, tsKey, safeDuration, hasVideo, segmentMs]);
 
-  return { progress, complete };
+  return { progressRef, progress, complete };
 }
 
 /**

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { BackButton } from "@/components/ui/back-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -76,7 +77,7 @@ export function ResultsView({
     () => (results ? results.timeline.map((r) => r.timestamp) : []),
     [results],
   );
-  const { progress, complete } = useJourneyProgress({
+  const { progressRef, progress, complete } = useJourneyProgress({
     active: load.state === "ok",
     reduced,
     timestamps,
@@ -128,6 +129,8 @@ export function ResultsView({
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 space-y-6 p-4 sm:p-6">
+      <BackButton href="/" label="Back to home" />
+
       {load.state === "loading" && <ResultsSkeleton />}
 
       {load.state === "not_found" && (
@@ -174,6 +177,7 @@ export function ResultsView({
             <CookingJourney
               timeline={results.timeline}
               duration={trackDuration}
+              progressRef={progressRef}
               progress={progress}
               complete={complete}
               reduced={reduced}
