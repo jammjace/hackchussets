@@ -5,13 +5,14 @@ const DISHES = ["Phở gà", "Arroz con pollo", "Sopa", "Canh chua", "Pozole"];
 
 export function WhoItsFor() {
   return (
-    <Card>
-      <CardContent className="space-y-4">
-        <h2 className="font-display text-4xl font-normal tracking-tight">
+    <section className="pt-[clamp(64px,8vw,96px)]">
+      <Card>
+        <CardContent className="space-y-4">
+        <h2 className="font-display text-[clamp(36px,4vw,44px)] font-normal tracking-[-.02em]">
           Who it&apos;s for
         </h2>
-        <p className="max-w-2xl font-ui text-lg text-ink-soft">
-          Home cooks managing blood pressure — Latino and Vietnamese American
+        <p className="max-w-[680px] font-ui text-lg text-ink-soft">
+          Home cooks managing blood pressure, Latino and Vietnamese American
           households first. The dishes you already make, counted honestly.
         </p>
         <div className="flex flex-wrap gap-2">
@@ -24,7 +25,8 @@ export function WhoItsFor() {
             </span>
           ))}
         </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </section>
   );
 }

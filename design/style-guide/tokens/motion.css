@@ -1,0 +1,5 @@
+:root{
+  --t-hover:150ms; --t-ui:300ms; --t-reveal:600ms; --t-hero:900ms;
+  --ease-out:cubic-bezier(0.22,1,0.36,1); --ease-pop:cubic-bezier(0.34,1.4,0.64,1); --reveal-y:14px;
+}
+@media (prefers-reduced-motion: reduce){ :root{ --t-hover:0ms; --t-ui:0ms; --t-reveal:120ms; --t-hero:120ms; --reveal-y:0px; } }
