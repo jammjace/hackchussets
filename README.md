@@ -1,909 +1,282 @@
 # Sodium Tracking AI — Cooking Video Analysis
 
-## 1. Product Overview
+**Hackathon prototype | Computer vision + sodium estimation + interactive cooking timeline**
 
-We are building an AI-powered sodium-tracking web application that estimates the sodium content of meals by analyzing ingredients added during cooking.
+Sodium Tracking AI helps people understand the estimated sodium content of a home-cooked meal **without manually logging every ingredient**. A user records their cooking, uploads the video, and reviews a timeline of ingredients added, estimated quantities, and sodium contributions.
 
-The product aims to help individuals, particularly those managing hypertension, understand their sodium intake without manually logging every ingredient.
+> **Prototype notice:** All quantities and sodium totals are estimates. This is not a medical-grade measurement tool or a substitute for nutritional or clinical guidance. The complete integrated application is being validated; real GPU inference has been verified separately on an 8-second salt clip.
 
-### User Experience
+## Contents
 
-1. The user records a cooking video using a head-mounted camera or uploads an existing recording.
-2. The application processes the recorded video using computer vision.
-3. The system identifies measurable ingredient-addition events.
-4. Each event records the ingredient, estimated quantity, unit, and time of addition.
-5. A separate calculation module estimates the sodium contribution of each ingredient.
-6. The webapp displays a **clickable cooking timeline**, showing the ingredient, quantity, estimated sodium contribution, and supporting image.
-7. Clicking an event allows the user to jump to the corresponding timestamp in the original video.
+1. [Product overview](#product-overview)
+2. [Architecture](#architecture)
+3. [Modules and ownership](#modules-and-ownership)
+4. [Repository structure](#repository-structure)
+5. [Current implementation status](#current-implementation-status)
+6. [Quick start: mock web app](#quick-start-mock-web-app)
+7. [Run Module A locally](#run-module-a-locally)
+8. [Run real Qwen inference on Kaggle](#run-real-qwen-inference-on-kaggle)
+9. [Data contracts](#data-contracts)
+10. [API and frontend](#api-and-frontend)
+11. [Testing](#testing)
+12. [Demo plan](#demo-plan)
+13. [Limitations and roadmap](#limitations-and-roadmap)
+14. [References and credits](#references-and-credits)
 
-**The goal is to turn cooking footage into an interactive, timestamped record of ingredient additions and their estimated sodium contributions.**
+## Product overview
 
-The system provides estimates, not medical-grade measurements. Ingredients with unmeasurable quantities may be omitted.
+### The problem
 
----
+Sodium consumed during home cooking can be hard to track. Most food-logging apps require manual ingredient entry, including quantities that the cook may not measure. This adds friction, especially when ingredients are sprinkled or poured directly into a dish.
 
-## 2. Full Product Architecture
+### Our solution
 
-```text
-                USER
-                  |
-                  v
-      Record / Upload Cooking Video
-                  |
-                  v
-       Generate Unique Session ID
-                  |
-                  v
-    MODULE A — INGREDIENT DETECTION
-    -------------------------------
-           VideoProcessor
-                  |
-                  v
-        OpenCV FrameExtractor
-      4-second analysis windows
-      Configurable stride, 2 FPS
-                  |
-                  v
-       Vision-Language Model
-       GPT-4.1 mini (initial)
-                  |
-                  v
-       IngredientEventTracker
-       - Confirm additions
-       - Identify ingredients
-       - Preserve quantities/units
-       - Deduplicate observations
-       - Preserve timestamps
-       - Assign unique event IDs
-       - Select evidence frames
-                  |
-                  v
-          TWO OUTPUT ARTIFACTS
-         /                    \
-        v                      v
-  events.json             Evidence JPEGs
-        |                      |
-        v                      |
-    MODULE B                   |
-   Sodium Engine               |
-   - Ingredient DB             |
-   - Unit conversion           |
-   - Sodium lookup             |
-   - Sodium totals             |
-        |                      |
-        v                      |
-   Sodium Results              |
-        |                      |
-        +-----------+----------+
-                    |
-                    v
-      MODULE C — WEB APPLICATION
-      --------------------------
-      Interactive Cooking Timeline
-      - Ingredient
-      - Detected quantity
-      - Sodium contribution
-      - Evidence image
-      - Seek original video
-```
+1. **Record** a cooking session using a head-mounted camera or existing video.
+2. **Detect** ingredients being added, using a vision-language model.
+3. **Estimate** quantities from the visual addition sequence.
+4. **Calculate** an estimated sodium contribution using a pantry/ingredient database.
+5. **Explore** the cooking timeline: see each ingredient, its estimated quantity, its sodium contribution, and the relevant moment in the video.
 
-Modules communicate through structured data contracts rather than depending on each other's internal implementations.
+The current MVP processes recordings **after cooking**, not as a live camera stream.
 
----
+### What makes this different
 
-## 3. Team Responsibilities
+- Hands-free ingredient logging during cooking.
+- Ingredient *addition* detection rather than recognizing everything visible in a frame.
+- Timestamped events linked to the source video.
+- Clear handling of uncertain or missing measurements.
+- An integrated path from computer vision to nutrition information.
 
-### Module A — Ingredient Detection
-
-**Owner: Video processing and computer vision developer**
-
-Responsibilities:
-
-- Accept and validate recorded cooking videos.
-- Extract timestamped frames using OpenCV.
-- Process frame sequences with a vision-language model.
-- Detect ingredient-addition actions.
-- Identify ingredients and estimate quantities.
-- Preserve original measurement units.
-- Deduplicate overlapping detections.
-- Track genuine repeated additions.
-- Preserve event timestamps.
-- Assign unique event IDs.
-- Save one representative evidence JPEG per event when available.
-- Export structured JSON under the recording's session directory.
-
-Module A does not identify brands, convert quantities into nutritional units, or calculate sodium.
-
-### Module B — Sodium Calculation
-
-**Owner: Ingredient database and calculation developer**
-
-Responsibilities:
-
-- Maintain a hardcoded database of supported ingredients, products, brands, unit conversions, and sodium concentrations.
-- Receive Module A's JSON events.
-- Match detected ingredients to database entries.
-- Convert quantities into appropriate units.
-- Calculate sodium contribution for each addition.
-- Aggregate total sodium for the recipe.
-- Return results linked to the original `event_id`.
-
-Module B does not need to process the original video or evidence images.
-
-### Module C — Web Application
-
-**Owner: Frontend and integration developer**
-
-Responsibilities:
-
-- Allow users to record or upload videos.
-- Generate or coordinate recording sessions.
-- Submit videos for backend processing.
-- Trigger Modules A and B.
-- Display ingredient-addition events chronologically.
-- Display per-event sodium contributions.
-- Display evidence images.
-- Seek the original video to an event's timestamp.
-- Display total estimated sodium and incomplete-estimate warnings.
-
-The MVP uses post-recording processing, not livestream analysis.
-
----
-
-## 4. Module A — Video Processing Pipeline
-
-### VideoProcessor
-
-- Accepts a recorded cooking video.
-- Validates the file.
-- Retrieves video metadata, including FPS, resolution, and duration.
-- Maintains a reference to the original recording.
-
-### OpenCV FrameExtractor
-
-Extracts chronological frame sequences from the recording.
-
-Initial settings:
-
-| Parameter | Initial value |
-|---|---|
-| Video format | MP4 |
-| Analysis window | 4 seconds |
-| Window stride | Configurable, initially 2 seconds |
-| Sampling rate | 2 FPS |
-| Frames per full window | 8 |
-| Image format | JPEG |
-| Timestamp units | Seconds from start of original recording |
-
-Frame extraction should:
-
-- Preserve original timestamps.
-- Support overlapping and nonoverlapping windows.
-- Resize and compress images before VLM input.
-- Process sequences incrementally to avoid unnecessary memory usage.
-- Make relevant frames available for evidence selection.
-
-### IngredientDetector
-
-The initial VLM is GPT-4.1 mini, through an interchangeable model adapter.
-
-It analyzes ordered images to identify:
-
-- Ingredient name.
-- Visible ingredient addition.
-- Numeric quantity, when measurable.
-- Original observed unit.
-- Approximate timing of addition.
-
-The model must not invent quantities when there is insufficient visual evidence.
-
-Alternative local vision-language models may be integrated later.
-
-### IngredientEventTracker
-
-Receives structured observations from the VLM.
-
-Responsibilities:
-
-1. Identify valid addition events.
-2. Reject unmeasured or uncertain additions.
-3. Merge duplicate observations from overlapping windows.
-4. Preserve separate genuine additions.
-5. Assign a unique `event_id` to each confirmed addition.
-6. Preserve start, end, and estimated addition timestamps.
-7. Select one representative evidence frame.
-8. Save the evidence image using the matching event ID.
-9. Export events in chronological order.
-
-The Event Tracker produces JSON-compatible data. No separate JSON event-processing module is necessary.
-
----
-
-## 5. Session-Based Storage and Event Identification
-
-**Every cooking recording must be associated with a unique `session_id`.**
-
-Each session has its own directory containing the event JSON and evidence images.
-
-### Required Storage Structure
+## Architecture
 
 ```text
-storage/
-  recordings/
-    cooking_001.mp4
-    cooking_002.mp4
-
-  sessions/
-    cooking_001/
-      events.json
-      evidence/
-        event_001.jpg
-        event_002.jpg
-        event_003.jpg
-
-    cooking_002/
-      events.json
-      evidence/
-        event_001.jpg
-        event_002.jpg
+                   Cooking video (.mp4)
+                            |
+                            v
+                    FastAPI upload API
+                    Session + video storage
+                            |
+                            v
+              MODULE A — COMPUTER VISION
+             OpenCV video / frame extraction
+                            |
+                            v
+                  Qwen3-VL-2B-Instruct
+            1. Discover ingredients added
+            2. Estimate amount per 1s interval
+                            |
+                            v
+                   Quantity aggregation
+                  ingredients.json (internal)
+                            |
+                            v
+                   Module A / B bridge
+                   events.json (shared)
+                            |
+                            v
+                MODULE B — SODIUM ENGINE
+             Pantry lookup + unit conversion
+               Sodium per event and total
+                            |
+                            v
+              MODULE C — WEB APPLICATION
+           Next.js dashboard + FastAPI APIs
+          Timeline / warnings / video seeking
 ```
 
-### Naming Rules
+**Two execution modes** are planned/used for integration:
 
-- `session_id` identifies a cooking session.
-- `event_id` identifies a specific ingredient-addition event within that session.
-- Each confirmed addition receives its own event ID.
-- Each evidence image must be named after the corresponding event ID.
-- For example, `event_001` maps to `event_001.jpg`.
-- Repeated additions of the same ingredient receive different event IDs.
-- Event IDs may repeat across different sessions because the session ID distinguishes them.
-- A session folder must never overwrite another session's data.
+- **Mock mode:** returns deterministic previously recorded sample predictions. Runs locally without GPU. Useful for developing the full web app.
+- **Real mode:** runs Qwen3-VL-2B on a GPU to analyze the submitted video. Tested independently in Kaggle; connecting GPU execution to the full web app is an ongoing deployment task.
 
-**The combination of `session_id` and `event_id` uniquely identifies an ingredient addition across the application.**
+## Modules and ownership
 
-### Evidence Image Rules
+### Module A — Ingredient detection and quantity estimation
 
-For every exported event:
+**Stack:** Python, OpenCV, Pillow, PyTorch, Hugging Face Transformers, Pydantic, Qwen3-VL-2B-Instruct.
 
-- Save at most one JPEG evidence image.
-- Use the event ID as the filename.
-- Prefer a frame showing the ingredient being added to the cooking vessel.
-- Preserve the source video's timestamp for the selected evidence frame.
-- Do not fabricate an image if a suitable frame is unavailable.
-- If no suitable frame exists, set `evidence_frame` to `null`.
-- Do not store Base64 image data in `events.json`.
-- Do not permanently save all extracted frames.
+The currently validated Qwen-based path performs:
 
-### Example
+1. Validate the video and read FPS/duration.
+2. Sample chronological frames at **1 FPS** for inference.
+3. Resize frames to **768 pixels wide**, preserving aspect ratio, and convert to RGB.
+4. Run a **whole-short-clip ingredient discovery pass** using chronological frames. Return generic ingredient names (`salt`, `soy sauce`, `cinnamon`, etc.), timestamps, and confidence. Brands are not required.
+5. For each detected ingredient, examine **two frames bounding each one-second interval**. Qwen predicts whether an addition occurred, an estimated amount in tablespoons, and confidence.
+6. Aggregate non-overlapping, active intervals into distinct addition events. Keep repeated additions of the same ingredient separate.
+7. Write structured `ingredients.json` with event IDs and timestamps.
 
-If salt is added twice:
+The latest inference prompt uses deterministic generation (`do_sample=False`) with `max_new_tokens=180` for the interval stage. The model is loaded once per process and reused for discovery and interval estimation.
+
+**Unknown and incomplete estimates:** If an ingredient cannot be identified, use `unknown`; if an addition is detected but its amount is not measurable, preserve a `null` quantity and an incomplete-estimate flag. Never interpret an unknown amount as zero.
+
+**Important:** Discovery of multiple ingredients and frame selection for longer videos require more validation. The separately retained older GPT-4.1-mini/OpenCV event-tracker code is *not* the primary Qwen interval workflow.
+
+### Module B — Sodium calculation
+
+**Stack:** Python sodium engine, ingredient/pantry JSON database, conversion and alias rules.
+
+- Match generic detected ingredients to pantry entries.
+- Translate supported quantities into pantry-compatible units.
+- Calculate estimated sodium for each recognized event.
+- Sum event-level sodium into a meal estimate.
+- Flag unsupported ingredients, units, or incomplete quantities instead of silently counting them as zero.
+
+Module B is independent of video inference. It consumes structured event data joined by `event_id`.
+
+### Module C — Web application
+
+**Stack:** FastAPI backend, Next.js/React frontend.
+
+The teammate's application includes or is designed around:
+
+- Video upload and session creation.
+- Pantry management.
+- Demo/mock sessions.
+- Results timeline and cumulative sodium.
+- Video playback with seek-to-event timestamps.
+- Evidence images when available, and placeholders otherwise.
+- Incomplete-result warnings.
+
+The backend provides the API and persistence seam between Module A and the frontend.
+
+## Repository structure
+
+The active integrated branch should resemble the following structure. Exact contents may change as branches are merged:
 
 ```text
-event_001 → First salt addition → event_001.jpg
-event_002 → Second salt addition → event_002.jpg
+hackchussets/
+├── README.md
+├── pyproject.toml
+├── src/ingredient_detection/
+│   ├── adapters/
+│   │   ├── qwen_vision.py            # Real Qwen model / discovery
+│   │   └── qwen_mock.py              # Recorded sample predictions
+│   ├── models/
+│   │   └── ingredient_export.py      # Export schema
+│   ├── pipeline/
+│   │   ├── automatic_ingredient_pipeline.py
+│   │   └── qwen_interval_pipeline.py
+│   └── services/
+│       ├── interval_extractor.py
+│       └── quantity_aggregator.py
+├── examples/
+│   ├── run_automatic_discovery.py
+│   └── run_qwen_intervals.py
+├── tests/
+├── samples/
+│   ├── test1.mp4                   # Local sample; may be gitignored
+│   ├── test2.mp4                   # Local sample; may be gitignored
+│   ├── clip_metadata.json
+│   └── benchmark_mapping.json
+├── backend/
+│   ├── app.py
+│   ├── module_a_bridge.py
+│   ├── sodium_engine/
+│   ├── fixtures/mock_events.json
+│   ├── requirements.txt
+│   └── storage/                    # Runtime-generated
+└── web/
+    ├── package.json
+    └── ...                         # Next.js frontend
 ```
 
-They must remain separate events even though the ingredient name is identical.
+**Sample mapping:** `test1.mp4` = EPIC-KITCHENS `P12_101` (salt); `test2.mp4` = `P22_113` (oil). The source clips are trimmed to about eight seconds. They may not be committed to Git due to size and redistribution considerations.
 
----
+## Current implementation status
 
-## 6. Shared JSON Output Contract
-
-The JSON file must include the session ID and the detected ingredient events.
-
-### Example `events.json`
-
-```json
-{
-  "session_id": "cooking_001",
-  "events": [
-    {
-      "event_id": "event_001",
-      "timestamp_start": 12.5,
-      "timestamp_end": 15.2,
-      "timestamp": 13.5,
-      "ingredient": "salt",
-      "quantity": 0.5,
-      "unit": "teaspoon",
-      "addition_confirmed": true,
-      "evidence_frame": "evidence/event_001.jpg"
-    },
-    {
-      "event_id": "event_002",
-      "timestamp_start": 25.0,
-      "timestamp_end": 28.5,
-      "timestamp": 26.0,
-      "ingredient": "soy sauce",
-      "quantity": 2,
-      "unit": "tablespoon",
-      "addition_confirmed": true,
-      "evidence_frame": "evidence/event_002.jpg"
-    }
-  ]
-}
-```
-
-The values above are illustrative.
-
-### Field Definitions
-
-| Field | Type | Description |
+| Component | Status | Evidence / caveat |
 |---|---|---|
-| `session_id` | String | Unique identifier for the cooking recording |
-| `event_id` | String | Unique ingredient-addition ID within the session |
-| `timestamp_start` | Float | Beginning of addition interval |
-| `timestamp_end` | Float | End of addition interval |
-| `timestamp` | Float | Best estimated moment of addition |
-| `ingredient` | String | Identified ingredient |
-| `quantity` | Float | Detected numerical quantity |
-| `unit` | String | Original observed measurement unit |
-| `addition_confirmed` | Boolean | True for exported events |
-| `evidence_frame` | String or null | Relative path to corresponding JPEG |
-
-### Timestamp Rules
-
-All timestamps refer to the original recording, in seconds.
-
-For example:
-
-- Analysis window: 120–124 seconds.
-- Ingredient added at approximately 122 seconds.
-- Event `timestamp`: approximately `122.0`.
-
-The frontend uses `timestamp` to seek within the original recording.
-
-Do not substitute the beginning of the analysis window for the actual addition timestamp.
-
-Timestamps reflect available visual evidence and may not be frame-perfect.
-
-### Strict Event Filtering
-
-Only export an event when:
-
-1. The ingredient is identifiable.
-2. The addition is confirmed.
-3. A positive numeric quantity is available.
-4. A recognizable measurement unit is available.
-
-Exclude:
-
-- Pinches.
-- Unmeasured pours.
-- Unknown quantities.
-- Uncertain additions.
-- Ingredients merely picked up or displayed.
-- Duplicate observations of one addition.
-
-An excluded event is not equivalent to zero sodium. Missing quantities make the sodium estimate incomplete.
-
-### Quantity Rules
-
-Preserve the original detected quantity and unit.
-
-| Ingredient | Quantity | Unit |
-|---|---:|---|
-| Salt | 0.5 | teaspoon |
-| Soy sauce | 2 | tablespoon |
-| Onion | 1 | piece |
-| Chopped tomato | 1 | cup |
-
-Module A must not convert these values into grams, milliliters, or sodium measurements.
-
----
-
-## 7. Module A Output Artifacts
-
-Each completed session should produce:
-
-```text
-cooking_001/
-  events.json
-  evidence/
-    event_001.jpg
-    event_002.jpg
-```
-
-Module A also preserves a reference to the original recording.
-
-### `events.json`
-
-Used by:
-
-- Module B for sodium calculation.
-- Module C for timeline construction.
-
-Contains:
-
-- Session ID.
-- Event IDs.
-- Ingredient names.
-- Quantities and units.
-- Event timestamps.
-- Evidence-image references.
-
-### Evidence JPEGs
-
-Used by:
-
-- Module A for debugging detections.
-- Module C to display timeline thumbnails and visual evidence.
-
-Module B does not need to read the JPEG files.
-
-### Original Recording
-
-Used by:
-
-- Module A for video analysis and frame extraction.
-- Module C for video playback and timestamp seeking.
-
-The original video should remain associated with the session until the results no longer need it.
-
----
-
-## 8. Module B — Sodium Calculation Integration
-
-Module B receives the event list from Module A.
-
-Example:
-
-```python
-events = pipeline_result.events
-
-# Module B implementation
-sodium_results = sodium_calculator.calculate(events)
-```
-
-Module B is responsible for:
-
-1. Looking up ingredients in the database.
-2. Applying ingredient-specific unit conversions.
-3. Retrieving sodium concentrations.
-4. Calculating sodium per addition.
-5. Aggregating total sodium.
-
-### Required Output Contract
-
-Every sodium result must preserve the original `event_id`.
-
-Example:
-
-```json
-{
-  "session_id": "cooking_001",
-  "results": [
-    {
-      "event_id": "event_001",
-      "sodium_mg": 1180
-    },
-    {
-      "event_id": "event_002",
-      "sodium_mg": 950
-    }
-  ],
-  "total_sodium_mg": 2130
-}
-```
-
-Values are illustrative.
-
-Module B should not modify:
-
-- Event IDs.
-- Event timestamps.
-- Evidence image references.
-- Original detected quantities or units.
-
-If an ingredient is unsupported by the database, the calculator should flag it rather than assign zero sodium.
-
----
-
-## 9. Module C — Interactive Cooking Timeline
-
-The webapp combines:
-
-- Original cooking recording.
-- Module A's `events.json`.
-- Module A's evidence JPEGs.
-- Module B's sodium calculations.
-
-### Example Timeline
-
-```text
-COOKING SESSION: cooking_001
-
-Original Cooking Video
-[Video Player]
-
-Detected Ingredient Timeline
-----------------------------------
-
-00:13 — Salt
-         Quantity: 0.5 teaspoon
-         Sodium: Module B result
-         Image: event_001.jpg
-
-00:26 — Soy Sauce
-         Quantity: 2 tablespoons
-         Sodium: Module B result
-         Image: event_002.jpg
-```
-
-### Click Behavior
-
-When a user selects an event:
-
-1. Identify the event using `session_id` and `event_id`.
-2. Display the ingredient name and quantity.
-3. Display its sodium contribution from Module B.
-4. Load the corresponding evidence image, if available.
-5. Seek the original recording to the event's `timestamp`.
-
-### Linking Data Across Modules
-
-| Identifier | Purpose |
-|---|---|
-| `session_id` | Locate the recording and all associated results |
-| `event_id` | Match an addition to its sodium result |
-| `timestamp` | Seek to the addition in the original video |
-| `evidence_frame` | Retrieve the event's supporting image |
-
-The frontend should use `event_id` as the join key within each session.
-
----
-
-## 10. Serving Evidence Images to the Webapp
-
-Evidence images are stored as JPEG files, not inside JSON.
-
-For local development, Module A may output:
-
-```text
-evidence/event_001.jpg
-```
-
-Module C cannot automatically access backend filesystem paths.
-
-The backend integration layer must make these images available using an accessible URL.
-
-Example endpoint:
-
-```text
-GET /api/sessions/cooking_001/evidence/event_001.jpg
-```
-
-The backend resolves this request to:
-
-```text
-storage/sessions/cooking_001/evidence/event_001.jpg
-```
-
-The backend should validate session IDs and filenames, and prevent access to files outside the configured storage directory.
-
-### Storage Approach for MVP
-
-Use local filesystem storage when the backend components share the same filesystem.
-
-If Module C is deployed separately, expose the images through a backend API or shared object storage.
-
-The same approach applies to original video playback.
-
-Module A remains responsible for generating events and images, not implementing frontend delivery infrastructure.
-
----
-
-## 11. Python Project Structure
-
-Module A uses the following planned architecture:
-
-```text
-src/
-  ingredient_detection/
-    models/
-      video.py
-      frames.py
-      ingredient_event.py
-
-    interfaces/
-      frame_extractor.py
-      vision_model.py
-
-    services/
-      video_processor.py
-      frame_extractor.py
-      ingredient_detector.py
-      event_tracker.py
-
-    pipeline/
-      cooking_pipeline.py
-
-    adapters/
-      openai_vision.py
-
-tests/
-examples/
-pyproject.toml
-README.md
-.env.example
-```
-
-The existing repository should remain the source of truth for exact filenames and implemented classes.
-
-Do not introduce unnecessary layers or duplicate services when implementing the timeline features.
-
----
-
-## 12. Development Setup
-
-Install development dependencies:
+| OpenCV extraction and timestamps | Implemented and tested | One-second RGB frame intervals |
+| Qwen automatic ingredient discovery | Real GPU test passed for salt | Correctly discovered `salt` in `test1.mp4` |
+| Qwen interval quantity estimates | Real GPU test passed for salt | 8/8 intervals processed |
+| Quantity aggregation | Implemented; mock-tested | Example: four × 0.5 tbsp → 2.0 tbsp |
+| `ingredients.json` export | Implemented; mock-tested | Latest Codex report: 53 tests passed for Module A |
+| Sodium engine + backend | Teammate implementation present | Integrated behavior needs final verification |
+| Next.js frontend | Teammate implementation present | Dependency/build verification may be ongoing |
+| Module A → backend `events.json` bridge | Integration work | Verify mode and nullable-quantity handling on the merged branch |
+| Full web app with mock inference | Integration target | Do not claim complete until upload/results/timeline are exercised |
+| Live GPU inference from web upload | Not yet deployed | Kaggle used for standalone GPU experiments |
+| Full 40-second video reliability | Not yet established | Requires performance and accuracy testing |
+
+**Real sample result:** On `test1.mp4`, Qwen discovered salt from 0–4 seconds and predicted `0.5` tablespoon in each of four active one-second intervals. The aggregate estimate is **2.0 tablespoons**. This is a model estimate, **not a ground-truth measurement**.
+
+## Quick start: mock web app
+
+Mock mode is the recommended way to test the integration without running GPU inference. Run the backend and frontend in **separate terminals** from the repository root.
+
+### Prerequisites
+
+- Git
+- Python and `pip` (use the versions supported by `pyproject.toml` and `backend/requirements.txt`)
+- Node.js and npm compatible with the `web/package.json` Next.js version
+- The branch containing both the Module A and teammate app files
+
+### 1. Get the project
 
 ```bash
-pip install -e ".[dev]"
+git clone https://github.com/jammjace/hackchussets.git
+cd hackchussets
+git switch integration   # or your actual integrated branch
 ```
 
-Run tests:
+If the integration branch has not been pushed, fetch it first or use the branch currently containing Modules A, B and C.
+
+### 2. Start FastAPI (mock mode)
 
 ```bash
-pytest
+cd backend
+python -m pip install -r requirements.txt
 ```
 
-Run the mock pipeline:
+Set `MODULE_A_MODE=mock` in the backend environment (the teammate's original backend also defaults to mock):
+
+```powershell
+# PowerShell
+$env:MODULE_A_MODE = "mock"
+python -m uvicorn app:app --reload --port 8000
+```
+
+macOS/Linux equivalent:
 
 ```bash
-python examples/run_mock_pipeline.py
+export MODULE_A_MODE=mock
+python -m uvicorn app:app --reload --port 8000
 ```
 
-For eventual API integration:
+Verify: `http://localhost:8000/api/health` should return `{"status":"ok"}`.
+
+### 3. Start Next.js
+
+In a second terminal:
 
 ```bash
-cp .env.example .env
+cd web
+npm install
+npm run dev
 ```
 
-Place API credentials in `.env`.
+Open `http://localhost:3000`.
 
-The setup commands assume the matching project files exist and have been configured.
+The backend defaults to a local frontend origin of `http://localhost:3000`. If the UI cannot access the backend, check the frontend's API base URL configuration and the backend's `CORS_ORIGINS` value. Refer to the integrated branch's environment files for exact settings.
 
-Do not commit API keys, cooking videos, or evidence images to Git.
+### 4. Exercise the mock flow
 
----
+1. Open the web app.
+2. Create a demo session or upload a supported sample video.
+3. Confirm a session ID is returned and the backend writes `events.json`.
+4. Open results, inspect sodium calculations and warnings, and click an event to seek to its video timestamp.
 
-## 13. Development Status
+**Mock limitation:** Pre-recorded inference is meaningful only for matching test assets. An arbitrary video uploaded in mock mode is not analyzed by Qwen. Depending on which fixture the integrated bridge selects, mock output may be a generic demonstration rather than a prediction for the uploaded file.
 
-### Module A — Ingredient Detection
+## Run Module A locally
 
-Previously scaffolded:
-
-- Pydantic models.
-- OOP interfaces.
-- Frame-window calculation logic.
-- Event Tracker.
-- Mock model adapter.
-- Initial unit tests.
-
-Newly confirmed requirements:
-
-- Session-level organization.
-- Stable event IDs unique within a session.
-- Event timestamps for timeline seeking.
-- One evidence JPEG per event when available.
-- Evidence filename matching its event ID.
-- JSON paths referencing the corresponding JPEGs.
-- Session-specific output directories.
-
-Remaining work:
-
-1. Implement actual OpenCV frame extraction.
-2. Implement VLM inference.
-3. Integrate real ingredient observations with the Event Tracker.
-4. Implement event timestamp estimation.
-5. Implement evidence-frame selection and saving.
-6. Export session-organized JSON and JPEG files.
-7. Test with recorded cooking videos.
-
-These new features are planned requirements and are not necessarily implemented yet.
-
-### Module B — Sodium Calculation
-
-Developed independently by a teammate.
-
-### Module C — Web Application
-
-Developed independently by a teammate.
-
----
-
-## 14. MVP Success Criteria
-
-The MVP should demonstrate:
-
-1. User records or uploads a cooking video.
-2. The backend associates it with a unique session ID.
-3. OpenCV extracts timestamped frame sequences.
-4. The VLM identifies measurable ingredient additions.
-5. The Event Tracker removes duplicates.
-6. Each valid addition receives a unique event ID.
-7. Each event includes ingredient, quantity, unit, and timestamps.
-8. A representative JPEG is saved for each event when available.
-9. Each JPEG filename matches its event ID.
-10. The session's `events.json` references the correct JPEGs.
-11. Module B calculates sodium for each event.
-12. Module C displays the clickable timeline.
-13. Clicking an event reveals the image and seeks the original video.
-14. The webapp displays the recipe's total estimated sodium and relevant limitations.
-
-### Known Limitations
-
-- Sparse sampling may miss short additions.
-- Quantities may be difficult to infer from visual footage.
-- Unmeasured additions are excluded.
-- Ingredient recognition can be incorrect.
-- Evidence frames may not show the exact addition moment.
-- The final sodium total may be incomplete.
-- The product does not provide medical-grade sodium measurements.
-
----
-
-## 15. Future Improvements
-
-Potential extensions include:
-
-- Real-time frame processing.
-- Smarter candidate-event detection.
-- Audio-assisted ingredient recognition.
-- Better visual volume estimation.
-- Detection of unmeasured pours.
-- Locally hosted open-weight vision-language models.
-- User correction of ingredient quantities.
-- Expanded ingredient and product databases.
-- Serving-size calculations.
-
-These are outside the current hackathon MVP.
-
----
-
-## 16. Summary — Shared Team Contract
-
-### Module A — Ingredient Detection
-
-**Input:** Recorded cooking video and session ID.
-
-**Output:**
-
-- `events.json`, with event IDs, ingredient details, quantities, units, timestamps, and evidence references.
-- Up to one JPEG image per confirmed event.
-- Reference to the original recording.
-
-### Module B — Sodium Calculation
-
-**Input:** Module A's structured events.
-
-**Output:**
-
-- Sodium contribution per event, linked by `event_id`.
-- Total estimated recipe sodium.
-
-### Module C — Web Application
-
-**Input:**
-
-- Original recording.
-- Module A's event JSON.
-- Evidence JPEG images.
-- Module B's sodium results.
-
-**Output:** Clickable ingredient-addition timeline and sodium dashboard.
-
-### Final Integration Rules
-
-- `session_id` uniquely identifies the cooking session.
-- `event_id` uniquely identifies an addition within that session.
-- `(session_id, event_id)` uniquely identifies an addition across the application.
-- `event_001` corresponds to `event_001.jpg` when evidence is available.
-- `timestamp` determines where the video player seeks.
-- `evidence_frame` references the saved JPEG.
-- `ingredient`, `quantity`, and `unit` provide Module B's calculation inputs.
-- Module B preserves event IDs when returning sodium results.
-- Module C joins Module A and B outputs using the session and event IDs.
-
-**One ingredient addition = one event record + at most one corresponding evidence image.**
-
----
-
-## Module A quick start
-
-Install and test the implementation:
+Install the Python project from the repository root:
 
 ```bash
-pip install -e ".[dev]"
-pytest
+python -m pip install -e .
 ```
 
-Construct `CookingPipeline` with `VideoProcessor`, `SlidingWindowFrameExtractor`,
-`IngredientDetector(OpenAIVisionModel(...))`, and `IngredientEventTracker`, then call:
-
-```python
-result = pipeline.process("storage/recordings/cooking.mp4", session_id="cooking_001")
-```
-
-This writes `storage/sessions/cooking_001/events.json` and at most one JPEG per
-confirmed event under its `evidence/` directory. Existing session directories are
-never overwritten. Set `OPENAI_API_KEY` in a local `.env` or your process environment;
-never commit the key.
-
----
-
-## Qwen interval experiment
-
-The intermediate Qwen path reuses `VideoProcessor` and the OpenCV frame
-extractor. It samples RGB frames at local timestamps 0, 1, 2, and so on,
-creates eight adjacent intervals for an eight-second clip, and produces
-validated per-interval predictions. It does not aggregate quantities or write
-the production ingredient-event JSON.
-
-The confirmed benchmark mapping is stored in
-`samples/benchmark_mapping.json`:
-
-- `test1.mp4` is `P12_101` (`salt`).
-- `test2.mp4` is `P22_113` (`oil`).
-
-Run the recorded Kaggle fixtures locally without loading Qwen:
-
-```bash
-python examples/run_qwen_intervals.py --video samples/test1.mp4 --mode mock
-python examples/run_qwen_intervals.py --video samples/test2.mp4 --mode mock
-```
-
-For Kaggle GPU inference, upload the repository and clips, enable a GPU, then:
-
-```bash
-pip install -e ".[qwen]"
-python examples/run_qwen_intervals.py --video samples/test1.mp4 --mode qwen
-```
-
-The real adapter loads `Qwen/Qwen3-VL-2B-Instruct` and its processor once,
-uses deterministic generation with `max_new_tokens=180`, and retains each raw
-model response alongside its validated intermediate prediction.
-
-### Automatic ingredient discovery
-
-The automatic path first asks the same loaded Qwen model to identify generic
-ingredient additions from chronological frames. Each confirmed, non-`unknown`
-name is then passed into the unchanged one-second tablespoon estimator.
-Discovery does not read benchmark metadata or expected ingredient labels.
-
-On Kaggle with a GPU, run real discovery and quantity inference with:
-
-```bash
-python examples/run_automatic_discovery.py --video samples/test1.mp4
-python examples/run_automatic_discovery.py --video samples/test2.mp4
-```
-
-To compare a completed prediction against benchmark labels afterward, add
-`--evaluate`. Evaluation metadata is loaded only after inference finishes:
-
-```bash
-python examples/run_automatic_discovery.py --video samples/test1.mp4 --evaluate
-```
-
-Discovery retains `unknown` results with timestamps and confidence but does not
-run ingredient-specific quantity inference for them. This intermediate output
-is printed for experimentation; it is not the production `ingredients.json`.
-
-### Final ingredient quantity export
-
-The automatic-discovery CLI now aggregates consecutive active intervals into
-distinct addition events and writes a frontend-facing `ingredients.json` while
-continuing to print detailed intermediate predictions for debugging:
-
-```bash
-python examples/run_automatic_discovery.py \
-  --video samples/test1.mp4 \
-  --output outputs/test1/ingredients.json
-```
-
-Use `--timestamp-offset <seconds>` only when an original-video offset is
-explicitly available. Mock mode uses the recorded Kaggle fixtures without
-loading Qwen:
+Run mock automatic discovery + aggregation:
 
 ```bash
 python examples/run_automatic_discovery.py \
@@ -911,3 +284,228 @@ python examples/run_automatic_discovery.py \
   --mode mock \
   --output outputs/test1/ingredients.json
 ```
+
+For the oil clip:
+
+```bash
+python examples/run_automatic_discovery.py \
+  --video samples/test2.mp4 \
+  --mode mock \
+  --output outputs/test2/ingredients.json
+```
+
+On Windows PowerShell, use one line instead of `\` line continuations:
+
+```powershell
+python examples/run_automatic_discovery.py --video samples/test1.mp4 --mode mock --output outputs/test1/ingredients.json
+```
+
+This tests OpenCV, the model-output interface, aggregation, and export **without loading Qwen weights**.
+
+## Run real Qwen inference on Kaggle
+
+The real model was tested on a Kaggle GPU notebook. Kaggle is intended for development/testing, **not as a permanent publicly accessible inference backend**.
+
+### Prerequisites
+
+- A Kaggle notebook with GPU accelerator and internet access enabled.
+- A checkout of the project branch containing the Qwen implementation.
+- Sample MP4 files in `samples/` (uploaded separately if omitted from Git).
+
+```python
+%cd /kaggle/working
+!git clone -b CVmodel --single-branch https://github.com/jammjace/hackchussets.git
+%cd /kaggle/working/hackchussets
+%pip install -e ".[qwen]"
+```
+
+Change `CVmodel` to the current integrated branch if appropriate.
+
+```python
+import torch
+print("GPU available:", torch.cuda.is_available())
+```
+
+Run the complete model + export pipeline:
+
+```bash
+python examples/run_automatic_discovery.py \
+  --video samples/test1.mp4 \
+  --mode qwen \
+  --output outputs/test1/ingredients.json
+```
+
+Optionally pass `--timestamp-offset 1892.945` for the EPIC-KITCHENS original-video time reference. **Do not** apply this offset to normal uploaded cooking videos; their timestamps start at zero.
+
+The CLI prints discovery and interval predictions and saves a concise `ingredients.json`. The model must run on suitable GPU hardware for practical latency. In its current CLI form, each new Python process loads model weights again.
+
+## Data contracts
+
+### Module A internal export — `ingredients.json`
+
+Illustrative output:
+
+```json
+{
+  "session_id": "test1",
+  "ingredients": [
+    {
+      "event_id": "event_001",
+      "ingredient": "salt",
+      "quantity": 2.0,
+      "unit": "tablespoon",
+      "quantity_source": "interval_visual_estimate",
+      "timestamp_start": 0.0,
+      "timestamp_end": 4.0,
+      "addition_confirmed": true,
+      "estimate_complete": true
+    }
+  ]
+}
+```
+
+- `quantity` is **nullable** when the observed amount is unknown.
+- An incomplete event may include `known_estimated_subtotal_tbsp` while keeping the main `quantity` null.
+- `event_id` remains stable within a session, and repeated additions are separate events.
+- Timestamps are seconds relative to the uploaded video, rounded for JSON output.
+- Sodium is **not** calculated by Module A.
+
+### Shared backend contract — `events.json`
+
+The backend was originally built around this shape:
+
+```json
+{
+  "session_id": "cooking_001",
+  "events": [
+    {
+      "event_id": "event_001",
+      "timestamp_start": 0.0,
+      "timestamp_end": 4.0,
+      "timestamp": 0.0,
+      "ingredient": "salt",
+      "quantity": 2.0,
+      "unit": "tablespoon",
+      "addition_confirmed": true,
+      "evidence_frame": null,
+      "quantity_source": "interval_visual_estimate",
+      "estimate_complete": true
+    }
+  ]
+}
+```
+
+**The Module A bridge must transform `ingredients` to `events`**, add the seek timestamp, and set `evidence_frame` to null when no suitable JPEG exists. The bridge must not convert unknown quantities to zero. The sodium engine and frontend must treat `quantity: null` as an incomplete estimate and surface a warning.
+
+The shared contract belongs to the integration layer; do not force the Qwen adapter to emit backend-specific fields.
+
+### Sodium results
+
+The backend associates sodium contributions with `event_id`. Unsupported ingredients, unsupported units, and incomplete quantities should be explicit states. The total reflects only successfully calculated contributions, with a warning when it is incomplete.
+
+## API and frontend
+
+The teammate's FastAPI service exposes these routes:
+
+| Method | Route | Purpose |
+|---|---|---|
+| `GET` | `/api/health` | Service health |
+| `GET` | `/api/pantry` | List pantry items |
+| `PUT` | `/api/pantry` | Update pantry |
+| `POST` | `/api/pantry/reset` | Reset pantry |
+| `POST` | `/api/sessions` | Upload cooking video and create session |
+| `POST` | `/api/sessions/demo` | Generate a demo/mock session |
+| `GET` | `/api/sessions/{id}/results` | Timeline, sodium totals, warnings |
+| `GET` | `/api/sessions/{id}/video` | Play/seek original video |
+| `GET` | `/api/sessions/{id}/evidence/{event_id}.jpg` | Evidence image, where available |
+
+The frontend uses each event's `timestamp` to seek the corresponding video. Missing evidence images should display a placeholder. The sodium total represents the **whole meal**, not a per-serving value.
+
+**Processing behavior:** The teammate's original upload endpoint waits synchronously for Module A. For long real GPU jobs, a future version should return a session ID immediately, enqueue inference, and let the frontend poll for completion.
+
+## Testing
+
+### Module A
+
+```bash
+python -m pytest tests -q
+```
+
+Codex reported **53 passing tests** after implementing aggregation and JSON export. This is a historical reported result, not a guarantee that all subsequent merges pass.
+
+### Backend
+
+```bash
+cd backend
+python -m pytest -q
+```
+
+The teammate's backend README describes **22 tests** for its original mock/sodium implementation. Rerun these after integration.
+
+### Frontend
+
+```bash
+cd web
+npm install
+npm run build
+npm run lint
+```
+
+Run commands only if the corresponding scripts exist in `web/package.json`. Commit any required `package-lock.json` correction alongside dependency changes.
+
+### Minimum integration acceptance checks
+
+- Mock upload produces a session and valid `events.json`.
+- Sodium results join to the correct `event_id`.
+- A nullable quantity does not crash the sodium engine.
+- Incomplete amounts do not masquerade as zero sodium.
+- The frontend renders the timeline and warnings.
+- Clicking an event seeks the correct position in the video.
+- Real inference remains separate from mock test fixtures.
+
+## Demo plan
+
+For the hackathon, prioritize a reliable demonstration of the **complete user journey**:
+
+1. Show head-mounted cooking footage and explain the hands-free tracking problem.
+2. Open a completed session whose detections were **previously generated by real Qwen inference**.
+3. Show generic ingredient names, visual quantity estimates, per-ingredient sodium and total sodium.
+4. Click timeline events to jump back to the relevant moment of the video.
+5. If time and GPU availability allow, show a separate short real-inference run as technical proof.
+
+Preprocessed predictions should be **clearly labeled** as such. Do not imply a live analysis is occurring when the app is replaying stored results.
+
+## Limitations and roadmap
+
+### Known limitations
+
+- **Quantity accuracy:** Estimates are inferred from sparse snapshots, not measured with calibrated equipment. The observed 2.0-tablespoon salt result has not been validated against known physical ground truth.
+- **Visual ambiguity:** Salt, sugar and other white granules may appear similar without labels or contextual evidence.
+- **Longer videos:** The current discovery pass was proven on an 8-second clip. Full 40-second recordings need discovery-window strategy and performance tests.
+- **Latency:** GPU model loading and repeated per-interval inference are expensive. Loading once and reusing a long-lived GPU worker can reduce cold-start overhead.
+- **GPU hosting:** Kaggle GPU notebooks are temporary experiments, not an always-on inference service. A deployed GPU worker/service is needed for arbitrary live uploads.
+- **Sodium coverage:** Results depend on the available pantry database, aliases, unit conversions and quantities. Unsupported or unknown inputs must remain visible as incomplete estimates.
+- **Evidence images:** Real Qwen's current automated export does not guarantee an evidence JPEG for each event. Missing evidence is represented as null.
+- **Supported formats:** The original Module A validator was MP4-focused, while the backend may accept additional extensions. The integrated path must validate formats end to end.
+- **Medical safety:** A sodium estimate may be significantly wrong and should not be used for clinical decisions.
+
+### Next steps
+
+1. Finish the mock-mode Module A/B/C integration and frontend build verification.
+2. Run end-to-end acceptance tests for `events.json`, nullable quantities and results screens.
+3. Run the **merged** pipeline in real Qwen mode on a GPU, not just the standalone Module A CLI.
+4. Measure actual load, discovery and inference latency on a representative 40-second video.
+5. Add scalable windowed ingredient discovery for longer footage.
+6. Deploy a persistent or on-demand GPU inference worker and asynchronous session processing.
+7. Evaluate ingredient identification, false additions, timestamps and estimated quantities on measured cooking examples.
+
+## References and credits
+
+- **Qwen3-VL-2B-Instruct** — vision-language model used for ingredient discovery and visual quantity estimation: <https://huggingface.co/Qwen/Qwen3-VL-2B-Instruct>
+- **OpenCV** — video decoding and frame extraction: <https://opencv.org/>
+- **EPIC-KITCHENS** — source of the two short evaluation clips and action annotations: <https://epic-kitchens.github.io/>
+- **EPIC-KITCHENS download tools**: <https://github.com/epic-kitchens/epic-kitchens-download-scripts>
+- **FastAPI**: <https://fastapi.tiangolo.com/>
+- **Next.js**: <https://nextjs.org/>
+
+This repository is a team hackathon prototype. Follow the licensing and redistribution requirements of the source videos and model before publishing artifacts or deploying the application publicly.
