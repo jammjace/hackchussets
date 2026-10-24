@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500&family=EB+Garamond&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+body{margin:0;background:#EFECE2;font-family:"Figtree",system-ui,sans-serif;color:#1E1C19;-webkit-font-smoothing:antialiased}
+a{color:#1E1C19}a:hover{color:#1F4A43}
+@keyframes nahSight{to{stroke-dashoffset:-20}}
+@keyframes nahScan{0%{top:12%}100%{top:88%}}
+@keyframes nahReveal{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes nahPop{0%{transform:scale(.92)}70%{transform:scale(1.07)}100%{transform:scale(1)}}
+@keyframes nahIdle{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes nahShimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+@keyframes nahSpin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:opacity 150ms linear!important}}
+body.nah-rm *{animation:none!important;transition:opacity 150ms linear!important}
+</style>
+</helmet>
+<div style="max-width:1440px;width:100%;margin:0 auto;background:#FAF7EE;padding:16px clamp(20px,8.3vw,120px) clamp(64px,9vw,128px);box-sizing:border-box;font-family:'Figtree',system-ui,sans-serif;color:#1E1C19;font-size:clamp(16px,1.25vw,18px);line-height:1.45">
+
+<!-- Section jump menu -->
+<nav aria-label="Sections" style="position:sticky;top:12px;z-index:50;display:flex;align-items:center;gap:4px;height:48px;padding:0 8px;background:#FFFDF7;border:2px solid #1E1C19;border-radius:999px;box-shadow:0 12px 32px -12px rgba(30,28,25,0.18);overflow-x:auto;scrollbar-width:none;margin-bottom:clamp(48px,6vw,80px)">
+  <a href="#s01" style="flex:none;font:600 13px 'Figtree',sans-serif;color:#1E1C19;text-decoration:none;padding:0 12px;height:36px;display:inline-flex;align-items:center;border-radius:999px;transition:background 150ms" style-hover="background:#E6E2D3">Wordmark</a>
+  <a href="#s02" style="flex:none;font:600 13px 'Figtree',sans-serif;color:#1E1C19;text-decoration:none;padding:0 12px;height:36px;display:inline-flex;align-items:center;border-radius:999px;transition:background 150ms" style-hover="background:#E6E2D3">Colour</a>
+  <a href="#s03" style="flex:none;font:600 13px 'Figtree',sans-serif;color:#1E1C19;text-decoration:none;padding:0 12px;height:36px;display:inline-flex;align-items:center;border-radius:999px;transition:background 150ms" style-hover="background:#E6E2D3">Type</a>
+  <a href="#s04" style="flex:none;font:600 13px 'Figtree',sans-serif;color:#1E1C19;text-decoration:none;padding:0 12px;height:36px;display:inline-flex;align-items:center;border-radius:999px;transition:background 150ms" style-hover="background:#E6E2D3">Spacing</a>
+  <a href="#s05" style="flex:none;font:600 13px 'Figtree',sans-serif;color:#1E1C19;text-decoration:none;padding:0 12px;height:36px;display:inline-flex;align-items:center;border-radius:999px;transition:background 150ms" style-hover="background:#E6E2D3">Motion</a>
+  <a href="#s06" style="flex:none;font:600 13px 'Figtree',sans-serif;color:#1E1C19;text-decoration:none;padding:0 12px;height:36px;display:inline-flex;align-items:center;border-radius:999px;transition:background 150ms" style-hover="background:#E6E2D3">Icons</a>
+  <a href="#s07" style="flex:none;font:600 13px 'Figtree',sans-serif;color:#1E1C19;text-decoration:none;padding:0 12px;height:36px;display:inline-flex;align-items:center;border-radius:999px;transition:background 150ms" style-hover="background:#E6E2D3">Detection</a>
+  <a href="#s08" style="flex:none;font:600 13px 'Figtree',sans-serif;color:#1E1C19;text-decoration:none;padding:0 12px;height:36px;display:inline-flex;align-items:center;border-radius:999px;transition:background 150ms" style-hover="background:#E6E2D3">Illustration</a>
+  <a href="#s09" style="flex:none;font:600 13px 'Figtree',sans-serif;color:#1E1C19;text-decoration:none;padding:0 12px;height:36px;display:inline-flex;align-items:center;border-radius:999px;transition:background 150ms" style-hover="background:#E6E2D3">Components</a>
+  <a href="#s10" style="flex:none;font:600 13px 'Figtree',sans-serif;color:#1E1C19;text-decoration:none;padding:0 12px;height:36px;display:inline-flex;align-items:center;border-radius:999px;transition:background 150ms" style-hover="background:#E6E2D3">Phone</a>
+  <a href="#s11" style="flex:none;font:600 13px 'Figtree',sans-serif;color:#1E1C19;text-decoration:none;padding:0 12px;height:36px;display:inline-flex;align-items:center;border-radius:999px;transition:background 150ms" style-hover="background:#E6E2D3">Copy</a>
+  <a href="#s12" style="flex:none;font:600 13px 'Figtree',sans-serif;color:#1E1C19;text-decoration:none;padding:0 12px;height:36px;display:inline-flex;align-items:center;border-radius:999px;transition:background 150ms" style-hover="background:#E6E2D3">Contrast</a>
+</nav>
+
+<!-- Masthead -->
+<header style="display:flex;flex-wrap:wrap;gap:40px 64px;padding-bottom:clamp(40px,5vw,64px)">
+  <div style="flex:1 1 220px;max-width:260px">
+    <div style="display:inline-flex;align-items:flex-start;gap:6px;cursor:default">
+      <div style="position:relative;width:64px;height:64px;border:2px solid #1E1C19;border-radius:14px;background:#FFFDF7;box-sizing:border-box;display:flex;align-items:center;justify-content:center">
+        <span style="position:absolute;top:5px;left:8px;font:600 9px/1 'Figtree',sans-serif;letter-spacing:.04em">11</span>
+        <span style="font:400 34px/1 'Instrument Serif',serif;margin-top:2px">Na</span>
+        <span style="position:absolute;bottom:5px;left:0;right:0;text-align:center;font:600 8px/1 'Figtree',sans-serif;letter-spacing:.04em">22.99</span>
+      </div>
+      <span style="display:inline-block;font:italic 400 40px/1 'Instrument Serif',serif;color:#B4432F;position:relative;top:-8px;transform-origin:20% 90%;transition:transform 600ms cubic-bezier(0.34,1.4,0.64,1)" style-hover="transform:rotate(8deg)">(h)</span>
+    </div>
+    <div style="margin-top:24px;font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Design system · v0.2 · Light theme · Responsive</div>
+  </div>
+  <div style="flex:1 1 600px;min-width:0">
+    <h1 style="margin:0 0 24px;font:400 clamp(40px,4.4vw,64px)/0.98 'Instrument Serif','EB Garamond',serif;letter-spacing:-0.02em;text-wrap:pretty">Kitchen editorial. <em style="font-style:italic">Say nah</em> to hidden sodium.</h1>
+    <p style="margin:0;max-width:760px;color:#5F5B53;text-wrap:pretty">Foundations and components for Na(h). This guide reflows from 1440 down to a phone; section 10 shows every component again at phone size inside iPhone frames. Use the pill above to jump between sections; pinch to zoom on a phone.</p>
+    <div style="margin-top:32px;display:flex;flex-wrap:wrap;gap:8px">
+      <span style="font:500 14px 'Figtree',sans-serif;padding:8px 14px;border:1px solid #E6E2D3;border-radius:999px;background:#FFFDF7">Landing page: Nav Pill with one CTA, no links. App: FAB + Back Button</span>
+      <span style="font:500 14px 'Figtree',sans-serif;padding:8px 14px;border:1px solid #E6E2D3;border-radius:999px;background:#FFFDF7">Lucide via CDN at 2px stroke; set 1.75 in code</span>
+      <span style="font:500 14px 'Figtree',sans-serif;padding:8px 14px;border:1px solid #E6E2D3;border-radius:999px;background:#FFFDF7">3D renders to be supplied; slots accept drops</span>
+    </div>
+  </div>
+</header>
+
+<!-- 01 Wordmark -->
+<section id="s01" style="display:flex;flex-wrap:wrap;gap:40px 64px;padding:clamp(40px,5vw,64px) 0;border-top:1px solid #E6E2D3;scroll-margin-top:80px">
+  <div style="flex:1 1 220px;max-width:260px">
+    <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:12px">01</div>
+    <h2 style="margin:0 0 12px;font:400 clamp(32px,3vw,44px)/1.05 'Instrument Serif',serif;letter-spacing:-0.01em">Wordmark</h2>
+    <p style="margin:0;font-size:15px;color:#5F5B53;text-wrap:pretty">Element tile: 14px radius, 2px ink, paper fill. “(h)” sits outside, italic, slightly higher, in chilli. Hover: “(h)” tilts 8° and settles. Clear space = tile height ÷ 4. Numbers on the tile drop below 40px.</p>
+  </div>
+  <div style="flex:1 1 600px;min-width:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px">
+    <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:32px;display:flex;flex-direction:column;gap:32px">
+      <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Full lockup · 64 and 32</div>
+      <div style="display:inline-flex;align-items:flex-start;gap:6px;cursor:default">
+        <div style="position:relative;width:64px;height:64px;border:2px solid #1E1C19;border-radius:14px;background:#FFFDF7;box-sizing:border-box;display:flex;align-items:center;justify-content:center">
+          <span style="position:absolute;top:5px;left:8px;font:600 9px/1 'Figtree',sans-serif;letter-spacing:.04em">11</span>
+          <span style="font:400 34px/1 'Instrument Serif',serif;margin-top:2px">Na</span>
+          <span style="position:absolute;bottom:5px;left:0;right:0;text-align:center;font:600 8px/1 'Figtree',sans-serif;letter-spacing:.04em">22.99</span>
+        </div>
+        <span style="display:inline-block;font:italic 400 40px/1 'Instrument Serif',serif;color:#B4432F;position:relative;top:-8px;transform-origin:20% 90%;transition:transform 600ms cubic-bezier(0.34,1.4,0.64,1)" style-hover="transform:rotate(8deg)">(h)</span>
+      </div>
+      <div style="display:inline-flex;align-items:flex-start;gap:3px;cursor:default">
+        <div style="width:32px;height:32px;border:2px solid #1E1C19;border-radius:8px;background:#FFFDF7;box-sizing:border-box;display:flex;align-items:center;justify-content:center"><span style="font:400 18px/1 'Instrument Serif',serif">Na</span></div>
+        <span style="display:inline-block;font:italic 400 21px/1 'Instrument Serif',serif;color:#B4432F;position:relative;top:-4px;transform-origin:20% 90%;transition:transform 600ms cubic-bezier(0.34,1.4,0.64,1)" style-hover="transform:rotate(8deg)">(h)</span>
+      </div>
+    </div>
+    <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:32px;display:flex;flex-direction:column;gap:32px">
+      <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Tile only · favicon</div>
+      <div style="display:flex;align-items:flex-end;gap:24px">
+        <div style="position:relative;width:64px;height:64px;border:2px solid #1E1C19;border-radius:14px;background:#FFFDF7;box-sizing:border-box;display:flex;align-items:center;justify-content:center">
+          <span style="position:absolute;top:5px;left:8px;font:600 9px/1 'Figtree',sans-serif">11</span>
+          <span style="font:400 34px/1 'Instrument Serif',serif;margin-top:2px">Na</span>
+          <span style="position:absolute;bottom:5px;left:0;right:0;text-align:center;font:600 8px/1 'Figtree',sans-serif">22.99</span>
+        </div>
+        <div style="width:32px;height:32px;border:2px solid #1E1C19;border-radius:8px;background:#FFFDF7;box-sizing:border-box;display:flex;align-items:center;justify-content:center"><span style="font:400 18px/1 'Instrument Serif',serif">Na</span></div>
+        <div style="width:16px;height:16px;border:1.5px solid #1E1C19;border-radius:4px;background:#FFFDF7;box-sizing:border-box;display:flex;align-items:center;justify-content:center"><span style="font:400 9px/1 'Instrument Serif',serif">Na</span></div>
+      </div>
+      <p style="margin:0;font-size:14px;color:#5F5B53">At 16px the tile keeps only “Na”. Border thins to 1.5px.</p>
+    </div>
+    <div style="background:#1F4A43;border-radius:28px;padding:32px;display:flex;flex-direction:column;gap:32px;color:#FAF7EE">
+      <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;opacity:.85">One colour · on forest</div>
+      <div style="display:inline-flex;align-items:flex-start;gap:6px">
+        <div style="position:relative;width:64px;height:64px;border:2px solid #FAF7EE;border-radius:14px;box-sizing:border-box;display:flex;align-items:center;justify-content:center">
+          <span style="position:absolute;top:5px;left:8px;font:600 9px/1 'Figtree',sans-serif">11</span>
+          <span style="font:400 34px/1 'Instrument Serif',serif;margin-top:2px">Na</span>
+          <span style="position:absolute;bottom:5px;left:0;right:0;text-align:center;font:600 8px/1 'Figtree',sans-serif">22.99</span>
+        </div>
+        <span style="font:italic 400 40px/1 'Instrument Serif',serif;position:relative;top:-8px">(h)</span>
+      </div>
+      <p style="margin:0;font-size:14px;opacity:.85">Ink on light, canvas on forest. No chilli in the one-colour version.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 Colour -->
+<section id="s02" style="display:flex;flex-wrap:wrap;gap:40px 64px;padding:clamp(40px,5vw,64px) 0;border-top:1px solid #E6E2D3;scroll-margin-top:80px">
+  <div style="flex:1 1 220px;max-width:260px">
+    <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:12px">02</div>
+    <h2 style="margin:0 0 12px;font:400 clamp(32px,3vw,44px)/1.05 'Instrument Serif',serif;letter-spacing:-0.01em">Colour</h2>
+    <p style="margin:0;font-size:15px;color:#5F5B53;text-wrap:pretty">Muted, warm, flat. Chilli is reserved for sodium over the limit; never decorative. Colour is never the only signal: pair it with an icon and a label.</p>
+  </div>
+  <div style="flex:1 1 600px;min-width:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px">
+    <sc-for list="{{ colours }}" as="c" hint-placeholder-count="10">
+      <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:20px;padding:8px;display:flex;flex-direction:column;gap:12px">
+        <div style="height:88px;border-radius:14px;background:{{ c.hex }};border:1px solid rgba(30,28,25,0.08)"></div>
+        <div style="padding:4px 8px 10px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><span style="font-weight:600;font-size:15px">{{ c.name }}</span><span style="font:500 12px 'JetBrains Mono',monospace;color:#5F5B53">{{ c.hex }}</span></div>
+          <div style="font-size:13px;color:#5F5B53;margin-top:4px;line-height:1.35">{{ c.use }}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<!-- 03 Typography -->
+<section id="s03" style="display:flex;flex-wrap:wrap;gap:40px 64px;padding:clamp(40px,5vw,64px) 0;border-top:1px solid #E6E2D3;scroll-margin-top:80px">
+  <div style="flex:1 1 220px;max-width:260px">
+    <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:12px">03</div>
+    <h2 style="margin:0 0 12px;font:400 clamp(32px,3vw,44px)/1.05 'Instrument Serif',serif;letter-spacing:-0.01em">Typography</h2>
+    <p style="margin:0;font-size:15px;color:#5F5B53;text-wrap:pretty">Instrument Serif 400 for display, never bold, one italic accent phrase per headline. Figtree for everything you can tap. JetBrains Mono only inside timestamp pills. Sizes below are fluid between the phone and desktop values.</p>
+  </div>
+  <div style="flex:1 1 600px;min-width:0;display:flex;flex-direction:column;gap:24px">
+    <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:clamp(24px,3vw,40px);display:flex;flex-direction:column;gap:32px">
+      <div>
+        <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:16px">Hero · 96 desktop → 52 phone · 0.95 · −2%</div>
+        <div style="font:400 clamp(52px,6.7vw,96px)/0.95 'Instrument Serif','EB Garamond',serif;letter-spacing:-0.02em;text-wrap:pretty">Cook like you always do. <em>We’ll count the salt.</em></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;border-top:1px solid #E6E2D3;padding-top:32px">
+        <div>
+          <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:12px">H1 · 64 → 40</div>
+          <div style="font:400 clamp(40px,4.4vw,64px)/1 'Instrument Serif',serif;letter-spacing:-0.02em">Your arroz con pollo</div>
+        </div>
+        <div>
+          <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:12px">H2 · 44 → 32 and H3 · 32 → 24</div>
+          <div style="font:400 clamp(32px,3vw,44px)/1.05 'Instrument Serif',serif;letter-spacing:-0.01em">Five seasonings, one dish</div>
+          <div style="font:400 clamp(24px,2.2vw,32px)/1.1 'Instrument Serif',serif;margin-top:8px">The broth did most of it</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px">
+      <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:32px;display:flex;flex-direction:column;gap:20px">
+        <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Body · Figtree 18 → 16 · 1.45</div>
+        <p style="margin:0;text-wrap:pretty">Upload the video after you cook. Na(h) finds each seasoning, when it went in and roughly how much, then adds it up against the 2,300 mg daily limit.</p>
+        <p style="margin:0;color:#5F5B53">Secondary text in ink-soft. This is the lightest colour allowed on canvas.</p>
+        <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+          <span style="font:600 16px 'Figtree',sans-serif">Button 16 / 600</span>
+          <span style="font:500 16px 'Figtree',sans-serif">Label 16 / 500</span>
+          <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase">Micro 12 / 600 / 0.08em</span>
+        </div>
+      </div>
+      <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:32px;display:flex;flex-direction:column;gap:20px">
+        <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Numbers</div>
+        <div style="display:flex;align-items:flex-end;gap:32px;flex-wrap:wrap">
+          <div>
+            <div style="font:400 72px/0.95 'Instrument Serif',serif;letter-spacing:-0.02em">1,640<span style="font-size:32px;margin-left:6px">mg</span></div>
+            <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-top:10px">Hero stat · serif</div>
+          </div>
+          <div style="font-variant-numeric:tabular-nums;font-size:16px;line-height:1.6;color:#1E1C19;flex:none">
+            <div style="display:flex;justify-content:space-between;gap:24px;border-bottom:1px solid #E6E2D3;white-space:nowrap"><span>Bouillon cube</span><span>1,100 mg</span></div>
+            <div style="display:flex;justify-content:space-between;gap:24px;border-bottom:1px solid #E6E2D3;white-space:nowrap"><span>Fish sauce</span><span>1,410 mg</span></div>
+            <div style="display:flex;justify-content:space-between;gap:24px;white-space:nowrap"><span>Sazón</span><span>510 mg</span></div>
+            <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-top:10px">Tabular figures · Figtree</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span style="font:500 13px 'JetBrains Mono',monospace;background:#E6E2D3;padding:6px 10px;border-radius:999px">0:42</span>
+          <span style="font:500 13px 'JetBrains Mono',monospace;background:#E6E2D3;padding:6px 10px;border-radius:999px">12:07</span>
+          <span style="font-size:14px;color:#5F5B53">Timestamps · JetBrains Mono 500 / 13</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 Spacing & shape -->
+<section id="s04" style="display:flex;flex-wrap:wrap;gap:40px 64px;padding:clamp(40px,5vw,64px) 0;border-top:1px solid #E6E2D3;scroll-margin-top:80px">
+  <div style="flex:1 1 220px;max-width:260px">
+    <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:12px">04</div>
+    <h2 style="margin:0 0 12px;font:400 clamp(32px,3vw,44px)/1.05 'Instrument Serif',serif;letter-spacing:-0.01em">Spacing, radii, borders, elevation</h2>
+    <p style="margin:0;font-size:15px;color:#5F5B53;text-wrap:pretty">8px base. Max content 1200. Sections 96–128 desktop, 48–64 mobile. Cards 24–32 padding desktop, 20 on phone. Mostly flat; one shadow, for floating things only.</p>
+  </div>
+  <div style="flex:1 1 600px;min-width:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px">
+    <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:32px">
+      <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:20px">Scale</div>
+      <div style="display:flex;align-items:flex-end;gap:8px;height:140px">
+        <sc-for list="{{ spaces }}" as="s" hint-placeholder-count="10">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;min-width:0"><div style="width:100%;max-width:40px;background:#E8DAF4;border:1px solid #1E1C19;border-radius:4px;height:{{ s.h }}"></div><span style="font:500 11px 'JetBrains Mono',monospace;color:#5F5B53">{{ s.v }}</span></div>
+        </sc-for>
+      </div>
+      <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin:32px 0 16px">Breakpoints</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="font:500 14px 'Figtree',sans-serif;padding:8px 14px;border:1px solid #E6E2D3;border-radius:999px">390 phone</span>
+        <span style="font:500 14px 'Figtree',sans-serif;padding:8px 14px;border:1px solid #E6E2D3;border-radius:999px">768 tablet</span>
+        <span style="font:500 14px 'Figtree',sans-serif;padding:8px 14px;border:1px solid #E6E2D3;border-radius:999px">1280 projector-safe · design 1280×720 above the fold</span>
+        <span style="font:500 14px 'Figtree',sans-serif;padding:8px 14px;border:1px solid #E6E2D3;border-radius:999px">1440</span>
+        <span style="font:500 14px 'Figtree',sans-serif;padding:8px 14px;border:1px solid #E6E2D3;border-radius:999px">Touch ≥ 44px</span>
+      </div>
+    </div>
+    <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:32px;display:flex;flex-direction:column;gap:24px">
+      <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Radii and borders</div>
+      <div style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap">
+        <div style="text-align:center"><div style="width:72px;height:48px;border:2px solid #1E1C19;border-radius:12px;background:#E8DAF4"></div><div style="font-size:12px;color:#5F5B53;margin-top:6px">12 · 2px ink<br>buttons, inputs</div></div>
+        <div style="text-align:center"><div style="width:72px;height:36px;border:2px solid #1E1C19;border-radius:999px;background:#FFFDF7"></div><div style="font-size:12px;color:#5F5B53;margin-top:6px">pill<br>chips, nav</div></div>
+        <div style="text-align:center"><div style="width:96px;height:72px;border:1px solid #E6E2D3;border-radius:28px;background:#FFFDF7"></div><div style="font-size:12px;color:#5F5B53;margin-top:6px">28 · 1px stone<br>cards</div></div>
+        <div style="text-align:center"><div style="width:120px;height:84px;border-radius:40px;background:#1F4A43"></div><div style="font-size:12px;color:#5F5B53;margin-top:6px">32–40<br>panels, video</div></div>
+        <div style="text-align:center"><div style="width:48px;height:48px;border:2px solid #1E1C19;border-radius:14px;background:#FFFDF7"></div><div style="font-size:12px;color:#5F5B53;margin-top:6px">14<br>logo tile</div></div>
+      </div>
+      <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Elevation</div>
+      <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+        <div style="padding:16px 20px;border:1px solid #E6E2D3;border-radius:20px;background:#FFFDF7;font-size:14px">Flat · everything resting</div>
+        <div style="padding:16px 20px;border:2px solid #1E1C19;border-radius:999px;background:#FFFDF7;font-size:14px;box-shadow:0 12px 32px -12px rgba(30,28,25,0.18)">Float · 0 12 32 −12 · 18%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 Motion -->
+<section id="s05" style="display:flex;flex-wrap:wrap;gap:40px 64px;padding:clamp(40px,5vw,64px) 0;border-top:1px solid #E6E2D3;scroll-margin-top:80px">
+  <div style="flex:1 1 220px;max-width:260px">
+    <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:12px">05</div>
+    <h2 style="margin:0 0 12px;font:400 clamp(32px,3vw,44px)/1.05 'Instrument Serif',serif;letter-spacing:-0.01em">Motion</h2>
+    <p style="margin:0;font-size:15px;color:#5F5B53;text-wrap:pretty">Rhythm, not noise. Reduced motion swaps every movement for an opacity fade, stops loops and shows final values at once.</p>
+  </div>
+  <div style="flex:1 1 600px;min-width:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px">
+    <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:24px;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;gap:16px">
+      <div style="font:400 44px/1 'Instrument Serif',serif">150<span style="font-size:20px">ms</span></div>
+      <div style="font-size:14px;color:#5F5B53">Hover. Buttons lift 2px and darken slightly; cards gain a 2px ink border.</div>
+    </div>
+    <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:24px;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;gap:16px">
+      <div style="font:400 44px/1 'Instrument Serif',serif">300<span style="font-size:20px">ms</span></div>
+      <div style="font-size:14px;color:#5F5B53">UI changes. Toggles, tabs, badge swaps. Pops overshoot 6–8%.</div>
+    </div>
+    <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:24px;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;gap:16px">
+      <div style="font:400 44px/1 'Instrument Serif',serif">600<span style="font-size:20px">ms</span></div>
+      <div style="font-size:14px;color:#5F5B53">Reveals. Fade + 12–16px rise, cubic-bezier(0.22, 1, 0.36, 1). Lists stagger 60ms.</div>
+    </div>
+    <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:24px;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;gap:16px">
+      <div style="font:400 44px/1 'Instrument Serif',serif">900<span style="font-size:20px">ms</span></div>
+      <div style="font-size:14px;color:#5F5B53">Hero moments. The dish total counting up, the character settling in.</div>
+    </div>
+    <div style="grid-column:1 / -1;background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:24px 32px;display:flex;align-items:center;gap:32px 48px;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start"><span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Reveal · looping demo</span><div style="animation:nahReveal 600ms cubic-bezier(0.22,1,0.36,1) infinite alternate;padding:12px 18px;border:1px solid #E6E2D3;border-radius:16px;background:#FAF7EE;font-size:15px">Fish sauce · 1 tbsp</div></div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start"><span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Pop · spring 7%</span><span style="display:inline-flex;align-items:center;gap:6px;animation:nahPop 1800ms cubic-bezier(0.34,1.4,0.64,1) infinite;background:#1F4A43;color:#FAF7EE;font:600 13px 'Figtree',sans-serif;padding:6px 12px;border-radius:999px"><span style="display:inline-block;width:14px;height:14px;background:#FAF7EE;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat"></span>Detected</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start"><span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Cooking idle · 3s loop</span><div style="width:40px;height:56px;border-radius:20px 20px 16px 16px;background:#1F4A43;animation:nahIdle 3000ms ease-in-out infinite"></div></div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start"><span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Scanning line · 2.4s</span><div style="position:relative;width:120px;height:72px;border-radius:12px;background:#E6E2D3;overflow:hidden"><div style="position:absolute;left:8px;right:8px;height:2px;background:#1F4A43;animation:nahScan 2400ms ease-in-out infinite alternate"></div></div></div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start"><span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Skeleton shimmer · 1.6s</span><div style="display:flex;flex-direction:column;gap:8px"><div style="width:140px;height:14px;border-radius:7px;background:linear-gradient(90deg,#E6E2D3 25%,#F3F0E6 50%,#E6E2D3 75%);background-size:200% 100%;animation:nahShimmer 1600ms linear infinite"></div><div style="width:90px;height:14px;border-radius:7px;background:linear-gradient(90deg,#E6E2D3 25%,#F3F0E6 50%,#E6E2D3 75%);background-size:200% 100%;animation:nahShimmer 1600ms linear infinite"></div></div></div>
+      <div style="margin-left:auto;font-size:14px;color:#5F5B53;max-width:260px">Toggle “Reduced motion” in Tweaks to see the fallback.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 Iconography -->
+<section id="s06" style="display:flex;flex-wrap:wrap;gap:40px 64px;padding:clamp(40px,5vw,64px) 0;border-top:1px solid #E6E2D3;scroll-margin-top:80px">
+  <div style="flex:1 1 220px;max-width:260px">
+    <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:12px">06</div>
+    <h2 style="margin:0 0 12px;font:400 clamp(32px,3vw,44px)/1.05 'Instrument Serif',serif;letter-spacing:-0.01em">Iconography</h2>
+    <p style="margin:0;font-size:15px;color:#5F5B53;text-wrap:pretty">Lucide, rounded line, 1.75px stroke, 20–24px. Ink by default. Forest or chilli only when the icon carries status.</p>
+  </div>
+  <div style="flex:1 1 600px;min-width:0;background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:32px;display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <sc-for list="{{ icons }}" as="ic" hint-placeholder-count="12">
+        <div style="width:72px;display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:44px;height:44px;border:1px solid #E6E2D3;border-radius:12px;display:flex;align-items:center;justify-content:center"><span style="display:inline-block;width:22px;height:22px;background:{{ ic.colour }};-webkit-mask:url({{ ic.url }}) center/contain no-repeat;mask:url({{ ic.url }}) center/contain no-repeat"></span></div><span style="font:500 11px 'JetBrains Mono',monospace;color:#5F5B53">{{ ic.name }}</span></div>
+      </sc-for>
+    </div>
+    <div style="font-size:14px;color:#5F5B53;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center">Status pairs always carry a label: <span style="display:inline-flex;align-items:center;gap:6px;color:#1F4A43;font-weight:600"><span style="display:inline-block;width:18px;height:18px;background:#1F4A43;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat"></span>Under limit</span><span style="display:inline-flex;align-items:center;gap:6px;color:#B4432F;font-weight:600"><span style="display:inline-block;width:18px;height:18px;background:#B4432F;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/triangle-alert.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/triangle-alert.svg) center/contain no-repeat"></span>Over limit</span></div>
+  </div>
+</section>
+
+<!-- 07 Detection graphics -->
+<section id="s07" style="display:flex;flex-wrap:wrap;gap:40px 64px;padding:clamp(40px,5vw,64px) 0;border-top:1px solid #E6E2D3;scroll-margin-top:80px">
+  <div style="flex:1 1 220px;max-width:260px">
+    <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:12px">07</div>
+    <h2 style="margin:0 0 12px;font:400 clamp(32px,3vw,44px)/1.05 'Instrument Serif',serif;letter-spacing:-0.01em">Detection graphics</h2>
+    <p style="margin:0;font-size:15px;color:#5F5B53;text-wrap:pretty">The signature motif. Bounding box: 2px dashed ink (6/4), 8px radius, solid corner ticks. Label tag on the top-left. Sightline: a dashed 1.5px cone with a slow travelling dash. Scrolls sideways on narrow screens.</p>
+  </div>
+  <div style="flex:1 1 600px;min-width:0;background:#1F4A43;border-radius:clamp(24px,3vw,40px);overflow-x:auto;overflow-y:hidden">
+  <div style="position:relative;min-width:1040px;height:420px;background:repeating-linear-gradient(135deg,rgba(250,247,238,0.06) 0 2px,transparent 2px 14px)">
+    <div style="position:absolute;left:40px;top:40px;font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#FAF7EE;opacity:.8">Frame from upload · 0:42 · placeholder for a still</div>
+    <svg width="1040" height="340" viewBox="0 0 1040 340" style="position:absolute;left:40px;top:60px;overflow:visible" aria-hidden="true">
+      <g stroke="#FAF7EE" stroke-width="1.5" fill="none" stroke-dasharray="6 6" style="animation:nahSight 1800ms linear infinite">
+        <line x1="150" y1="110" x2="560" y2="150"></line>
+        <line x1="150" y1="130" x2="560" y2="300"></line>
+      </g>
+      <circle cx="150" cy="120" r="5" fill="#E8DAF4"></circle>
+      <rect x="560" y="150" width="240" height="150" rx="8" fill="none" stroke="#FAF7EE" stroke-width="2" stroke-dasharray="6 4"></rect>
+      <g stroke="#FAF7EE" stroke-width="2.5" fill="none" stroke-linecap="round">
+        <path d="M560 166 V158 a8 8 0 0 1 8 -8 H576"></path>
+        <path d="M784 150 H792 a8 8 0 0 1 8 8 V166"></path>
+        <path d="M800 284 V292 a8 8 0 0 1 -8 8 H784"></path>
+        <path d="M576 300 H568 a8 8 0 0 1 -8 -8 V284"></path>
+      </g>
+    </svg>
+    <div style="position:absolute;left:60px;top:140px;width:120px;text-align:left;font-size:13px;color:#FAF7EE;opacity:.8">Camera glasses<br>status light</div>
+    <div style="position:absolute;left:600px;top:150px;transform:translateY(-100%);margin-top:-12px;white-space:nowrap;background:#FFFDF7;border:1px solid #E6E2D3;border-radius:999px;padding:8px 10px 8px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 12px 32px -12px rgba(30,28,25,0.18)">
+      <span style="font:600 14px 'Figtree',sans-serif">Fish sauce</span>
+      <span style="font-size:14px;color:#5F5B53">1 tbsp</span>
+      <span style="font-size:14px;font-variant-numeric:tabular-nums;color:#B4432F;font-weight:600">1,410 mg</span>
+      <span style="width:64px;height:6px;border-radius:999px;background:#E6E2D3;position:relative;overflow:hidden"><span style="position:absolute;left:0;top:0;bottom:0;width:61%;background:#B4432F;border-radius:999px"></span></span>
+    </div>
+    <div style="position:absolute;left:600px;top:320px;white-space:nowrap;background:#FFFDF7;border:1px solid #E6E2D3;border-radius:999px;padding:8px 10px 8px 14px;display:inline-flex;align-items:center;gap:12px">
+      <span style="font:600 14px 'Figtree',sans-serif">Bouillon cube</span>
+      <span style="font-size:14px;color:#5F5B53">1 cube</span>
+      <span style="font-size:14px;font-variant-numeric:tabular-nums;font-weight:600">1,100 mg</span>
+      <span style="width:64px;height:6px;border-radius:999px;background:#E6E2D3;position:relative;overflow:hidden"><span style="position:absolute;left:0;top:0;bottom:0;width:48%;background:#1F4A43;border-radius:999px"></span></span>
+    </div>
+    <div style="position:absolute;right:40px;bottom:32px;font-size:13px;color:#FAF7EE;opacity:.8;max-width:200px;text-align:right">Mini bar: amount vs 2,300 mg. Chilli when one item passes 50%.</div>
+  </div>
+  </div>
+</section>
+
+<!-- 08 Illustration -->
+<section id="s08" style="display:flex;flex-wrap:wrap;gap:40px 64px;padding:clamp(40px,5vw,64px) 0;border-top:1px solid #E6E2D3;scroll-margin-top:80px">
+  <div style="flex:1 1 220px;max-width:260px">
+    <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:12px">08</div>
+    <h2 style="margin:0 0 12px;font:400 clamp(32px,3vw,44px)/1.05 'Instrument Serif',serif;letter-spacing:-0.01em">Illustration and avatar</h2>
+    <p style="margin:0;font-size:15px;color:#5F5B53;text-wrap:pretty">Original chunky matte-clay 3D: capsule body, round head, dot eyes, mitten hands, no outlines, soft studio light, token colours. Forest apron, camera glasses with a lavender light. Props unbranded. Drop renders into the slots.</p>
+  </div>
+  <div style="flex:1 1 600px;min-width:0;display:flex;flex-wrap:wrap;gap:16px">
+    <div style="flex:2 1 400px;min-height:420px;background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:12px;display:flex;flex-direction:column;gap:12px">
+      <div style="flex:1;position:relative;background:repeating-linear-gradient(135deg,#F3F0E6 0 10px,#FAF7EE 10px 20px);border-radius:20px;overflow:hidden"><image-slot id="ill-hero" shape="rounded" radius="20" placeholder="hero render · character at stove, camera glasses, pot of arroz con pollo"></image-slot></div>
+      <div style="font:500 12px 'JetBrains Mono',monospace;color:#5F5B53;padding:0 8px 4px">hero · character cooking · 3:2</div>
+    </div>
+    <div style="flex:1 1 200px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
+      <div style="min-height:200px;background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:12px;display:flex;flex-direction:column;gap:12px"><div style="flex:1;background:repeating-linear-gradient(135deg,#F3F0E6 0 10px,#FAF7EE 10px 20px);border-radius:20px;overflow:hidden"><image-slot id="ill-glasses" shape="rounded" radius="20" placeholder="camera glasses · lavender light"></image-slot></div><div style="font:500 12px 'JetBrains Mono',monospace;color:#5F5B53;padding:0 8px 4px">prop · camera glasses</div></div>
+      <div style="min-height:200px;background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:12px;display:flex;flex-direction:column;gap:12px"><div style="flex:1;background:repeating-linear-gradient(135deg,#F3F0E6 0 10px,#FAF7EE 10px 20px);border-radius:20px;overflow:hidden"><image-slot id="ill-props" shape="rounded" radius="20" placeholder="seasoning props · bouillon, packet, soy, fish sauce"></image-slot></div><div style="font:500 12px 'JetBrains Mono',monospace;color:#5F5B53;padding:0 8px 4px">props · seasonings, unbranded</div></div>
+      <div style="min-height:200px;background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:12px;display:flex;flex-direction:column;gap:12px"><div style="flex:1;background:repeating-linear-gradient(135deg,#F3F0E6 0 10px,#FAF7EE 10px 20px);border-radius:20px;overflow:hidden"><image-slot id="ill-broth" shape="rounded" radius="20" placeholder="pot · clear broth with herbs"></image-slot></div><div style="font:500 12px 'JetBrains Mono',monospace;color:#5F5B53;padding:0 8px 4px">prop · phở-style broth</div></div>
+      <div style="min-height:200px;background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:12px;display:flex;flex-direction:column;gap:12px"><div style="flex:1;display:flex;align-items:center;justify-content:center;background:repeating-linear-gradient(135deg,#F3F0E6 0 10px,#FAF7EE 10px 20px);border-radius:20px;overflow:hidden"><image-slot id="ill-spot" shape="circle" style="width:120px;height:120px" placeholder="spot · empty pantry"></image-slot></div><div style="font:500 12px 'JetBrains Mono',monospace;color:#5F5B53;padding:0 8px 4px">spot · empty states · 120px</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 Components -->
+<section id="s09" style="display:flex;flex-wrap:wrap;gap:40px 64px;padding:clamp(40px,5vw,64px) 0;border-top:1px solid #E6E2D3;scroll-margin-top:80px">
+  <div style="flex:1 1 220px;max-width:260px">
+    <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:12px">09</div>
+    <h2 style="margin:0 0 12px;font:400 clamp(32px,3vw,44px)/1.05 'Instrument Serif',serif;letter-spacing:-0.01em">Components</h2>
+    <p style="margin:0;font-size:15px;color:#5F5B53;text-wrap:pretty">Named exactly as referenced in screen prompts. Desktop sizes here; every one appears again at phone size in section 10. Hover anything with a 2px border.</p>
+  </div>
+  <div style="flex:1 1 600px;min-width:0;display:flex;flex-direction:column;gap:24px">
+
+    <!-- Nav Pill -->
+    <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:clamp(20px,3vw,32px);display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap"><span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Nav Pill · landing page only</span><span style="font-size:13px;color:#5F5B53">Logo + one CTA that opens the app. No links. Floating, paper, 2px ink, 64px tall, 16px from the top.</span></div>
+      <div style="background:#FAF7EE;border-radius:20px;padding:24px;display:flex;justify-content:center">
+        <nav style="display:flex;align-items:center;justify-content:space-between;gap:24px;padding:8px 8px 8px 16px;height:64px;width:min(100%,640px);box-sizing:border-box;background:#FFFDF7;border:2px solid #1E1C19;border-radius:999px;box-shadow:0 12px 32px -12px rgba(30,28,25,0.18)">
+          <div style="display:inline-flex;align-items:flex-start;gap:3px"><div style="width:32px;height:32px;border:2px solid #1E1C19;border-radius:8px;background:#FFFDF7;box-sizing:border-box;display:flex;align-items:center;justify-content:center"><span style="font:400 18px/1 'Instrument Serif',serif">Na</span></div><span style="font:italic 400 21px/1 'Instrument Serif',serif;color:#B4432F;position:relative;top:-4px">(h)</span></div>
+          <button style="height:44px;padding:0 20px;border:2px solid #1E1C19;border-radius:999px;background:#E8DAF4;font:600 16px 'Figtree',sans-serif;color:#1E1C19;cursor:pointer;white-space:nowrap;transition:transform 150ms,background 150ms" style-hover="transform:translateY(-2px);background:#DCC8EE">Open Na(h)</button>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Buttons, links, pills, badges -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px">
+      <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:clamp(20px,3vw,32px);display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap"><span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Primary · Secondary · Ghost Link</span><span style="font-size:13px;color:#5F5B53">48px tall, 12px radius, 16/600. Hover lifts 2px.</span></div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button style="height:48px;padding:0 24px;border:2px solid #1E1C19;border-radius:12px;background:#E8DAF4;font:600 16px 'Figtree',sans-serif;color:#1E1C19;cursor:pointer;transition:transform 150ms,background 150ms" style-hover="transform:translateY(-2px);background:#DCC8EE">Primary Button</button>
+          <button style="height:48px;padding:0 24px;border:2px solid #1E1C19;border-radius:12px;background:#FFFDF7;font:600 16px 'Figtree',sans-serif;color:#1E1C19;cursor:pointer;transition:transform 150ms,background 150ms" style-hover="transform:translateY(-2px);background:#FAF7EE">Secondary Button</button>
+          <a href="#" style="font:600 16px 'Figtree',sans-serif;color:#1E1C19;text-decoration:none;border-bottom:2px solid transparent;padding:4px 0;transition:border-color 150ms" style-hover="border-color:#1E1C19">Ghost Link</a>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button style="height:48px;padding:0 24px;border:2px solid #1E1C19;border-radius:12px;background:#DCC8EE;font:600 16px 'Figtree',sans-serif;color:#1E1C19;transform:translateY(-2px)">Hover</button>
+          <button style="height:48px;padding:0 24px;border:2px solid #1E1C19;border-radius:12px;background:#E8DAF4;font:600 16px 'Figtree',sans-serif;color:#1E1C19;outline:2px solid #1E1C19;outline-offset:3px">Focus ring</button>
+          <button style="height:48px;padding:0 24px;border:2px solid #E6E2D3;border-radius:12px;background:#FAF7EE;font:600 16px 'Figtree',sans-serif;color:#5F5B53;cursor:not-allowed">Disabled</button>
+          <button style="height:48px;padding:0 20px;border:2px solid #1E1C19;border-radius:12px;background:#E8DAF4;font:600 16px 'Figtree',sans-serif;color:#1E1C19;display:inline-flex;align-items:center;gap:8px;cursor:pointer"><span style="display:inline-block;width:20px;height:20px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/upload.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/upload.svg) center/contain no-repeat"></span>With icon</button>
+        </div>
+      </div>
+      <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:clamp(20px,3vw,32px);display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap"><span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Badge variants · Timestamp Pill</span><span style="font-size:13px;color:#5F5B53">Pill radius, 13/600. Always icon + label.</span></div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#1F4A43;color:#FAF7EE;font:600 13px 'Figtree',sans-serif;padding:7px 12px;border-radius:999px"><span style="display:inline-block;width:14px;height:14px;background:#FAF7EE;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat"></span>Default · Detected</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#F1D9A8;color:#1E1C19;font:600 13px 'Figtree',sans-serif;padding:7px 12px;border-radius:999px"><span style="display:inline-block;width:14px;height:14px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/circle-alert.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/circle-alert.svg) center/contain no-repeat"></span>Not counted</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;border:2px solid #B4432F;color:#B4432F;font:600 13px 'Figtree',sans-serif;padding:5px 12px;border-radius:999px"><span style="display:inline-block;width:14px;height:14px;background:#B4432F;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/triangle-alert.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/triangle-alert.svg) center/contain no-repeat"></span>Over limit</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#E6E2D3;color:#1E1C19;font:600 13px 'Figtree',sans-serif;padding:7px 12px;border-radius:999px"><span style="display:inline-block;width:14px;height:14px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/scale.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/scale.svg) center/contain no-repeat"></span>Estimate</span>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <span style="font:500 13px 'JetBrains Mono',monospace;background:#E6E2D3;padding:6px 10px;border-radius:999px">0:42</span>
+          <span style="font:500 13px 'JetBrains Mono',monospace;background:#E6E2D3;padding:6px 10px;border-radius:999px">3:15</span>
+          <span style="font:500 13px 'JetBrains Mono',monospace;background:#E6E2D3;padding:6px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:6px"><span style="display:inline-block;width:12px;height:12px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/play.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/play.svg) center/contain no-repeat"></span>12:07</span>
+          <span style="font-size:13px;color:#5F5B53">Timestamp Pill · mono, stone fill, click to seek</span>
+        </div>
+        <div style="font-size:13px;color:#5F5B53">“Not counted” is used for anything not in the pantry. It is never shown as 0 mg.</div>
+      </div>
+    </div>
+
+    <!-- Card, Dark Panel, Stat Block -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Card</span>
+        <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:28px;box-shadow:0 0 0 1px transparent;transition:box-shadow 150ms;cursor:pointer;display:flex;flex-direction:column;gap:12px;flex:1" style-hover="box-shadow:0 0 0 1px #1E1C19;border-color:#1E1C19">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><span style="font:400 32px/1.1 'Instrument Serif',serif">Arroz con pollo</span><span style="font:500 13px 'JetBrains Mono',monospace;background:#E6E2D3;padding:6px 10px;border-radius:999px">18:40</span></div>
+          <div style="font-size:16px;color:#5F5B53">Tuesday · 5 seasonings found</div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px;gap:12px;flex-wrap:wrap"><span style="font:400 44px/1 'Instrument Serif',serif;font-variant-numeric:tabular-nums">1,640<span style="font-size:20px;margin-left:4px">mg</span></span><span style="display:inline-flex;align-items:center;gap:6px;background:#DCE5D9;color:#1F4A43;font:600 13px 'Figtree',sans-serif;padding:7px 12px;border-radius:999px"><span style="display:inline-block;width:14px;height:14px;background:#1F4A43;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat"></span>Under limit</span></div>
+        </div>
+        <span style="font-size:13px;color:#5F5B53">Paper, 1px stone, 28px radius, 24–32 padding. Hover: 2px ink border (border + 1px ring so nothing shifts).</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Dark Panel</span>
+        <div style="background:#1F4A43;color:#FAF7EE;border-radius:40px;padding:32px;display:flex;flex-direction:column;gap:16px;flex:1">
+          <div style="font:400 32px/1.1 'Instrument Serif',serif;text-wrap:pretty">Most of it was the <em>broth</em>.</div>
+          <p style="margin:0;font-size:16px;opacity:.9">Two bouillon cubes added 2,200 mg before the rice went in.</p>
+          <a href="#" style="font:600 16px 'Figtree',sans-serif;color:#FAF7EE;text-decoration:none;border-bottom:2px solid #FAF7EE;align-self:flex-start;margin-top:auto">See the timeline</a>
+        </div>
+        <span style="font-size:13px;color:#5F5B53">Forest, 40px radius, canvas text. For feature moments and the hero stat.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Stat Block</span>
+        <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:28px;display:grid;grid-template-columns:1fr 1fr;gap:24px;flex:1">
+          <div><div style="font:400 64px/0.95 'Instrument Serif',serif;letter-spacing:-0.02em">1,640</div><div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-top:12px">mg · dish estimate</div></div>
+          <div><div style="font:400 64px/0.95 'Instrument Serif',serif;letter-spacing:-0.02em;color:#B4432F">3,020</div><div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#B4432F;margin-top:12px;display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:14px;height:14px;background:#B4432F;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/triangle-alert.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/triangle-alert.svg) center/contain no-repeat"></span>mg · over limit</div></div>
+          <div><div style="font:400 44px/0.95 'Instrument Serif',serif">5</div><div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-top:12px">Seasonings</div></div>
+          <div><div style="font:400 44px/0.95 'Instrument Serif',serif">71<span style="font-size:24px">%</span></div><div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-top:12px">of daily limit</div></div>
+        </div>
+        <span style="font-size:13px;color:#5F5B53">Serif number, micro label. Chilli only when over 2,300 mg, with icon.</span>
+      </div>
+    </div>
+
+    <!-- Sodium Meter -->
+    <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:clamp(20px,3vw,32px);display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap"><span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Sodium Meter</span><span style="font-size:13px;color:#5F5B53">12px track, marker at 2,300 mg</span></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;font-size:15px;gap:12px;flex-wrap:wrap"><span style="font-weight:600">Arroz con pollo</span><span style="font-variant-numeric:tabular-nums;color:#1F4A43;font-weight:600;display:inline-flex;align-items:center;gap:6px"><span style="display:inline-block;width:14px;height:14px;background:#1F4A43;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat"></span>1,640 mg · under limit</span></div>
+        <div style="position:relative;height:12px;background:#E6E2D3;border-radius:999px;margin-right:60px">
+          <div style="position:absolute;left:0;top:0;bottom:0;width:71%;background:#1F4A43;border-radius:999px"></div>
+          <div style="position:absolute;left:100%;top:-6px;width:2px;height:24px;background:#B4432F;transform:translateX(-1px)"></div>
+          <div style="position:absolute;left:100%;top:26px;transform:translateX(-50%);font:600 11px 'Figtree',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#B4432F;white-space:nowrap">2,300 mg</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+        <div style="display:flex;justify-content:space-between;font-size:15px;gap:12px;flex-wrap:wrap"><span style="font-weight:600">Phở gà</span><span style="font-variant-numeric:tabular-nums;color:#B4432F;font-weight:600;display:inline-flex;align-items:center;gap:6px"><span style="display:inline-block;width:14px;height:14px;background:#B4432F;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/triangle-alert.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/triangle-alert.svg) center/contain no-repeat"></span>3,020 mg · over limit</span></div>
+        <div style="position:relative;height:12px;background:#E6E2D3;border-radius:999px;margin-right:60px">
+          <div style="position:absolute;left:0;top:0;bottom:0;width:76%;background:#1F4A43;border-radius:999px 0 0 999px"></div>
+          <div style="position:absolute;left:76%;top:0;bottom:0;width:24%;background:#B4432F;border-radius:0 999px 999px 0;background-image:repeating-linear-gradient(135deg,rgba(250,247,238,.35) 0 3px,transparent 3px 7px)"></div>
+          <div style="position:absolute;left:76%;top:-6px;width:2px;height:24px;background:#B4432F;transform:translateX(-1px)"></div>
+          <div style="position:absolute;left:76%;top:26px;transform:translateX(-50%);font:600 11px 'Figtree',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#B4432F;white-space:nowrap">2,300 mg</div>
+        </div>
+      </div>
+      <span style="font-size:13px;color:#5F5B53;margin-top:8px">When the dish exceeds the limit the track rescales so the bar is the dish total and the marker slides to 2,300 mg. Over-limit segment is hatched as well as chilli. Sage is for large under-limit fills (cards, charts), forest for the bar itself.</span>
+    </div>
+
+    <!-- Timeline Row -->
+    <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:clamp(20px,3vw,32px);display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap"><span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Timeline Row</span><span style="font-size:13px;color:#5F5B53">64px thumb, hairline between rows. Stacks on phone (see section 10).</span></div>
+      <div style="overflow-x:auto"><div style="display:flex;flex-direction:column;min-width:640px">
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="3">
+          <div style="display:grid;grid-template-columns:auto 64px 1fr auto auto;gap:16px;align-items:center;padding:12px 8px;border-top:1px solid #E6E2D3;border-radius:12px;transition:background 150ms;cursor:pointer" style-hover="background:#FAF7EE">
+            <span style="font:500 13px 'JetBrains Mono',monospace;background:#E6E2D3;padding:6px 10px;border-radius:999px">{{ r.t }}</span>
+            <div style="width:64px;height:44px;border-radius:10px;background:repeating-linear-gradient(135deg,#E6E2D3 0 4px,#F3F0E6 4px 8px)"></div>
+            <div style="white-space:nowrap"><div style="font-weight:600;font-size:16px">{{ r.name }}</div><div style="font-size:14px;color:#5F5B53">{{ r.amount }}</div></div>
+            <span style="font-variant-numeric:tabular-nums;font-weight:600;font-size:16px;white-space:nowrap;color:{{ r.colour }}">{{ r.mg }}</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;background:{{ r.badgeBg }};color:{{ r.badgeFg }};border:2px solid {{ r.badgeBorder }};font:600 13px 'Figtree',sans-serif;padding:5px 12px;border-radius:999px;white-space:nowrap"><span style="display:inline-block;width:14px;height:14px;background:{{ r.badgeFg }};-webkit-mask:url({{ r.icon }}) center/contain no-repeat;mask:url({{ r.icon }}) center/contain no-repeat"></span>{{ r.badge }}</span>
+          </div>
+        </sc-for>
+      </div></div>
+    </div>
+
+    <!-- Drop Zone, Step List -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Drop Zone</span>
+        <div style="border:2px dashed #1E1C19;border-radius:28px;padding:48px 32px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;background:#FFFDF7;transition:background 300ms;cursor:pointer;flex:1;justify-content:center" style-hover="background:#E8DAF4">
+          <span style="display:inline-block;width:32px;height:32px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/video.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/video.svg) center/contain no-repeat"></span>
+          <div style="font:400 32px/1.1 'Instrument Serif',serif">Drop your cook here</div>
+          <div style="font-size:16px;color:#5F5B53">MP4 or MOV from your glasses, up to 2 hours. Nothing is processed live.</div>
+          <button style="height:48px;padding:0 24px;border:2px solid #1E1C19;border-radius:12px;background:#FFFDF7;font:600 16px 'Figtree',sans-serif;color:#1E1C19;cursor:pointer;margin-top:8px">Choose a file</button>
+        </div>
+        <span style="font-size:13px;color:#5F5B53">2px dashed ink, 28px radius. Drag-over fills lavender. On phone it becomes a tap target that opens the camera roll.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Step List</span>
+        <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:32px;display:flex;flex-direction:column;gap:0;flex:1">
+          <div style="display:flex;gap:16px;align-items:flex-start">
+            <div style="display:flex;flex-direction:column;align-items:center;align-self:stretch"><div style="width:36px;height:36px;border-radius:999px;background:#1F4A43;display:flex;align-items:center;justify-content:center;flex:none"><span style="display:inline-block;width:18px;height:18px;background:#FAF7EE;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat"></span></div><div style="width:2px;flex:1;min-height:28px;background:#1F4A43"></div></div>
+            <div style="padding:6px 0 24px"><div style="font-weight:600;font-size:16px">Upload your cook</div><div style="font-size:14px;color:#5F5B53">Done · 18:40 of footage</div></div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start">
+            <div style="display:flex;flex-direction:column;align-items:center;align-self:stretch"><div style="width:36px;height:36px;border-radius:999px;border:2px solid #1E1C19;background:#FFFDF7;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:600 14px 'Figtree',sans-serif;flex:none">2</div><div style="width:2px;flex:1;min-height:28px;background:#E6E2D3"></div></div>
+            <div style="padding:6px 0 24px"><div style="font-weight:600;font-size:16px">We find each seasoning</div><div style="font-size:14px;color:#5F5B53">Scanning · about 2 minutes</div></div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start">
+            <div style="width:36px;height:36px;border-radius:999px;border:2px solid #E6E2D3;background:#FFFDF7;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:600 14px 'Figtree',sans-serif;color:#5F5B53;flex:none">3</div>
+            <div style="padding:6px 0"><div style="font-weight:600;font-size:16px;color:#5F5B53">See the dish total</div><div style="font-size:14px;color:#5F5B53">Per addition, and against 2,300 mg</div></div>
+          </div>
+        </div>
+        <span style="font-size:13px;color:#5F5B53">Done = forest circle with check (pop 300ms). Current = 2px ink. Upcoming = stone.</span>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Data Table with checkboxes</span>
+      <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:8px 8px 16px;overflow-x:auto">
+       <div style="min-width:760px">
+        <div style="display:grid;grid-template-columns:56px 90px 1fr 160px 140px 160px;align-items:center;padding:12px 16px;font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">
+          <span style="width:20px;height:20px;border:2px solid #1E1C19;border-radius:6px;background:#1F4A43;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box"><span style="display:inline-block;width:14px;height:2px;background:#FAF7EE"></span></span>
+          <span>Time</span><span>Ingredient</span><span>Amount</span><span style="text-align:right">Sodium</span><span style="text-align:right">Status</span>
+        </div>
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:56px 90px 1fr 160px 140px 160px;align-items:center;padding:14px 16px;border-top:1px solid #E6E2D3;font-size:16px;transition:background 150ms" style-hover="background:#FAF7EE">
+            <span style="width:20px;height:20px;border:2px solid #1E1C19;border-radius:6px;background:{{ r.checkBg }};display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box"><span style="display:inline-block;width:14px;height:14px;background:#FAF7EE;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat;opacity:{{ r.checkOpacity }}"></span></span>
+            <span style="font:500 13px 'JetBrains Mono',monospace;background:#E6E2D3;padding:6px 10px;border-radius:999px;justify-self:start">{{ r.t }}</span>
+            <span style="font-weight:600">{{ r.name }}</span>
+            <span style="color:#5F5B53">{{ r.amount }}</span>
+            <span style="text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:{{ r.colour }}">{{ r.mg }}</span>
+            <span style="justify-self:end;display:inline-flex;align-items:center;gap:6px;background:{{ r.badgeBg }};color:{{ r.badgeFg }};border:2px solid {{ r.badgeBorder }};font:600 13px 'Figtree',sans-serif;padding:5px 12px;border-radius:999px"><span style="display:inline-block;width:14px;height:14px;background:{{ r.badgeFg }};-webkit-mask:url({{ r.icon }}) center/contain no-repeat;mask:url({{ r.icon }}) center/contain no-repeat"></span>{{ r.badge }}</span>
+          </div>
+        </sc-for>
+        <div style="display:grid;grid-template-columns:56px 90px 1fr 160px 140px 160px;align-items:center;padding:16px 16px 8px;border-top:2px solid #1E1C19;font-size:16px">
+          <span></span><span></span><span style="font-weight:600">Dish total · estimate</span><span style="color:#5F5B53">3 counted, 1 not</span>
+          <span style="text-align:right;font:400 28px/1 'Instrument Serif',serif;color:#B4432F;font-variant-numeric:tabular-nums">3,020 mg</span>
+          <span style="justify-self:end;display:inline-flex;align-items:center;gap:6px;border:2px solid #B4432F;color:#B4432F;font:600 13px 'Figtree',sans-serif;padding:5px 12px;border-radius:999px"><span style="display:inline-block;width:14px;height:14px;background:#B4432F;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/triangle-alert.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/triangle-alert.svg) center/contain no-repeat"></span>Over limit</span>
+        </div>
+       </div>
+      </div>
+      <span style="font-size:13px;color:#5F5B53">Checkbox 20px, 6px radius, 2px ink; checked = forest. Rows 52px, hairlines; total row has a 2px ink rule. Numbers tabular, right-aligned. Below 768 the table becomes stacked cards (section 10).</span>
+    </div>
+
+    <!-- Video Frame -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Video Frame</span>
+      <div style="background:#1E1C19;border-radius:32px;padding:12px;display:flex;flex-direction:column;gap:12px">
+        <div style="position:relative;aspect-ratio:16/9;border-radius:22px;overflow:hidden;background:repeating-linear-gradient(135deg,#2A2824 0 12px,#1E1C19 12px 24px)">
+          <image-slot id="video-still" shape="rect" placeholder="video still · first-person view of the stovetop"></image-slot>
+          <div style="position:absolute;left:24px;top:24px;font:500 13px 'JetBrains Mono',monospace;background:#FFFDF7;color:#1E1C19;padding:6px 10px;border-radius:999px;pointer-events:none">0:42 / 18:40</div>
+          <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:999px;background:#E8DAF4;border:2px solid #1E1C19;box-sizing:border-box;display:flex;align-items:center;justify-content:center;pointer-events:none"><span style="display:inline-block;width:28px;height:28px;margin-left:4px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/play.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/play.svg) center/contain no-repeat"></span></div>
+        </div>
+        <div style="padding:8px 16px 12px;display:flex;flex-direction:column;gap:10px">
+          <div style="position:relative;height:8px;background:#5F5B53;border-radius:999px">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4%;background:#FAF7EE;border-radius:999px"></div>
+            <div style="position:absolute;left:4%;top:-6px;width:20px;height:20px;border-radius:999px;background:#FAF7EE;border:2px solid #1E1C19;box-sizing:border-box;transform:translateX(-50%)"></div>
+            <div style="position:absolute;left:18%;top:-4px;width:4px;height:16px;border-radius:2px;background:#E8DAF4"></div>
+            <div style="position:absolute;left:33%;top:-4px;width:4px;height:16px;border-radius:2px;background:#E8DAF4"></div>
+            <div style="position:absolute;left:47%;top:-4px;width:4px;height:16px;border-radius:2px;background:#F1D9A8"></div>
+            <div style="position:absolute;left:61%;top:-4px;width:4px;height:16px;border-radius:2px;background:#E8DAF4"></div>
+            <div style="position:absolute;left:86%;top:-4px;width:4px;height:16px;border-radius:2px;background:#E8DAF4"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;color:#FAF7EE;font-size:13px;gap:12px;flex-wrap:wrap">
+            <span style="display:inline-flex;gap:16px;align-items:center;flex-wrap:wrap"><span style="display:inline-flex;align-items:center;gap:6px"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#E8DAF4"></span>Seasoning added</span><span style="display:inline-flex;align-items:center;gap:6px"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#F1D9A8"></span>Not counted</span></span>
+            <span style="opacity:.8">Tap a marker to jump. Scrubber 8px, markers 4×16.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dialog, Toast, Tooltip, Disclaimer -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Dialog</span>
+        <div style="background:rgba(30,28,25,0.32);border-radius:28px;padding:clamp(16px,4vw,48px);display:flex;align-items:center;justify-content:center;flex:1">
+          <div role="dialog" style="width:min(440px,100%);box-sizing:border-box;background:#FFFDF7;border:2px solid #1E1C19;border-radius:28px;padding:clamp(20px,3vw,32px);box-shadow:0 12px 32px -12px rgba(30,28,25,0.18);display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="font:400 32px/1.1 'Instrument Serif',serif;text-wrap:pretty">Delete this cook?</div><button aria-label="Close" style="width:44px;height:44px;border:0;background:transparent;border-radius:999px;display:flex;align-items:center;justify-content:center;cursor:pointer;margin:-10px -10px 0 0;flex:none" style-hover="background:#E6E2D3"><span style="display:inline-block;width:20px;height:20px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/x.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/x.svg) center/contain no-repeat"></span></button></div>
+            <p style="margin:0;font-size:16px;color:#5F5B53">Arroz con pollo from Tuesday and its 5 detections will go. The video stays on your device.</p>
+            <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap">
+              <button style="height:48px;padding:0 24px;border:2px solid #1E1C19;border-radius:12px;background:#FFFDF7;font:600 16px 'Figtree',sans-serif;color:#1E1C19;cursor:pointer">Keep it</button>
+              <button style="height:48px;padding:0 24px;border:2px solid #1E1C19;border-radius:12px;background:#E8DAF4;font:600 16px 'Figtree',sans-serif;color:#1E1C19;cursor:pointer">Delete</button>
+            </div>
+          </div>
+        </div>
+        <span style="font-size:13px;color:#5F5B53">Scrim ink at 32%. 2px ink border, float shadow, 28px radius. Enters with fade + 16px rise, 300ms. On phone it becomes a Bottom Sheet.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:24px;min-width:0">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Toast</span>
+          <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+            <div role="status" style="display:inline-flex;align-items:center;gap:12px;background:#FFFDF7;border:2px solid #1E1C19;border-radius:999px;padding:12px 20px 12px 16px;box-shadow:0 12px 32px -12px rgba(30,28,25,0.18);font-size:16px;max-width:100%;box-sizing:border-box"><span style="display:inline-block;width:20px;height:20px;flex:none;background:#1F4A43;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat"></span><span>Dish saved. 1,640 mg estimated.</span><a href="#" style="font-weight:600;color:#1E1C19;margin-left:8px;white-space:nowrap">Open</a></div>
+            <div role="status" style="display:inline-flex;align-items:center;gap:12px;background:#FFFDF7;border:2px solid #1E1C19;border-radius:999px;padding:12px 20px 12px 16px;box-shadow:0 12px 32px -12px rgba(30,28,25,0.18);font-size:16px;max-width:100%;box-sizing:border-box"><span style="display:inline-block;width:20px;height:20px;flex:none;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/circle-alert.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/circle-alert.svg) center/contain no-repeat"></span><span>One ingredient isn’t in your pantry yet.</span><a href="#" style="font-weight:600;color:#1E1C19;margin-left:8px;white-space:nowrap">Add it</a></div>
+          </div>
+          <span style="font-size:13px;color:#5F5B53">Bottom-centre, float shadow, 5s, pauses on hover. Status icon in forest; everything else ink.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Tooltip</span>
+          <div style="display:flex;align-items:flex-end;gap:32px;padding-top:64px;flex-wrap:wrap">
+            <div style="position:relative;display:inline-block">
+              <div role="tooltip" style="position:absolute;bottom:calc(100% + 10px);left:0;background:#1E1C19;color:#FAF7EE;font-size:13px;line-height:1.4;padding:8px 12px;border-radius:10px;white-space:nowrap;box-shadow:0 12px 32px -12px rgba(30,28,25,0.18)">From the label on your fish sauce<span style="position:absolute;top:100%;left:24px;border:6px solid transparent;border-top-color:#1E1C19"></span></div>
+              <span style="display:inline-flex;align-items:center;gap:6px;background:#E6E2D3;color:#1E1C19;font:600 13px 'Figtree',sans-serif;padding:7px 12px;border-radius:999px;border-bottom:2px dotted #1E1C19"><span style="display:inline-block;width:14px;height:14px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/scale.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/scale.svg) center/contain no-repeat"></span>Estimate</span>
+            </div>
+            <span style="font-size:13px;color:#5F5B53">Ink fill, canvas text, 10px radius. 150ms fade, 400ms delay. On touch, a tap toggles it.</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Disclaimer Line</span>
+          <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:#5F5B53;padding-top:12px;border-top:1px solid #E6E2D3"><span style="display:inline-block;width:16px;height:16px;flex:none;background:#5F5B53;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/info.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/info.svg) center/contain no-repeat"></span>Estimates from your pantry labels. Not medical advice.</div>
+          <span style="font-size:13px;color:#5F5B53">Appears under every total. 14px ink-soft (6.2:1), info icon, hairline above.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 Phone -->
+<section id="s10" style="display:flex;flex-wrap:wrap;gap:40px 64px;padding:clamp(40px,5vw,64px) 0;border-top:1px solid #E6E2D3;scroll-margin-top:80px">
+  <div style="flex:1 1 220px;max-width:260px">
+    <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:12px">10</div>
+    <h2 style="margin:0 0 12px;font:400 clamp(32px,3vw,44px)/1.05 'Instrument Serif',serif;letter-spacing:-0.01em">Phone</h2>
+    <p style="margin:0 0 16px;font-size:15px;color:#5F5B53;text-wrap:pretty">Every component at 390 wide, one-handed. Screen padding 20, card padding 20, radii step down one size (cards 24, panels 32, video 24). Buttons go full width. Hit areas ≥ 44px are outlined in lavender in the last frame.</p>
+    <p style="margin:0;font-size:15px;color:#5F5B53;text-wrap:pretty">New phone-only components: <strong>FAB</strong> (Upload a cook, lavender circle, 2px ink, bottom right), <strong>Back Button</strong> (44px circle), <strong>Sticky Total Bar</strong>, <strong>Bottom Sheet</strong> (replaces Dialog), <strong>Skeleton</strong>, <strong>Pull to refresh</strong>. Frames scroll.</p>
+  </div>
+  <div style="flex:1 1 600px;min-width:0;display:flex;flex-wrap:wrap;gap:40px 24px;justify-content:flex-start">
+
+    <!-- Frame A: Landing -->
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:100%">
+      <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">A · Landing · Nav Pill, hero 52, mini hero slot, Primary Button, mobile type scale</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ 390 }}" height="{{ 844 }}" hint-size="390px,844px">
+        <div style="min-height:100%;background:#FAF7EE;padding:68px 20px 48px;box-sizing:border-box;font-family:'Figtree',system-ui,sans-serif;color:#1E1C19;font-size:16px;line-height:1.45;display:flex;flex-direction:column;gap:24px">
+          <nav style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 6px 6px 14px;height:56px;box-sizing:border-box;background:#FFFDF7;border:2px solid #1E1C19;border-radius:999px;box-shadow:0 12px 32px -12px rgba(30,28,25,0.18)">
+            <div style="display:inline-flex;align-items:flex-start;gap:3px"><div style="width:32px;height:32px;border:2px solid #1E1C19;border-radius:8px;background:#FFFDF7;box-sizing:border-box;display:flex;align-items:center;justify-content:center"><span style="font:400 18px/1 'Instrument Serif',serif">Na</span></div><span style="font:italic 400 21px/1 'Instrument Serif',serif;color:#B4432F;position:relative;top:-4px">(h)</span></div>
+            <button style="height:44px;padding:0 18px;border:2px solid #1E1C19;border-radius:999px;background:#E8DAF4;font:600 15px 'Figtree',sans-serif;color:#1E1C19">Open Na(h)</button>
+          </nav>
+          <div style="font:400 52px/0.95 'Instrument Serif',serif;letter-spacing:-0.02em;text-wrap:pretty;margin-top:8px">Cook like you always do. <em>We’ll count the salt.</em></div>
+          <div style="position:relative;width:100%;aspect-ratio:1/1;border:2px solid #1E1C19;border-radius:32px;overflow:hidden;background:repeating-linear-gradient(135deg,#F3F0E6 0 10px,#FAF7EE 10px 20px)">
+            <image-slot id="hero-gimmick-mobile" shape="rounded" radius="30" placeholder="mini hero · your hero piece scaled to 350×350"></image-slot>
+            <div style="position:absolute;left:12px;top:12px;font:500 11px 'JetBrains Mono',monospace;background:#FFFDF7;border:1px solid #E6E2D3;padding:5px 9px;border-radius:999px;pointer-events:none">hero gimmick · mini · 1:1</div>
+          </div>
+          <p style="margin:0;color:#5F5B53">Wear the glasses, cook, upload. Na(h) finds every seasoning and adds up the sodium against 2,300 mg.</p>
+          <button style="height:52px;width:100%;border:2px solid #1E1C19;border-radius:12px;background:#E8DAF4;font:600 16px 'Figtree',sans-serif;color:#1E1C19">Upload a cook</button>
+          <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:#5F5B53"><span style="display:inline-block;width:16px;height:16px;flex:none;background:#5F5B53;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/info.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/info.svg) center/contain no-repeat"></span>Estimates from your pantry labels. Not medical advice.</div>
+          <div style="border-top:1px solid #E6E2D3;padding-top:20px;display:flex;flex-direction:column;gap:14px">
+            <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Mobile type scale</div>
+            <div style="font:400 40px/1 'Instrument Serif',serif;letter-spacing:-0.02em">H1 · 40</div>
+            <div style="font:400 32px/1.05 'Instrument Serif',serif">H2 · 32</div>
+            <div style="font:400 24px/1.1 'Instrument Serif',serif">H3 · 24</div>
+            <div>Body · 16 / 1.45. Short sentences read well at this width.</div>
+            <div style="font:600 16px 'Figtree',sans-serif">Button · 16 / 600</div>
+            <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase">Micro · 12 / 600</div>
+            <div><span style="font:500 13px 'JetBrains Mono',monospace;background:#E6E2D3;padding:6px 10px;border-radius:999px">0:42</span></div>
+          </div>
+        </div>
+      </x-import>
+      <span style="font-size:13px;color:#5F5B53;max-width:390px">Mini hero: a 1:1 panel, 2px ink, 32px radius, full width under the headline. The desktop hero piece plays here scaled down; same motion, 900ms, loops stop under reduced motion.</span>
+    </div>
+
+    <!-- Frame B: App home -->
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:100%">
+      <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">B · App home · Back Button, Card, Stat Block, Sodium Meter, Sticky Total Bar, FAB</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ 390 }}" height="{{ 844 }}" hint-size="390px,844px">
+        <div style="min-height:100%;background:#FAF7EE;box-sizing:border-box;font-family:'Figtree',system-ui,sans-serif;color:#1E1C19;font-size:16px;line-height:1.45;display:flex;flex-direction:column">
+          <div style="padding:64px 20px 24px;display:flex;flex-direction:column;gap:20px">
+            <div style="display:flex;align-items:center;gap:12px">
+              <button aria-label="Back" style="width:44px;height:44px;border:2px solid #1E1C19;border-radius:999px;background:#FFFDF7;display:flex;align-items:center;justify-content:center;flex:none"><span style="display:inline-block;width:20px;height:20px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/arrow-left.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/arrow-left.svg) center/contain no-repeat"></span></button>
+              <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Your cooks</span>
+            </div>
+            <div style="font:400 40px/1 'Instrument Serif',serif;letter-spacing:-0.02em">Arroz con pollo</div>
+            <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:24px;padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div><div style="font:400 44px/0.95 'Instrument Serif',serif;letter-spacing:-0.02em">1,640</div><div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-top:8px">mg · estimate</div></div>
+              <div><div style="font:400 44px/0.95 'Instrument Serif',serif">71<span style="font-size:22px">%</span></div><div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-top:8px">of daily limit</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;font-size:14px"><span style="font-weight:600">Sodium Meter</span><span style="color:#1F4A43;font-weight:600;display:inline-flex;align-items:center;gap:6px"><span style="display:inline-block;width:14px;height:14px;background:#1F4A43;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat"></span>Under limit</span></div>
+              <div style="position:relative;height:12px;background:#E6E2D3;border-radius:999px;margin-right:48px"><div style="position:absolute;left:0;top:0;bottom:0;width:71%;background:#1F4A43;border-radius:999px"></div><div style="position:absolute;left:100%;top:-6px;width:2px;height:24px;background:#B4432F"></div><div style="position:absolute;left:100%;top:26px;transform:translateX(-50%);font:600 10px 'Figtree',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#B4432F;white-space:nowrap">2,300</div></div>
+            </div>
+            <div style="margin-top:12px;background:#FFFDF7;border:1px solid #E6E2D3;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font:400 24px/1.1 'Instrument Serif',serif">Phở gà</span><span style="font:500 13px 'JetBrains Mono',monospace;background:#E6E2D3;padding:6px 10px;border-radius:999px">42:10</span></div>
+              <div style="font-size:14px;color:#5F5B53">Sunday · 4 seasonings found</div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><span style="font:400 32px/1 'Instrument Serif',serif;color:#B4432F">3,020<span style="font-size:16px;margin-left:4px">mg</span></span><span style="display:inline-flex;align-items:center;gap:6px;border:2px solid #B4432F;color:#B4432F;font:600 13px 'Figtree',sans-serif;padding:5px 12px;border-radius:999px"><span style="display:inline-block;width:14px;height:14px;background:#B4432F;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/triangle-alert.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/triangle-alert.svg) center/contain no-repeat"></span>Over limit</span></div>
+            </div>
+            <div style="background:#1F4A43;color:#FAF7EE;border-radius:32px;padding:24px;display:flex;flex-direction:column;gap:12px">
+              <div style="font:400 24px/1.1 'Instrument Serif',serif">Most of it was the <em>broth</em>.</div>
+              <a href="#" style="font:600 15px 'Figtree',sans-serif;color:#FAF7EE;text-decoration:none;border-bottom:2px solid #FAF7EE;align-self:flex-start">See the timeline</a>
+            </div>
+            <div style="height:60px"></div>
+          </div>
+          <div style="position:sticky;bottom:0;margin-top:auto;display:flex;flex-direction:column;align-items:flex-end;gap:12px;padding:0 20px 0">
+            <button aria-label="Upload a cook" style="width:60px;height:60px;border:2px solid #1E1C19;border-radius:999px;background:#E8DAF4;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 32px -12px rgba(30,28,25,0.18)"><span style="display:inline-block;width:26px;height:26px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/plus.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/plus.svg) center/contain no-repeat"></span></button>
+            <div style="width:calc(100% + 40px);margin:0 -20px;background:#FFFDF7;border-top:2px solid #1E1C19;padding:12px 20px 40px;box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;gap:12px">
+              <div><div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Today so far</div><div style="font:400 28px/1 'Instrument Serif',serif;margin-top:4px">1,640<span style="font-size:14px;font-family:'Figtree',sans-serif;font-weight:600;margin-left:4px">/ 2,300 mg</span></div></div>
+              <span style="display:inline-flex;align-items:center;gap:6px;background:#DCE5D9;color:#1F4A43;font:600 13px 'Figtree',sans-serif;padding:7px 12px;border-radius:999px"><span style="display:inline-block;width:14px;height:14px;background:#1F4A43;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat"></span>Under limit</span>
+            </div>
+          </div>
+        </div>
+      </x-import>
+      <span style="font-size:13px;color:#5F5B53;max-width:390px">FAB 60px, lavender, 2px ink, float shadow, 16px above the Sticky Total Bar. Total bar clears the 34px home indicator.</span>
+    </div>
+
+    <!-- Frame C: Timeline -->
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:100%">
+      <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">C · Timeline · stacked Timeline Row, Data Table as cards, Badges, Timestamp Pill</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ 390 }}" height="{{ 844 }}" hint-size="390px,844px">
+        <div style="min-height:100%;background:#FAF7EE;padding:64px 20px 48px;box-sizing:border-box;font-family:'Figtree',system-ui,sans-serif;color:#1E1C19;font-size:16px;line-height:1.45;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <button aria-label="Back" style="width:44px;height:44px;border:2px solid #1E1C19;border-radius:999px;background:#FFFDF7;display:flex;align-items:center;justify-content:center;flex:none"><span style="display:inline-block;width:20px;height:20px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/arrow-left.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/arrow-left.svg) center/contain no-repeat"></span></button>
+            <span style="display:inline-flex;align-items:center;gap:6px;background:#E6E2D3;color:#1E1C19;font:600 13px 'Figtree',sans-serif;padding:7px 12px;border-radius:999px"><span style="display:inline-block;width:14px;height:14px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/scale.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/scale.svg) center/contain no-repeat"></span>Estimate</span>
+          </div>
+          <div style="font:400 32px/1.05 'Instrument Serif',serif">Five seasonings, one dish</div>
+          <div style="display:flex;flex-direction:column;background:#FFFDF7;border:1px solid #E6E2D3;border-radius:24px;overflow:hidden">
+            <sc-for list="{{ rows }}" as="r" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:56px 1fr;gap:12px 14px;padding:16px;border-top:1px solid #E6E2D3;align-items:start">
+                <div style="width:56px;height:56px;border-radius:12px;background:repeating-linear-gradient(135deg,#E6E2D3 0 4px,#F3F0E6 4px 8px)"></div>
+                <div style="min-width:0;display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-weight:600;font-size:16px">{{ r.name }}</span><span style="font:500 12px 'JetBrains Mono',monospace;background:#E6E2D3;padding:5px 9px;border-radius:999px;flex:none">{{ r.t }}</span></div>
+                  <div style="font-size:14px;color:#5F5B53">{{ r.amount }}</div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-variant-numeric:tabular-nums;font-weight:600;font-size:18px;color:{{ r.colour }}">{{ r.mg }}</span><span style="display:inline-flex;align-items:center;gap:6px;background:{{ r.badgeBg }};color:{{ r.badgeFg }};border:2px solid {{ r.badgeBorder }};font:600 12px 'Figtree',sans-serif;padding:4px 10px;border-radius:999px"><span style="display:inline-block;width:12px;height:12px;background:{{ r.badgeFg }};-webkit-mask:url({{ r.icon }}) center/contain no-repeat;mask:url({{ r.icon }}) center/contain no-repeat"></span>{{ r.badge }}</span></div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-top:2px solid #1E1C19;gap:8px"><div><div style="font-weight:600">Dish total · estimate</div><div style="font-size:13px;color:#5F5B53">3 counted, 1 not</div></div><span style="font:400 28px/1 'Instrument Serif',serif;color:#B4432F">3,020 mg</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#5F5B53"><span style="display:inline-block;width:16px;height:16px;flex:none;background:#5F5B53;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/info.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/info.svg) center/contain no-repeat"></span>Estimates from your pantry labels. Not medical advice.</div>
+        </div>
+      </x-import>
+      <span style="font-size:13px;color:#5F5B53;max-width:390px">Below 768 the Data Table loses checkboxes; select mode comes from a long press. Rows become cards with the thumb on the left.</span>
+    </div>
+
+    <!-- Frame D: Video + upload -->
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:100%">
+      <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">D · Video Frame with swipe to seek, Drop Zone, Step List</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ 390 }}" height="{{ 844 }}" hint-size="390px,844px">
+        <div style="min-height:100%;background:#FAF7EE;padding:64px 20px 48px;box-sizing:border-box;font-family:'Figtree',system-ui,sans-serif;color:#1E1C19;font-size:16px;line-height:1.45;display:flex;flex-direction:column;gap:20px">
+          <div style="background:#1E1C19;border-radius:24px;padding:8px;display:flex;flex-direction:column;gap:8px">
+            <div style="position:relative;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:repeating-linear-gradient(135deg,#2A2824 0 12px,#1E1C19 12px 24px)">
+              <div style="position:absolute;left:12px;top:12px;font:500 12px 'JetBrains Mono',monospace;background:#FFFDF7;color:#1E1C19;padding:5px 9px;border-radius:999px">0:42 / 18:40</div>
+              <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:999px;background:#E8DAF4;border:2px solid #1E1C19;box-sizing:border-box;display:flex;align-items:center;justify-content:center"><span style="display:inline-block;width:22px;height:22px;margin-left:3px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/play.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/play.svg) center/contain no-repeat"></span></div>
+              <div style="position:absolute;right:12px;bottom:12px;display:flex;align-items:center;gap:6px;font:500 12px 'JetBrains Mono',monospace;background:rgba(250,247,238,.9);color:#1E1C19;padding:5px 9px;border-radius:999px"><span style="display:inline-block;width:12px;height:12px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/move-horizontal.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/move-horizontal.svg) center/contain no-repeat"></span>swipe to seek</div>
+            </div>
+            <div style="padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px">
+              <div style="position:relative;height:8px;background:#5F5B53;border-radius:999px">
+                <div style="position:absolute;left:0;top:0;bottom:0;width:4%;background:#FAF7EE;border-radius:999px"></div>
+                <div style="position:absolute;left:4%;top:-8px;width:24px;height:24px;border-radius:999px;background:#FAF7EE;border:2px solid #1E1C19;box-sizing:border-box;transform:translateX(-50%)"></div>
+                <div style="position:absolute;left:18%;top:-4px;width:4px;height:16px;border-radius:2px;background:#E8DAF4"></div>
+                <div style="position:absolute;left:33%;top:-4px;width:4px;height:16px;border-radius:2px;background:#E8DAF4"></div>
+                <div style="position:absolute;left:47%;top:-4px;width:4px;height:16px;border-radius:2px;background:#F1D9A8"></div>
+                <div style="position:absolute;left:61%;top:-4px;width:4px;height:16px;border-radius:2px;background:#E8DAF4"></div>
+              </div>
+              <div style="font-size:12px;color:#FAF7EE;opacity:.8">Thumb 24px. Horizontal swipe anywhere on the video scrubs; markers snap.</div>
+            </div>
+          </div>
+          <div style="border:2px dashed #1E1C19;border-radius:24px;padding:28px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;background:#FFFDF7">
+            <span style="display:inline-block;width:28px;height:28px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/video.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/video.svg) center/contain no-repeat"></span>
+            <div style="font:400 24px/1.1 'Instrument Serif',serif">Add your cook</div>
+            <div style="font-size:14px;color:#5F5B53">From your camera roll. Nothing is processed live.</div>
+            <button style="height:48px;width:100%;border:2px solid #1E1C19;border-radius:12px;background:#E8DAF4;font:600 16px 'Figtree',sans-serif;color:#1E1C19;margin-top:6px">Choose a video</button>
+          </div>
+          <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:24px;padding:20px;display:flex;flex-direction:column">
+            <div style="display:flex;gap:14px;align-items:flex-start"><div style="display:flex;flex-direction:column;align-items:center;align-self:stretch"><div style="width:32px;height:32px;border-radius:999px;background:#1F4A43;display:flex;align-items:center;justify-content:center;flex:none"><span style="display:inline-block;width:16px;height:16px;background:#FAF7EE;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat"></span></div><div style="width:2px;flex:1;min-height:20px;background:#1F4A43"></div></div><div style="padding:5px 0 18px"><div style="font-weight:600;font-size:15px">Upload your cook</div><div style="font-size:13px;color:#5F5B53">Done</div></div></div>
+            <div style="display:flex;gap:14px;align-items:flex-start"><div style="display:flex;flex-direction:column;align-items:center;align-self:stretch"><div style="width:32px;height:32px;border-radius:999px;border:2px solid #1E1C19;background:#FFFDF7;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:600 13px 'Figtree',sans-serif;flex:none">2</div><div style="width:2px;flex:1;min-height:20px;background:#E6E2D3"></div></div><div style="padding:5px 0 18px"><div style="font-weight:600;font-size:15px">We find each seasoning</div><div style="font-size:13px;color:#5F5B53">About 2 minutes</div></div></div>
+            <div style="display:flex;gap:14px;align-items:flex-start"><div style="width:32px;height:32px;border-radius:999px;border:2px solid #E6E2D3;background:#FFFDF7;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:600 13px 'Figtree',sans-serif;color:#5F5B53;flex:none">3</div><div style="padding:5px 0"><div style="font-weight:600;font-size:15px;color:#5F5B53">See the dish total</div></div></div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <!-- Frame E: Bottom sheet + feedback -->
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:100%">
+      <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">E · Bottom Sheet (Dialog), Toast, Tooltip, Secondary Button, Ghost Link</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ 390 }}" height="{{ 844 }}" hint-size="390px,844px">
+        <div style="min-height:100%;background:#FAF7EE;box-sizing:border-box;font-family:'Figtree',system-ui,sans-serif;color:#1E1C19;font-size:16px;line-height:1.45;display:flex;flex-direction:column;position:relative">
+          <div style="padding:64px 20px 24px;display:flex;flex-direction:column;gap:20px">
+            <div role="status" style="display:flex;align-items:center;gap:10px;background:#FFFDF7;border:2px solid #1E1C19;border-radius:999px;padding:12px 16px;box-shadow:0 12px 32px -12px rgba(30,28,25,0.18);font-size:15px"><span style="display:inline-block;width:20px;height:20px;flex:none;background:#1F4A43;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat"></span><span style="flex:1">Dish saved. 1,640 mg estimated.</span><a href="#" style="font-weight:600;color:#1E1C19;white-space:nowrap">Open</a></div>
+            <div style="font-size:13px;color:#5F5B53">Toast sits under the status bar on phone, 20px inset, full width.</div>
+            <div style="padding-top:44px;display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+              <div style="position:relative;display:inline-block">
+                <div role="tooltip" style="position:absolute;bottom:calc(100% + 10px);left:0;background:#1E1C19;color:#FAF7EE;font-size:13px;line-height:1.4;padding:8px 12px;border-radius:10px;white-space:nowrap">From the label on your fish sauce<span style="position:absolute;top:100%;left:24px;border:6px solid transparent;border-top-color:#1E1C19"></span></div>
+                <span style="display:inline-flex;align-items:center;gap:6px;background:#E6E2D3;color:#1E1C19;font:600 13px 'Figtree',sans-serif;padding:7px 12px;border-radius:999px;border-bottom:2px dotted #1E1C19;min-height:30px"><span style="display:inline-block;width:14px;height:14px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/scale.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/scale.svg) center/contain no-repeat"></span>Estimate</span>
+              </div>
+              <div style="font-size:13px;color:#5F5B53">Tooltip: tap to toggle, tap away to dismiss.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px">
+              <button style="height:52px;width:100%;border:2px solid #1E1C19;border-radius:12px;background:#FFFDF7;font:600 16px 'Figtree',sans-serif;color:#1E1C19">Secondary Button · full width</button>
+              <a href="#" style="font:600 16px 'Figtree',sans-serif;color:#1E1C19;text-decoration:none;border-bottom:2px solid #1E1C19;align-self:center;padding:10px 0">Ghost Link · 44px row</a>
+            </div>
+          </div>
+          <div style="position:absolute;inset:0;background:rgba(30,28,25,0.32);display:flex;flex-direction:column;justify-content:flex-end;pointer-events:none">
+            <div role="dialog" style="background:#FFFDF7;border:2px solid #1E1C19;border-bottom:0;border-radius:28px 28px 0 0;padding:12px 20px 48px;box-shadow:0 -12px 32px -12px rgba(30,28,25,0.18);display:flex;flex-direction:column;gap:14px">
+              <div style="width:40px;height:4px;border-radius:2px;background:#E6E2D3;align-self:center"></div>
+              <div style="font:400 28px/1.1 'Instrument Serif',serif;text-wrap:pretty">Delete this cook?</div>
+              <p style="margin:0;font-size:15px;color:#5F5B53">Arroz con pollo from Tuesday and its 5 detections will go. The video stays on your device.</p>
+              <button style="height:52px;width:100%;border:2px solid #1E1C19;border-radius:12px;background:#E8DAF4;font:600 16px 'Figtree',sans-serif;color:#1E1C19;margin-top:6px">Delete</button>
+              <button style="height:52px;width:100%;border:2px solid #1E1C19;border-radius:12px;background:#FFFDF7;font:600 16px 'Figtree',sans-serif;color:#1E1C19">Keep it</button>
+            </div>
+          </div>
+        </div>
+      </x-import>
+      <span style="font-size:13px;color:#5F5B53;max-width:390px">Bottom Sheet: 28px top radius, grab handle, primary action first (thumb reach), swipe down to dismiss. Slides up 300ms.</span>
+    </div>
+
+    <!-- Frame F: Loading -->
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:100%">
+      <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">F · Pull to refresh, Skeleton, processing, empty state</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ 390 }}" height="{{ 844 }}" hint-size="390px,844px">
+        <div style="min-height:100%;background:#FAF7EE;padding:60px 20px 48px;box-sizing:border-box;font-family:'Figtree',system-ui,sans-serif;color:#1E1C19;font-size:16px;line-height:1.45;display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 0 0">
+            <div style="width:28px;height:28px;border-radius:999px;border:2px solid #E6E2D3;border-top-color:#1F4A43;box-sizing:border-box;animation:nahSpin 900ms linear infinite"></div>
+            <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Pull to refresh · checking for new cooks</div>
+          </div>
+          <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center"><div style="width:160px;height:22px;border-radius:11px;background:linear-gradient(90deg,#E6E2D3 25%,#F3F0E6 50%,#E6E2D3 75%);background-size:200% 100%;animation:nahShimmer 1600ms linear infinite"></div><div style="width:56px;height:26px;border-radius:999px;background:linear-gradient(90deg,#E6E2D3 25%,#F3F0E6 50%,#E6E2D3 75%);background-size:200% 100%;animation:nahShimmer 1600ms linear infinite"></div></div>
+            <div style="width:200px;height:14px;border-radius:7px;background:linear-gradient(90deg,#E6E2D3 25%,#F3F0E6 50%,#E6E2D3 75%);background-size:200% 100%;animation:nahShimmer 1600ms linear infinite"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><div style="width:110px;height:36px;border-radius:8px;background:linear-gradient(90deg,#E6E2D3 25%,#F3F0E6 50%,#E6E2D3 75%);background-size:200% 100%;animation:nahShimmer 1600ms linear infinite"></div><div style="width:96px;height:30px;border-radius:999px;background:linear-gradient(90deg,#E6E2D3 25%,#F3F0E6 50%,#E6E2D3 75%);background-size:200% 100%;animation:nahShimmer 1600ms linear infinite"></div></div>
+          </div>
+          <div style="font-size:13px;color:#5F5B53">Skeleton: stone blocks in the exact shape of the loaded card, 1.6s shimmer, no spinner. Pop in the real values with a 300ms fade.</div>
+          <div style="background:#1F4A43;color:#FAF7EE;border-radius:32px;padding:24px;display:flex;flex-direction:column;gap:14px">
+            <div style="position:relative;height:120px;border-radius:16px;background:rgba(250,247,238,0.08);overflow:hidden"><div style="position:absolute;left:12px;right:12px;height:2px;background:#E8DAF4;animation:nahScan 2400ms ease-in-out infinite alternate"></div></div>
+            <div style="font:400 24px/1.1 'Instrument Serif',serif">Finding your seasonings…</div>
+            <div style="font-size:14px;opacity:.9">About 2 minutes for 18:40 of footage. We’ll let you know when it’s done.</div>
+            <div style="position:relative;height:8px;background:rgba(250,247,238,0.2);border-radius:999px"><div style="position:absolute;left:0;top:0;bottom:0;width:38%;background:#FAF7EE;border-radius:999px"></div></div>
+          </div>
+          <div style="border:1px solid #E6E2D3;border-radius:24px;padding:24px 20px;background:#FFFDF7;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+            <image-slot id="ill-empty-phone" shape="circle" style="width:96px;height:96px" placeholder="spot · empty"></image-slot>
+            <div style="font:400 24px/1.1 'Instrument Serif',serif">No cooks yet</div>
+            <div style="font-size:14px;color:#5F5B53">Upload your first one and we’ll count the salt.</div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+
+    <!-- Frame G: Thumb zone + safe areas + hit areas -->
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:100%">
+      <span style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">G · Thumb zone, safe areas, 44px hit areas</span>
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ 390 }}" height="{{ 844 }}" hint-size="390px,844px">
+        <div style="height:844px;background:#FAF7EE;box-sizing:border-box;font-family:'Figtree',system-ui,sans-serif;color:#1E1C19;font-size:14px;position:relative;overflow:hidden">
+          <div style="position:absolute;left:0;right:0;top:0;height:59px;background:repeating-linear-gradient(135deg,rgba(232,218,244,.9) 0 6px,rgba(232,218,244,.4) 6px 12px);border-bottom:2px dashed #1E1C19"></div>
+          <div style="position:absolute;left:20px;top:64px;font:600 11px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Safe area top · 59px · nothing tappable here</div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:34px;background:repeating-linear-gradient(135deg,rgba(232,218,244,.9) 0 6px,rgba(232,218,244,.4) 6px 12px);border-top:2px dashed #1E1C19"></div>
+          <div style="position:absolute;left:20px;bottom:40px;font:600 11px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53">Safe area bottom · 34px · home indicator</div>
+          <div style="position:absolute;left:0;right:0;top:300px;bottom:34px;background:radial-gradient(ellipse 120% 90% at 85% 100%,rgba(31,74,67,0.32) 0 40%,rgba(31,74,67,0.16) 40% 70%,rgba(31,74,67,0.05) 70% 100%)"></div>
+          <div style="position:absolute;right:20px;top:420px;width:150px;text-align:right;font-size:13px;color:#1F4A43;font-weight:600">Easy reach<br><span style="font-weight:400;color:#5F5B53">FAB, primary actions, sheet buttons</span></div>
+          <div style="position:absolute;left:20px;top:300px;width:150px;font-size:13px;color:#1F4A43;font-weight:600">Stretch<br><span style="font-weight:400;color:#5F5B53">secondary actions, list rows</span></div>
+          <div style="position:absolute;left:20px;top:120px;width:200px;font-size:13px;color:#1E1C19;font-weight:600">Hard reach<br><span style="font-weight:400;color:#5F5B53">titles, status, Back Button only (swipe-back as well)</span></div>
+          <div style="position:absolute;left:20px;top:200px;display:flex;align-items:center;gap:12px">
+            <div style="position:relative;width:44px;height:44px;border:2px solid #1E1C19;border-radius:999px;background:#FFFDF7;display:flex;align-items:center;justify-content:center;outline:2px dashed #B48BD9;outline-offset:3px"><span style="display:inline-block;width:20px;height:20px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/arrow-left.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/arrow-left.svg) center/contain no-repeat"></span></div>
+            <div style="position:relative;outline:2px dashed #B48BD9;outline-offset:6px;border-radius:999px"><span style="font:500 13px 'JetBrains Mono',monospace;background:#E6E2D3;padding:6px 10px;border-radius:999px;display:inline-block">0:42</span></div>
+            <span style="font-size:12px;color:#5F5B53">Visual 30px, hit area padded to 44px</span>
+          </div>
+          <div style="position:absolute;left:20px;right:20px;top:560px;display:flex;flex-direction:column;gap:14px">
+            <div style="outline:2px dashed #B48BD9;outline-offset:3px;border-radius:12px"><button style="height:52px;width:100%;border:2px solid #1E1C19;border-radius:12px;background:#E8DAF4;font:600 16px 'Figtree',sans-serif;color:#1E1C19">Primary · 52px tall on phone</button></div>
+            <div style="display:flex;justify-content:flex-end"><div style="outline:2px dashed #B48BD9;outline-offset:3px;border-radius:999px"><button aria-label="Upload a cook" style="width:60px;height:60px;border:2px solid #1E1C19;border-radius:999px;background:#E8DAF4;display:flex;align-items:center;justify-content:center"><span style="display:inline-block;width:26px;height:26px;background:#1E1C19;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/plus.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/plus.svg) center/contain no-repeat"></span></button></div></div>
+            <div style="font-size:12px;color:#5F5B53;text-align:right">Dashed lavender = 44px minimum hit area. Spacing between targets ≥ 8px.</div>
+          </div>
+        </div>
+      </x-import>
+    </div>
+  </div>
+</section>
+
+<!-- 11 Copy tone -->
+<section id="s11" style="display:flex;flex-wrap:wrap;gap:40px 64px;padding:clamp(40px,5vw,64px) 0;border-top:1px solid #E6E2D3;scroll-margin-top:80px">
+  <div style="flex:1 1 220px;max-width:260px">
+    <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:12px">11</div>
+    <h2 style="margin:0 0 12px;font:400 clamp(32px,3vw,44px)/1.05 'Instrument Serif',serif;letter-spacing:-0.01em">Copy tone</h2>
+    <p style="margin:0;font-size:15px;color:#5F5B53;text-wrap:pretty">Warm, direct, slightly cheeky. Sentence case. Short sentences. British spelling. Talk about the dish, not the person.</p>
+  </div>
+  <div style="flex:1 1 600px;min-width:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px">
+    <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:clamp(20px,3vw,32px);display:flex;flex-direction:column;gap:16px">
+      <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#1F4A43;display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:14px;height:14px;background:#1F4A43;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/check.svg) center/contain no-repeat"></span>Say</div>
+      <div style="font:400 clamp(24px,2.2vw,32px)/1.15 'Instrument Serif',serif">Say nah to hidden sodium.</div>
+      <div style="font:400 clamp(24px,2.2vw,32px)/1.15 'Instrument Serif',serif">Cook like you always do. <em>We’ll count the salt.</em></div>
+      <div style="font-size:16px">“This dish is over the limit.” · “Most of it was the broth.” · “Not in your pantry yet. Add the label and we’ll count it next time.”</div>
+    </div>
+    <div style="background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:clamp(20px,3vw,32px);display:flex;flex-direction:column;gap:16px">
+      <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#B4432F;display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:14px;height:14px;background:#B4432F;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/x.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/x.svg) center/contain no-repeat"></span>Don’t say</div>
+      <div style="font-size:16px;color:#5F5B53;line-height:1.6">“You consumed too much sodium.” (about the person) · “Diagnosis: hypertension risk.” (clinical; we estimate, never diagnose) · “Unknown ingredient: 0 mg.” (never zero; flag it) · “Live sodium tracking.” (processing is never live) · Title Case Buttons · emoji.</div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:#5F5B53;padding-top:12px;border-top:1px solid #E6E2D3;margin-top:auto"><span style="display:inline-block;width:16px;height:16px;flex:none;background:#5F5B53;-webkit-mask:url(https://unpkg.com/lucide-static@latest/icons/info.svg) center/contain no-repeat;mask:url(https://unpkg.com/lucide-static@latest/icons/info.svg) center/contain no-repeat"></span>Estimates from your pantry labels. Not medical advice.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 Accessibility -->
+<section id="s12" style="display:flex;flex-wrap:wrap;gap:40px 64px;padding:clamp(40px,5vw,64px) 0 0;border-top:1px solid #E6E2D3;scroll-margin-top:80px">
+  <div style="flex:1 1 220px;max-width:260px">
+    <div style="font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53;margin-bottom:12px">12</div>
+    <h2 style="margin:0 0 12px;font:400 clamp(32px,3vw,44px)/1.05 'Instrument Serif',serif;letter-spacing:-0.01em">Accessibility check</h2>
+    <p style="margin:0;font-size:15px;color:#5F5B53;text-wrap:pretty">WCAG contrast computed from the token hexes. Text needs 4.5:1 (3:1 at headline scale); UI boundaries, focus rings and chart lines need 3:1.</p>
+  </div>
+  <div style="flex:1 1 600px;min-width:0;background:#FFFDF7;border:1px solid #E6E2D3;border-radius:28px;padding:8px 8px 16px;overflow-x:auto">
+   <div style="min-width:720px">
+    <div style="display:grid;grid-template-columns:72px 1fr 1fr 90px 130px 1fr;column-gap:16px;align-items:center;padding:12px 16px;font:600 12px/1 'Figtree',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5F5B53"><span></span><span>Foreground</span><span>Background</span><span style="text-align:right">Ratio</span><span>Needs</span><span>Result</span></div>
+    <sc-for list="{{ contrast }}" as="p" hint-placeholder-count="16">
+      <div style="display:grid;grid-template-columns:72px 1fr 1fr 90px 130px 1fr;column-gap:16px;align-items:center;padding:10px 16px;border-top:1px solid #E6E2D3;font-size:15px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:36px;border-radius:10px;background:{{ p.bgHex }};color:{{ p.fgHex }};border:1px solid #E6E2D3;font:600 14px 'Figtree',sans-serif">{{ p.sample }}</span>
+        <span>{{ p.fg }} <span style="font:500 12px 'JetBrains Mono',monospace;color:#5F5B53">{{ p.fgHex }}</span></span>
+        <span>{{ p.bg }} <span style="font:500 12px 'JetBrains Mono',monospace;color:#5F5B53">{{ p.bgHex }}</span></span>
+        <span style="text-align:right;font-variant-numeric:tabular-nums;font-weight:600">{{ p.ratio }}:1</span>
+        <span style="color:#5F5B53">{{ p.needs }}</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;color:{{ p.resultColour }};font-weight:600"><span style="display:inline-block;width:14px;height:14px;flex:none;background:{{ p.resultColour }};-webkit-mask:url({{ p.resultIcon }}) center/contain no-repeat;mask:url({{ p.resultIcon }}) center/contain no-repeat"></span>{{ p.result }}</span>
+      </div>
+    </sc-for>
+   </div>
+  </div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;reducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+class Component extends DCLogic {
+  componentDidMount(){ this.applyRm(); }
+  componentDidUpdate(){ this.applyRm(); }
+  applyRm(){ document.body.classList.toggle('nah-rm', !!this.props.reducedMotion); }
+  lum(hex){
+    const c=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(v=>v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4));
+    return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2];
+  }
+  ratio(a,b){ const l1=this.lum(a),l2=this.lum(b); return (Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05); }
+  renderVals(){
+    const T={canvas:'#FAF7EE',paper:'#FFFDF7',stone:'#E6E2D3',ink:'#1E1C19','ink-soft':'#5F5B53',lavender:'#E8DAF4','lavender hover':'#DCC8EE',forest:'#1F4A43',sage:'#DCE5D9',saffron:'#F1D9A8',chilli:'#B4432F'};
+    const I=n=>`https://unpkg.com/lucide-static@latest/icons/${n}.svg`;
+    const colours=[
+      {name:'canvas',hex:T.canvas,use:'Page background'},
+      {name:'paper',hex:T.paper,use:'Cards, panels'},
+      {name:'stone',hex:T.stone,use:'Hairlines, dividers, meter tracks, subtle fills'},
+      {name:'ink',hex:T.ink,use:'Primary text, 2px borders on interactive elements'},
+      {name:'ink-soft',hex:T['ink-soft'],use:'Secondary text; lightest allowed for body on canvas'},
+      {name:'lavender',hex:T.lavender,use:'Primary action fill and highlight. Hover #DCC8EE'},
+      {name:'forest',hex:T.forest,use:'Secondary brand, dark panels, success, chart line. Text on it is canvas'},
+      {name:'sage',hex:T.sage,use:'“Under limit” fills'},
+      {name:'saffron',hex:T.saffron,use:'“Flagged / not counted” badge fill, ink text'},
+      {name:'chilli',hex:T.chilli,use:'Over-limit numbers, the 2,300 mg line, warnings only. Never decorative'}
+    ];
+    const spaces=[4,8,12,16,24,32,48,64,96,128].map(v=>({v,h:Math.max(4,v)+'px'}));
+    const icons=['glasses','video','upload','cooking-pot','clock','search','plus','arrow-left','pencil','trash-2','chevron-right','menu','move-horizontal','info','check','circle-alert','triangle-alert'].map(n=>({name:n,url:I(n),colour:n==='check'?T.forest:(n==='triangle-alert'?T.chilli:T.ink)}));
+    const ok={badge:'Detected',badgeBg:T.forest,badgeFg:T.canvas,badgeBorder:T.forest,icon:I('check'),colour:T.ink,checkBg:T.forest,checkOpacity:1};
+    const rows=[
+      {t:'0:42',name:'Chicken bouillon cube',amount:'1 cube · foil wrapper',mg:'1,100 mg',...ok},
+      {t:'3:15',name:'Sazón packet',amount:'½ packet',mg:'510 mg',...ok},
+      {t:'7:02',name:'Fish sauce',amount:'1 tbsp',mg:'1,410 mg',...ok,colour:T.chilli},
+      {t:'12:07',name:'Grandma’s spice mix',amount:'Not in your pantry',mg:'—',badge:'Not counted',badgeBg:T.saffron,badgeFg:T.ink,badgeBorder:T.saffron,icon:I('circle-alert'),colour:T['ink-soft'],checkBg:T.paper,checkOpacity:0}
+    ];
+    const pairs=[
+      ['ink','canvas',4.5,'Aa','Body text'],['ink','paper',4.5,'Aa','Body text'],['ink-soft','canvas',4.5,'Aa','Secondary text'],['ink-soft','paper',4.5,'Aa','Secondary text'],
+      ['canvas','forest',4.5,'Aa','Text on Dark Panel'],['ink','lavender',4.5,'Aa','Primary Button text'],['ink','lavender hover',4.5,'Aa','Primary hover text'],['ink','saffron',4.5,'Aa','Not counted badge'],
+      ['ink','stone',4.5,'Aa','Timestamp Pill, Estimate badge'],['forest','sage',4.5,'Aa','Under-limit chip'],['chilli','canvas',4.5,'Aa','Over-limit number'],['chilli','paper',4.5,'Aa','Over-limit badge'],
+      ['forest','canvas',4.5,'Aa','Status icon + text'],['ink','canvas',3,'▢','2px border / focus ring'],['forest','stone',3,'▬','Meter fill on track'],['chilli','stone',3,'▬','Over segment on track'],
+      ['chilli','sage',3,'▬','Chilli marker on sage'],['lavender','canvas',3,'▢','Lavender fill edge'],['stone','canvas',3,'▢','1px hairline'],['stone','paper',3,'▢','1px hairline on card']
+    ];
+    const contrast=pairs.map(([fg,bg,need,sample,note])=>{
+      const r=this.ratio(T[fg],T[bg]); const pass=r>=need;
+      let result=pass?'Pass · '+note:'Fail · '+note;
+      if(!pass&&fg==='lavender') result='Fail · decorative; the 2px ink border carries the edge';
+      if(!pass&&fg==='stone') result='Fail · decorative hairline only; never the sole boundary';
+      return {fg,bg,fgHex:T[fg],bgHex:T[bg],sample,ratio:r.toFixed(2),needs:need+':1 '+(need===3?'UI':'text'),result,resultColour:pass?T.forest:T.chilli,resultIcon:pass?I('check'):I('x')};
+    });
+    return {colours,spaces,icons,rows,contrast};
+  }
+}
+</script>
+</body>
+</html>

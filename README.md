@@ -509,3 +509,67 @@ Preprocessed predictions should be **clearly labeled** as such. Do not imply a l
 - **Next.js**: <https://nextjs.org/>
 
 This repository is a team hackathon prototype. Follow the licensing and redistribution requirements of the source videos and model before publishing artifacts or deploying the application publicly.
+
+---
+
+## Module C — Implemented Frontend (Na(h))
+
+This section documents what has actually been built for Module C. The app is
+branded **Na(h)** ("Na" = sodium; add an "h" and it reads "nah"). It lives in
+`web/` (Next.js App Router, TypeScript, Tailwind v4, shadcn/ui). See
+`web/README.md` for run instructions and `KIRO_HANDOFF.md` for the API
+contract the frontend consumes.
+
+### Screens
+
+- **Landing (`/`)** — a sticky bare wordmark plus a lavender "Start cooking"
+  CTA, an animated hero (Instrument Serif headline with the element-tile motif,
+  a glasses POV panel with live detection overlays, and a cook character joined
+  by a dashed sightline), a "how it works" three-step section with
+  illustrations, a "who it's for" section, and the "not medical advice"
+  disclaimer. CTAs fade out and route; "Try a demo" starts a mock session.
+- **How to record (`/how-to-record`)** — the recording instructions as a Step
+  List, plus a "What counts" card (counted: spoon measures, whole cubes/packets;
+  not counted: splashes, free pours, pinches).
+- **Pantry (`/pantry`)** — view, edit, add, set-default and reset pantry
+  products, grouped by category with source text, saved via the pantry API.
+- **Receipt (`/pantry/receipt`)** — a mocked receipt scan that adds products to
+  the pantry (clearly labelled as simulated).
+- **Upload (`/upload`)** — a drop zone / file picker that validates video files
+  and previews the selection.
+- **Processing (`/processing`)** — posts the video to `POST /api/sessions`,
+  shows a four-step ticker, then redirects to the results.
+- **Results (`/results/[sessionId]`)** — the core analysis screen, below.
+
+### Results analysis features
+
+The results page fetches `GET /api/sessions/{id}/results` and renders:
+
+1. **Video player** — seekable; a placeholder when the session has no video.
+2. **Cooking journey** — a vertical spine with a playhead that travels down as
+   the cook plays. Each addition pops out alternately left/right with its
+   evidence photo, amount and sodium. The playhead follows the video's
+   `currentTime` when a video exists, or self-drives for demo sessions. Clicking
+   a card seeks the video to that moment.
+3. **Dish total** — the total sodium as a large serif number that counts up,
+   with a Sodium Meter comparing it against the 2,300 mg daily limit (the meter
+   rescales and hatches the over-limit portion when the dish exceeds the limit).
+4. **Incomplete notice** — lists warnings when some additions could not be
+   counted, so the real total is understood to be higher.
+5. **Cumulative sodium chart** — a step-area chart of the running total over
+   time with a labelled daily-limit reference line.
+6. **Biggest contributor and one easy swap** — both computed live from the
+   counted (`ok`) timeline rows.
+
+The whole page honours `prefers-reduced-motion` by showing the final state at
+once.
+
+### Design system and data rules honoured
+
+The Na(h) kitchen-editorial design system (`design/style-guide`) is implemented
+in the frontend. The UI enforces the product's hard rules: an over-limit
+(chilli) colour is used only for a dish total at or above 2,300 mg, never for a
+single addition; a `null` sodium value is shown as "Not counted", never as 0;
+flagged rows are never hidden; and seeking/playhead position use each event's
+`timestamp`. All backend access goes through `web/lib/api.ts`, and video is only
+ever sent to `POST /api/sessions`.

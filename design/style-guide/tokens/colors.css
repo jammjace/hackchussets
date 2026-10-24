@@ -1,0 +1,9 @@
+:root{
+  --canvas:#FAF7EE; --paper:#FFFDF7; --stone:#E6E2D3; --ink:#1E1C19; --ink-soft:#5F5B53;
+  --lavender:#E8DAF4; --lavender-hover:#DCC8EE; --forest:#1F4A43; --sage:#DCE5D9; --saffron:#F1D9A8; --chilli:#B4432F;
+  --bg-page:var(--canvas); --surface-card:var(--paper); --border-hairline:var(--stone); --border-strong:var(--ink);
+  --text-primary:var(--ink); --text-secondary:var(--ink-soft); --text-on-forest:var(--canvas);
+  --action-primary:var(--lavender); --action-primary-hover:var(--lavender-hover);
+  --status-ok:var(--forest); --status-ok-fill:var(--sage); --status-flag-fill:var(--saffron); --status-over:var(--chilli);
+  --shadow-float:0 12px 32px -12px rgba(30,28,25,0.18);
+}

@@ -1,0 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500&family=EB+Garamond&display=swap');
+:root{
+  --font-display:"Instrument Serif","EB Garamond",Georgia,serif; --font-ui:"Figtree",system-ui,sans-serif; --font-mono:"JetBrains Mono",ui-monospace,monospace;
+  --hero:96px; --h1:64px; --h2:44px; --h3:32px; --hero-mobile:52px; --h1-mobile:40px; --display-lh:0.95; --display-ls:-0.02em;
+  --body:18px; --body-mobile:16px; --body-lh:1.45; --button:16px; --micro:12px; --micro-ls:0.08em; --timestamp:13px;
+}

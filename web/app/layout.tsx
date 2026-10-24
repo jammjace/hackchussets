@@ -18,7 +18,8 @@ const instrumentSerif = Instrument_Serif({
 const figtree = Figtree({
   variable: "--font-figtree",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  // 700 is used by the hero's "+mg" tag value (HERO_HANDOFF §2).
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
