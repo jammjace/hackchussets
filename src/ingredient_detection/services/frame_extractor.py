@@ -25,17 +25,36 @@ class SlidingWindowFrameExtractor(IFrameExtractor):
         self.max_width = max_width
         self.jpeg_quality = jpeg_quality
 
-    def extract(self, metadata: VideoMetadata) -> list[FrameWindow]:
-        return list(self.iter_extract(metadata))
+    def extract(
+        self,
+        metadata: VideoMetadata,
+        start_seconds: float = 0.0,
+        duration_seconds: float | None = None,
+    ) -> list[FrameWindow]:
+        return list(self.iter_extract(metadata, start_seconds, duration_seconds))
 
-    def iter_extract(self, metadata: VideoMetadata) -> Iterator[FrameWindow]:
-        """Yield one window at a time so callers can release image memory."""
-        duration = metadata.duration_seconds
+    def iter_extract(
+        self,
+        metadata: VideoMetadata,
+        start_seconds: float = 0.0,
+        duration_seconds: float | None = None,
+    ) -> Iterator[FrameWindow]:
+        """Yield one window at a time, optionally bounded to a source-video range."""
+        if start_seconds < 0:
+            raise ValueError("start_seconds must be non-negative")
+        if duration_seconds is not None and duration_seconds <= 0:
+            raise ValueError("duration_seconds must be positive")
+        if start_seconds >= metadata.duration_seconds:
+            raise ValueError("start_seconds must be before the end of the video")
+
+        range_end = metadata.duration_seconds
+        if duration_seconds is not None:
+            range_end = min(range_end, start_seconds + duration_seconds)
         step = 1.0 / self.sample_fps
-        start = 0.0
+        start = start_seconds
         window_id = 0
-        while start < duration:
-            end = min(start + self.window_seconds, duration)
+        while start < range_end:
+            end = min(start + self.window_seconds, range_end)
             frames = self._decode_window(metadata.path, start, end, step)
             yield FrameWindow(
                 window_id=window_id,
