@@ -6,16 +6,16 @@ import { use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CookingJourney } from "@/components/results/CookingJourney";
 import { CumulativeChart } from "@/components/results/CumulativeChart";
 import { IncompleteNotice } from "@/components/results/IncompleteNotice";
-import { IngredientTimeline } from "@/components/results/IngredientTimeline";
 import { SessionVideo } from "@/components/results/SessionVideo";
 import { Suggestions } from "@/components/results/Suggestions";
 import { TotalCard } from "@/components/results/TotalCard";
 import { Reveal } from "@/components/results/Reveal";
 import { ApiError, apiUrl, getResults } from "@/lib/api";
 import type { Results, TimelineRow } from "@/lib/types";
-import { useReducedMotion, useRevealSequence } from "@/lib/use-reveal";
+import { useJourneyProgress, useReducedMotion } from "@/lib/use-reveal";
 
 type LoadState =
   | { state: "loading" }
@@ -67,17 +67,52 @@ export function ResultsView({
     return last.timestamp + 10;
   }, [videoDuration, results]);
 
-  // Intro reveal: show each timeline addition in turn, then count the total
-  // up, then fade in the rest of the analysis. Honours reduced motion.
+  // Cooking journey: a playhead travels down the spine (video-synced, or
+  // self-driving for demo sessions), popping each addition in turn. Once it
+  // finishes, the total counts up, then the rest of the analysis fades in.
   const reduced = useReducedMotion();
-  const rowCount = results?.timeline.length ?? 0;
-  const { revealCount, phase } = useRevealSequence({
-    rowCount,
+  const hasVideo = !!results?.video_url;
+  const timestamps = useMemo(
+    () => (results ? results.timeline.map((r) => r.timestamp) : []),
+    [results],
+  );
+  const { progress, complete } = useJourneyProgress({
     active: load.state === "ok",
     reduced,
+    timestamps,
+    duration: trackDuration,
+    videoRef,
+    hasVideo,
   });
-  const timelineReady = phase === "total" || phase === "done";
-  const analysisReady = phase === "done";
+
+  // The journey finishing gates the total; a short beat later the rest shows.
+  const timelineReady = complete;
+  const [analysisReady, setAnalysisReady] = useState(false);
+  useEffect(() => {
+    if (!complete) {
+      setAnalysisReady(false);
+      return;
+    }
+    if (reduced) {
+      setAnalysisReady(true);
+      return;
+    }
+    const t = setTimeout(() => setAnalysisReady(true), 1100);
+    return () => clearTimeout(t);
+  }, [complete, reduced]);
+
+  // When a real video loads, start it muted so the journey plays through on
+  // its own. If the browser blocks autoplay, the playhead simply waits for the
+  // user to press play, then syncs to it.
+  useEffect(() => {
+    if (load.state !== "ok" || !hasVideo || reduced) return;
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    void video.play().catch(() => {
+      // Autoplay blocked — fine, the journey waits for a manual play.
+    });
+  }, [load.state, hasVideo, reduced]);
 
   const handleSelect = useCallback((row: TimelineRow) => {
     setSelectedEventId(row.event_id);
@@ -130,17 +165,20 @@ export function ResultsView({
             </div>
           )}
 
-          {/* Ingredient timeline — additions reveal one at a time. */}
+          {/* Cooking journey — a playhead travels the spine, popping each
+              addition left/right as the cook plays. */}
           <section className="space-y-3">
             <h2 className="font-heading text-2xl font-normal">
               Cooking timeline
             </h2>
-            <IngredientTimeline
+            <CookingJourney
               timeline={results.timeline}
               duration={trackDuration}
+              progress={progress}
+              complete={complete}
+              reduced={reduced}
               selectedEventId={selectedEventId}
               onSelect={handleSelect}
-              revealCount={revealCount}
             />
           </section>
 

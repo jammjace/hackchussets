@@ -1,16 +1,20 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { NahWordmark } from "@/components/brand/NahWordmark";
+import { HeroArt } from "@/components/landing/HeroArt";
+import { HowItWorks } from "@/components/landing/HowItWorks";
+import { LandingFooter } from "@/components/landing/LandingFooter";
+import { NavPill } from "@/components/landing/NavPill";
+import { WhoItsFor } from "@/components/landing/WhoItsFor";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createDemoSession, getHealth } from "@/lib/api";
 
 type Status =
   | { state: "loading" }
-  | { state: "connected"; status: string }
+  | { state: "connected" }
   | { state: "error"; message: string };
 
 export default function Home() {
@@ -22,8 +26,8 @@ export default function Home() {
   useEffect(() => {
     let active = true;
     getHealth()
-      .then((res) => {
-        if (active) setStatus({ state: "connected", status: res.status });
+      .then(() => {
+        if (active) setStatus({ state: "connected" });
       })
       .catch((err: unknown) => {
         if (active)
@@ -55,35 +59,58 @@ export default function Home() {
   }
 
   return (
-    <main className="flex flex-1 items-center justify-center p-6">
-      <Card className="w-full max-w-md">
-        <CardHeader className="gap-3">
-          <NahWordmark size={56} />
-          <CardTitle>Say nah to hidden sodium.</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {status.state === "loading" && (
-            <p className="text-ink-soft">Checking the backend…</p>
-          )}
+    <div className="flex-1 px-4 sm:px-6">
+      <NavPill />
+
+      <main className="mx-auto w-full max-w-5xl space-y-20 py-12 sm:py-16">
+        {/* Hero */}
+        <section className="grid items-center gap-10 lg:grid-cols-2">
+          <div className="space-y-6">
+            <h1 className="font-display text-6xl leading-[0.95] font-normal tracking-tight sm:text-7xl">
+              Cook like you always do.{" "}
+              <em className="italic">We&apos;ll count the salt.</em>
+            </h1>
+            <p className="max-w-xl font-ui text-lg text-ink-soft">
+              Say nah to hidden sodium. Wear the glasses, cook, then upload the
+              video — Na(h) finds every seasoning and adds up the sodium against
+              the 2,300 mg daily limit.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Button render={<Link href="/how-to-record" />}>
+                Start cooking
+              </Button>
+              <Button variant="outline" render={<Link href="/pantry" />}>
+                Set up your pantry
+              </Button>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button variant="link" onClick={startDemo} disabled={demoBusy}>
+                {demoBusy ? "Starting demo…" : "Try a demo"}
+              </Button>
+              {demoError && <span className="text-sm text-chilli">{demoError}</span>}
+            </div>
+          </div>
+
+          <HeroArt />
+        </section>
+
+        <HowItWorks />
+        <WhoItsFor />
+        <LandingFooter />
+
+        {/* Backend status — quiet line so you can see the API is reachable */}
+        <p className="font-ui text-sm text-ink-soft">
+          {status.state === "loading" && "Checking the backend…"}
           {status.state === "connected" && (
-            <p className="font-medium text-forest">Backend connected</p>
+            <span className="text-forest">Backend connected</span>
           )}
           {status.state === "error" && (
-            <div className="space-y-1">
-              <p className="font-medium text-chilli">Backend not reachable</p>
-              <p className="text-sm text-ink-soft">{status.message}</p>
-            </div>
+            <span className="text-chilli">
+              Backend not reachable — {status.message}
+            </span>
           )}
-
-          {/* Temporary: jump straight to a mock results session. */}
-          <div className="space-y-2 border-t border-stone pt-4">
-            <Button onClick={startDemo} disabled={demoBusy}>
-              {demoBusy ? "Starting demo…" : "Try a demo"}
-            </Button>
-            {demoError && <p className="text-sm text-chilli">{demoError}</p>}
-          </div>
-        </CardContent>
-      </Card>
-    </main>
+        </p>
+      </main>
+    </div>
   );
 }
