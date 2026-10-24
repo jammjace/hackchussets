@@ -43,10 +43,35 @@ def run_mock(session_id: str, session_dir: Path) -> None:
 
 
 def run_real(video_path: Path | None, session_id: str, session_dir: Path) -> None:
-    # TODO (with Jace): call his pipeline here once it writes events.json and
-    # evidence JPEGs per README sections 5 to 7. Today his CookingPipeline.process()
-    # returns events without session_id, timestamp or evidence_frame.
-    raise NotImplementedError("Module A session export isn't ready yet; use MODULE_A_MODE=mock")
+    """Jace's CookingPipeline with the OpenAI vision adapter. Needs OPENAI_API_KEY
+    (env or repo-root .env). Install once: pip install -e .. from backend/."""
+    if video_path is None:
+        raise ValueError("MODULE_A_MODE=real needs an uploaded video")
+
+    from dotenv import load_dotenv
+    from ingredient_detection.adapters.openai_vision import OpenAIVisionModel
+    from ingredient_detection.pipeline.cooking_pipeline import CookingPipeline
+    from ingredient_detection.services.event_tracker import IngredientEventTracker
+    from ingredient_detection.services.frame_extractor import SlidingWindowFrameExtractor
+    from ingredient_detection.services.ingredient_detector import IngredientDetector
+    from ingredient_detection.services.video_processor import VideoProcessor
+
+    load_dotenv(Path(__file__).parent.parent / ".env")
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        raise RuntimeError("OPENAI_API_KEY is not set (env or repo-root .env)")
+
+    model = OpenAIVisionModel(api_key, model=os.environ.get("VLM_MODEL", "gpt-4.1-mini"))
+    pipeline = CookingPipeline(
+        VideoProcessor(),
+        SlidingWindowFrameExtractor(),
+        IngredientDetector(model),
+        IngredientEventTracker(),
+        storage_root=session_dir.parent.parent,
+    )
+    # The pipeline refuses to reuse a session folder; app.py made an empty one.
+    session_dir.rmdir()
+    pipeline.process(str(video_path), session_id=session_id)
 
 
 def _placeholder_jpeg(path: Path, title: str, subtitle: str) -> None:
