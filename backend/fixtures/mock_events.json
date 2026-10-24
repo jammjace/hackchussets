@@ -1,0 +1,71 @@
+{
+  "session_id": "REPLACED_AT_RUNTIME",
+  "events": [
+    {
+      "event_id": "event_001",
+      "timestamp_start": 8.0,
+      "timestamp_end": 11.5,
+      "timestamp": 9.5,
+      "ingredient": "chicken bouillon",
+      "quantity": 1,
+      "unit": "cube",
+      "addition_confirmed": true,
+      "evidence_frame": "evidence/event_001.jpg"
+    },
+    {
+      "event_id": "event_002",
+      "timestamp_start": 24.0,
+      "timestamp_end": 27.0,
+      "timestamp": 25.0,
+      "ingredient": "sazon",
+      "quantity": 1,
+      "unit": "packet",
+      "addition_confirmed": true,
+      "evidence_frame": "evidence/event_002.jpg"
+    },
+    {
+      "event_id": "event_003",
+      "timestamp_start": 41.5,
+      "timestamp_end": 44.0,
+      "timestamp": 42.5,
+      "ingredient": "soy sauce",
+      "quantity": 1,
+      "unit": "tablespoon",
+      "addition_confirmed": true,
+      "evidence_frame": "evidence/event_003.jpg"
+    },
+    {
+      "event_id": "event_004",
+      "timestamp_start": 63.0,
+      "timestamp_end": 66.5,
+      "timestamp": 64.5,
+      "ingredient": "fish sauce",
+      "quantity": 2,
+      "unit": "teaspoon",
+      "addition_confirmed": true,
+      "evidence_frame": "evidence/event_004.jpg"
+    },
+    {
+      "event_id": "event_005",
+      "timestamp_start": 88.0,
+      "timestamp_end": 90.5,
+      "timestamp": 89.0,
+      "ingredient": "soy sauce",
+      "quantity": 1,
+      "unit": "teaspoon",
+      "addition_confirmed": true,
+      "evidence_frame": "evidence/event_005.jpg"
+    },
+    {
+      "event_id": "event_006",
+      "timestamp_start": 104.0,
+      "timestamp_end": 107.0,
+      "timestamp": 105.0,
+      "ingredient": "oyster sauce",
+      "quantity": 1,
+      "unit": "tablespoon",
+      "addition_confirmed": true,
+      "evidence_frame": null
+    }
+  ]
+}

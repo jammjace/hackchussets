@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "unit_aliases": {
+    "tsp": "teaspoon", "teaspoons": "teaspoon",
+    "tbsp": "tablespoon", "tablespoons": "tablespoon", "tbs": "tablespoon",
+    "cups": "cup",
+    "cubes": "cube",
+    "packets": "packet", "sachet": "packet", "sachets": "packet",
+    "milliliter": "ml", "milliliters": "ml", "millilitre": "ml", "millilitres": "ml", "mls": "ml",
+    "gram": "g", "grams": "g",
+    "pieces": "piece"
+  },
+  "volume_ml": {
+    "teaspoon": 4.929,
+    "tablespoon": 14.787,
+    "cup": 236.6,
+    "ml": 1
+  },
+  "categories": [
+    {
+      "category_id": "salt",
+      "display_name": "Salt",
+      "aliases": ["salt", "table salt", "sea salt", "kosher salt", "sal"],
+      "default_product_id": "table_salt"
+    },
+    {
+      "category_id": "soy_sauce",
+      "display_name": "Soy sauce",
+      "aliases": ["soy sauce", "soya sauce", "shoyu", "nuoc tuong", "salsa de soya", "salsa de soja"],
+      "default_product_id": "kikkoman_soy"
+    },
+    {
+      "category_id": "fish_sauce",
+      "display_name": "Fish sauce",
+      "aliases": ["fish sauce", "nuoc mam"],
+      "default_product_id": "redboat_40n"
+    },
+    {
+      "category_id": "chicken_bouillon",
+      "display_name": "Chicken bouillon",
+      "aliases": ["chicken bouillon", "bouillon cube", "bouillon", "stock cube", "chicken stock cube", "caldo de pollo", "consome"],
+      "default_product_id": "knorr_chicken_cube"
+    },
+    {
+      "category_id": "sazon",
+      "display_name": "Sazon seasoning",
+      "aliases": ["sazon", "sazon goya", "sazon seasoning"],
+      "default_product_id": "goya_sazon_coriander_annatto"
+    }
+  ],
+  "products": [
+    {
+      "product_id": "table_salt",
+      "category_id": "salt",
+      "brand": "Generic",
+      "name": "Table salt",
+      "sodium_mg_per_unit": {"teaspoon": 2325},
+      "source": "Approximate, about 6 g per teaspoon; check your label"
+    },
+    {
+      "product_id": "kikkoman_soy",
+      "category_id": "soy_sauce",
+      "brand": "Kikkoman",
+      "name": "Soy Sauce",
+      "sodium_mg_per_unit": {"tablespoon": 960},
+      "source": "Kikkoman USA label: 960 mg per 1 Tbsp (15 mL)"
+    },
+    {
+      "product_id": "redboat_40n",
+      "category_id": "fish_sauce",
+      "brand": "Red Boat",
+      "name": "40N Fish Sauce",
+      "sodium_mg_per_unit": {"tablespoon": 1430},
+      "source": "US retail label: 1,430 mg per 1 Tbsp"
+    },
+    {
+      "product_id": "knorr_chicken_cube",
+      "category_id": "chicken_bouillon",
+      "brand": "Knorr",
+      "name": "Chicken Flavor Bouillon Cube (24 ct, US)",
+      "sodium_mg_per_unit": {"cube": 2080},
+      "source": "US label: 1,040 mg per half cube"
+    },
+    {
+      "product_id": "goya_sazon_coriander_annatto",
+      "category_id": "sazon",
+      "brand": "Goya",
+      "name": "Sazon Coriander & Annatto",
+      "sodium_mg_per_unit": {"packet": 850, "teaspoon": 680},
+      "source": "US label: 170 mg per 1/4 tsp; packet value derived (about 5 servings per packet)"
+    }
+  ]
+}
