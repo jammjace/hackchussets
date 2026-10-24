@@ -1,8 +1,13 @@
 import json
 
 from ..interfaces.interval_inference import IIntervalInference
-from ..models.intervals import FrameInterval
-from ..models.qwen import IntervalPrediction
+from ..interfaces.ingredient_discovery import IIngredientDiscovery
+from ..models.intervals import FrameInterval, TimestampedFrame
+from ..models.qwen import (
+    IngredientDiscovery,
+    IngredientDiscoveryResult,
+    IntervalPrediction,
+)
 
 
 RECORDED_PREDICTIONS = {
@@ -41,4 +46,22 @@ class MockQwenVisionModel(IIntervalInference):
             raw_response=json.dumps(payload),
             timestamp_start=interval.timestamp_start,
             timestamp_end=interval.timestamp_end,
+        )
+
+
+class MockIngredientDiscovery(IIngredientDiscovery):
+    """Scripted discovery results, intentionally independent of benchmark labels."""
+
+    def __init__(self, discoveries: list[IngredientDiscovery]) -> None:
+        self._discoveries = discoveries
+        self.received_timestamps: list[float] = []
+
+    def discover(
+        self, frames: list[TimestampedFrame]
+    ) -> IngredientDiscoveryResult:
+        self.received_timestamps = [frame.timestamp for frame in frames]
+        payload = {"ingredients": [item.model_dump() for item in self._discoveries]}
+        return IngredientDiscoveryResult(
+            ingredients=self._discoveries,
+            raw_response=json.dumps(payload),
         )

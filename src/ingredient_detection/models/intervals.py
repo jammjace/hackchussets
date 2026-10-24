@@ -11,3 +11,11 @@ class FrameInterval:
     timestamp_start: float
     timestamp_end: float
     frames: tuple[Image.Image, Image.Image]
+
+
+@dataclass(frozen=True)
+class TimestampedFrame:
+    """A chronological RGB frame used to provide discovery context."""
+
+    timestamp: float
+    image: Image.Image
