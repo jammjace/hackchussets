@@ -108,7 +108,7 @@ export default function ProcessingPage() {
           {phase.state === "working" ? (
             <>
               <div className="space-y-1 text-center">
-                <h1 className="font-heading text-xl font-semibold">
+                <h1 className="font-heading text-2xl font-normal">
                   Analysing your video
                 </h1>
                 <p className="text-sm text-muted-foreground">
@@ -126,10 +126,10 @@ export default function ProcessingPage() {
                         className={[
                           "flex size-6 shrink-0 items-center justify-center rounded-full",
                           done
-                            ? "bg-green-600 text-white"
+                            ? "bg-forest text-canvas"
                             : current
-                              ? "bg-primary/10 text-primary"
-                              : "bg-muted text-muted-foreground",
+                              ? "border-2 border-ink text-ink"
+                              : "bg-stone text-ink-soft",
                         ].join(" ")}
                       >
                         {done ? (
@@ -157,7 +157,7 @@ export default function ProcessingPage() {
           ) : (
             <div className="space-y-4 text-center">
               <div className="space-y-1">
-                <h1 className="font-heading text-xl font-semibold">
+                <h1 className="font-heading text-2xl font-normal">
                   We couldn&apos;t analyse that video
                 </h1>
                 <p className="text-sm text-muted-foreground">{phase.message}</p>

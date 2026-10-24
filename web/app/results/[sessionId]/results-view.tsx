@@ -10,9 +10,12 @@ import { CumulativeChart } from "@/components/results/CumulativeChart";
 import { IncompleteNotice } from "@/components/results/IncompleteNotice";
 import { IngredientTimeline } from "@/components/results/IngredientTimeline";
 import { SessionVideo } from "@/components/results/SessionVideo";
+import { Suggestions } from "@/components/results/Suggestions";
 import { TotalCard } from "@/components/results/TotalCard";
+import { Reveal } from "@/components/results/Reveal";
 import { ApiError, apiUrl, getResults } from "@/lib/api";
 import type { Results, TimelineRow } from "@/lib/types";
+import { useReducedMotion, useRevealSequence } from "@/lib/use-reveal";
 
 type LoadState =
   | { state: "loading" }
@@ -64,6 +67,18 @@ export function ResultsView({
     return last.timestamp + 10;
   }, [videoDuration, results]);
 
+  // Intro reveal: show each timeline addition in turn, then count the total
+  // up, then fade in the rest of the analysis. Honours reduced motion.
+  const reduced = useReducedMotion();
+  const rowCount = results?.timeline.length ?? 0;
+  const { revealCount, phase } = useRevealSequence({
+    rowCount,
+    active: load.state === "ok",
+    reduced,
+  });
+  const timelineReady = phase === "total" || phase === "done";
+  const analysisReady = phase === "done";
+
   const handleSelect = useCallback((row: TimelineRow) => {
     setSelectedEventId(row.event_id);
     const video = videoRef.current;
@@ -102,19 +117,7 @@ export function ResultsView({
 
       {load.state === "ok" && results && (
         <>
-          {/* 1. Total card */}
-          <TotalCard
-            totalSodiumMg={results.total_sodium_mg}
-            dailyLimitMg={results.daily_limit_mg}
-            percentOfDailyLimit={results.percent_of_daily_limit}
-          />
-
-          {/* 2. Incomplete notice */}
-          {results.is_incomplete && (
-            <IncompleteNotice warnings={results.warnings} />
-          )}
-
-          {/* 3. Video player (or placeholder when no video) */}
+          {/* Video player (the source) shows first (or a placeholder). */}
           {results.video_url ? (
             <SessionVideo
               ref={videoRef}
@@ -122,14 +125,14 @@ export function ResultsView({
               onDuration={setVideoDuration}
             />
           ) : (
-            <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-muted text-center text-sm text-muted-foreground ring-1 ring-foreground/10">
+            <div className="flex aspect-video w-full items-center justify-center rounded-video bg-stone text-center text-sm text-ink-soft ring-1 ring-stone">
               No video for this session — timeline seeking is disabled.
             </div>
           )}
 
-          {/* 4. Ingredient timeline */}
+          {/* Ingredient timeline — additions reveal one at a time. */}
           <section className="space-y-3">
-            <h2 className="font-heading text-lg font-medium">
+            <h2 className="font-heading text-2xl font-normal">
               Cooking timeline
             </h2>
             <IngredientTimeline
@@ -137,33 +140,65 @@ export function ResultsView({
               duration={trackDuration}
               selectedEventId={selectedEventId}
               onSelect={handleSelect}
+              revealCount={revealCount}
             />
           </section>
 
-          {/* 5. Cumulative sodium chart */}
-          {results.timeline.length > 0 && (
-            <section className="space-y-3">
-              <h2 className="font-heading text-lg font-medium">
-                Sodium over time
-              </h2>
-              <Card>
-                <CardContent>
-                  <CumulativeChart
-                    timeline={results.timeline}
-                    dailyLimitMg={results.daily_limit_mg}
-                  />
-                </CardContent>
-              </Card>
-            </section>
+          {/* Total card — revealed once every addition has appeared; the big
+              number counts up to the dish total. */}
+          <Reveal show={timelineReady}>
+            <TotalCard
+              totalSodiumMg={results.total_sodium_mg}
+              dailyLimitMg={results.daily_limit_mg}
+              percentOfDailyLimit={results.percent_of_daily_limit}
+              animate={timelineReady}
+            />
+          </Reveal>
+
+          {/* Incomplete notice */}
+          {results.is_incomplete && (
+            <Reveal show={timelineReady}>
+              <IncompleteNotice warnings={results.warnings} />
+            </Reveal>
           )}
 
-          {/* 7. Navigation */}
-          <div className="flex flex-wrap gap-3 pt-2">
-            <Button render={<Link href="/upload" />}>Cook something else</Button>
-            <Button variant="outline" render={<Link href="/pantry" />}>
-              Edit pantry
-            </Button>
-          </div>
+          {/* The rest of the analysis fades in after the total. */}
+          {results.timeline.length > 0 && (
+            <Reveal show={analysisReady}>
+              <section className="space-y-3">
+                <h2 className="font-heading text-2xl font-normal">
+                  Sodium over time
+                </h2>
+                <Card>
+                  <CardContent>
+                    <CumulativeChart
+                      timeline={results.timeline}
+                      dailyLimitMg={results.daily_limit_mg}
+                    />
+                  </CardContent>
+                </Card>
+              </section>
+            </Reveal>
+          )}
+
+          <Reveal show={analysisReady}>
+            <Suggestions
+              timeline={results.timeline}
+              totalSodiumMg={results.total_sodium_mg}
+              dailyLimitMg={results.daily_limit_mg}
+            />
+          </Reveal>
+
+          <Reveal show={analysisReady}>
+            <div className="flex flex-wrap gap-3 pt-2">
+              <Button render={<Link href="/upload" />}>
+                Cook something else
+              </Button>
+              <Button variant="outline" render={<Link href="/pantry" />}>
+                Edit pantry
+              </Button>
+            </div>
+          </Reveal>
         </>
       )}
     </main>

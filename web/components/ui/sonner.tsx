@@ -30,13 +30,23 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       style={
         {
-          "--normal-bg": "var(--popover)",
-          "--normal-text": "var(--popover-foreground)",
-          "--normal-border": "var(--border)",
-          "--border-radius": "var(--radius)",
+          // Na(h) Toast (§09): paper fill, 2px ink border, pill radius, float shadow.
+          "--normal-bg": "var(--paper)",
+          "--normal-text": "var(--ink)",
+          "--normal-border": "var(--ink)",
+          "--border-radius": "999px",
+          "--border": "2px",
+          "--success-bg": "var(--paper)",
+          "--success-text": "var(--ink)",
+          "--success-border": "var(--ink)",
         } as React.CSSProperties
       }
       toastOptions={{
+        style: {
+          border: "2px solid var(--ink)",
+          boxShadow: "var(--shadow-float)",
+          fontFamily: "var(--font-ui)",
+        },
         classNames: {
           toast: "cn-toast",
         },

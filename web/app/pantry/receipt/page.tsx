@@ -154,7 +154,7 @@ export default function ReceiptPage() {
     <main className="mx-auto w-full max-w-3xl flex-1 space-y-6 p-4 sm:p-6">
       <div className="space-y-2">
         <Badge variant="secondary">Demo: receipt scanning is simulated</Badge>
-        <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+        <h1 className="font-heading text-3xl font-normal tracking-tight sm:text-4xl">
           Scan a receipt
         </h1>
         <p className="text-muted-foreground">
@@ -165,7 +165,7 @@ export default function ReceiptPage() {
 
       {pantryError && (
         <Card>
-          <CardContent className="text-sm text-red-600">
+          <CardContent className="text-sm text-chilli">
             {pantryError}
           </CardContent>
         </Card>

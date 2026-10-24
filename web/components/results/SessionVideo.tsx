@@ -29,7 +29,7 @@ export const SessionVideo = forwardRef<HTMLVideoElement, SessionVideoProps>(
             onDuration?.(duration);
           }
         }}
-        className="w-full rounded-xl bg-black ring-1 ring-foreground/10"
+        className="w-full rounded-video bg-ink p-2 ring-1 ring-stone [&::-webkit-media-controls-panel]:rounded-b-[24px]"
       />
     );
   },

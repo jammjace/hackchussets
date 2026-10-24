@@ -92,7 +92,7 @@ export default function UploadPage() {
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 space-y-6 p-4 sm:p-6">
       <div className="space-y-1">
-        <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+        <h1 className="font-heading text-3xl font-normal tracking-tight sm:text-4xl">
           Upload your cooking video
         </h1>
         <p className="text-muted-foreground">
@@ -114,18 +114,17 @@ export default function UploadPage() {
             onDragLeave={() => setDragOver(false)}
             onDrop={onDrop}
             className={[
-              "flex w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-8 text-center transition-colors outline-none",
-              "focus-visible:ring-3 focus-visible:ring-ring/50",
-              dragOver
-                ? "border-primary bg-primary/5"
-                : "border-border hover:bg-muted/50",
+              // Na(h) Drop Zone: 2px dashed ink, 28px radius, lavender on drag-over.
+              "flex w-full flex-col items-center justify-center gap-3 rounded-card border-2 border-dashed border-ink p-10 text-center outline-none transition-colors [transition-duration:var(--duration-ui)]",
+              "focus-visible:ring-2 focus-visible:ring-ink",
+              dragOver ? "bg-lavender" : "bg-paper hover:bg-canvas",
             ].join(" ")}
           >
-            <UploadIcon className="size-8 text-muted-foreground" aria-hidden />
-            <span className="font-medium">
+            <UploadIcon className="size-8 text-ink" aria-hidden />
+            <span className="font-ui font-semibold">
               Drag a video here, or click to choose
             </span>
-            <span className="text-sm text-muted-foreground">
+            <span className="font-ui text-sm text-ink-soft">
               .mp4, .mov, .webm or .m4v
             </span>
           </button>
@@ -138,7 +137,7 @@ export default function UploadPage() {
           />
 
           {error && (
-            <p className="mt-3 text-sm text-red-600" role="alert">
+            <p className="mt-3 text-sm text-chilli" role="alert">
               {error}
             </p>
           )}

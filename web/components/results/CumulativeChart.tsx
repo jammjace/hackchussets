@@ -118,12 +118,12 @@ export function CumulativeChart({
         />
         <ReferenceLine
           y={dailyLimitMg}
-          stroke="var(--color-red-500, #ef4444)"
+          stroke="var(--chilli)"
           strokeDasharray="4 4"
           label={{
             value: "Daily limit",
             position: "insideTopRight",
-            fill: "var(--color-red-500, #ef4444)",
+            fill: "var(--chilli)",
             fontSize: 12,
           }}
         />
@@ -147,12 +147,10 @@ function CumulativeTooltip({
     return null;
   }
   return (
-    <div className="grid min-w-32 gap-1 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
-      <span className="font-medium capitalize">{point.ingredient}</span>
-      <span className="text-muted-foreground">
-        at {formatTime(point.timestamp)}
-      </span>
-      <span className="font-mono font-medium tabular-nums">
+    <div className="grid min-w-32 gap-1 rounded-xl border-2 border-ink bg-paper px-3 py-2 text-xs shadow-[var(--shadow-float)]">
+      <span className="font-ui font-semibold capitalize">{point.ingredient}</span>
+      <span className="text-ink-soft">at {formatTime(point.timestamp)}</span>
+      <span className="font-timestamp font-medium tabular-nums">
         {formatMg(point.cumulative_mg)} total
       </span>
     </div>

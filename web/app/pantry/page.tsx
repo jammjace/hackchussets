@@ -141,7 +141,7 @@ export default function PantryPage() {
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 space-y-6 p-4 sm:p-6">
       <div className="space-y-1">
-        <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+        <h1 className="font-heading text-3xl font-normal tracking-tight sm:text-4xl">
           Your pantry
         </h1>
         <p className="text-muted-foreground">
@@ -189,7 +189,7 @@ export default function PantryPage() {
             return (
               <section key={category.category_id} className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <h2 className="font-heading text-lg font-medium">
+                  <h2 className="font-heading text-xl font-normal">
                     {category.display_name}
                   </h2>
                   <Button
