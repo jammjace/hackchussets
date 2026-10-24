@@ -70,6 +70,32 @@ def test_response_parser_accepts_fenced_json():
     assert parsed.ingredient == "oil"
 
 
+def test_no_pour_null_quantity_is_normalized_to_zero():
+    parsed = parse_interval_response(
+        '{"ingredient":"salt","pouring_detected":false,'
+        '"quantity_tbsp":null,"confidence":"low"}'
+    )
+    assert parsed.pouring_detected is False
+    assert parsed.quantity_tbsp == 0
+
+
+def test_detected_pour_preserves_unknown_null_quantity():
+    parsed = parse_interval_response(
+        '{"ingredient":"salt","pouring_detected":true,'
+        '"quantity_tbsp":null,"confidence":"low"}'
+    )
+    assert parsed.pouring_detected is True
+    assert parsed.quantity_tbsp is None
+
+
+def test_no_pour_positive_quantity_is_rejected():
+    with pytest.raises(ValidationError, match="quantity_tbsp must be 0"):
+        parse_interval_response(
+            '{"ingredient":"salt","pouring_detected":false,'
+            '"quantity_tbsp":0.5,"confidence":"low"}'
+        )
+
+
 @pytest.mark.parametrize(
     "raw",
     [

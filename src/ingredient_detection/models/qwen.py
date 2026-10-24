@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -12,6 +12,17 @@ class QwenResponse(BaseModel):
     pouring_detected: bool
     quantity_tbsp: float | None = Field(ge=0)
     confidence: Literal["low", "medium", "high"]
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_no_pour_null_quantity(cls, value: Any) -> Any:
+        if (
+            isinstance(value, dict)
+            and value.get("pouring_detected") is False
+            and value.get("quantity_tbsp") is None
+        ):
+            value = {**value, "quantity_tbsp": 0}
+        return value
 
     @field_validator("ingredient")
     @classmethod
