@@ -5,8 +5,8 @@ class Frame(BaseModel):
     """A single sampled frame with its source timestamp."""
 
     timestamp: float = Field(ge=0)
-    # Placeholder for image data (path or encoded bytes) filled in by extractor.
     image_ref: str | None = None
+    jpeg_bytes: bytes | None = Field(default=None, exclude=True, repr=False)
 
 
 class FrameWindow(BaseModel):

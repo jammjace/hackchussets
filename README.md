@@ -806,3 +806,60 @@ These are outside the current hackathon MVP.
 - Module C joins Module A and B outputs using the session and event IDs.
 
 **One ingredient addition = one event record + at most one corresponding evidence image.**
+
+---
+
+## Module A quick start
+
+Install and test the implementation:
+
+```bash
+pip install -e ".[dev]"
+pytest
+```
+
+Construct `CookingPipeline` with `VideoProcessor`, `SlidingWindowFrameExtractor`,
+`IngredientDetector(OpenAIVisionModel(...))`, and `IngredientEventTracker`, then call:
+
+```python
+result = pipeline.process("storage/recordings/cooking.mp4", session_id="cooking_001")
+```
+
+This writes `storage/sessions/cooking_001/events.json` and at most one JPEG per
+confirmed event under its `evidence/` directory. Existing session directories are
+never overwritten. Set `OPENAI_API_KEY` in a local `.env` or your process environment;
+never commit the key.
+
+---
+
+## Qwen interval experiment
+
+The intermediate Qwen path reuses `VideoProcessor` and the OpenCV frame
+extractor. It samples RGB frames at local timestamps 0, 1, 2, and so on,
+creates eight adjacent intervals for an eight-second clip, and produces
+validated per-interval predictions. It does not aggregate quantities or write
+the production ingredient-event JSON.
+
+The confirmed benchmark mapping is stored in
+`samples/benchmark_mapping.json`:
+
+- `test1.mp4` is `P12_101` (`salt`).
+- `test2.mp4` is `P22_113` (`oil`).
+
+Run the recorded Kaggle fixtures locally without loading Qwen:
+
+```bash
+python examples/run_qwen_intervals.py --video samples/test1.mp4 --mode mock
+python examples/run_qwen_intervals.py --video samples/test2.mp4 --mode mock
+```
+
+For Kaggle GPU inference, upload the repository and clips, enable a GPU, then:
+
+```bash
+pip install -e ".[qwen]"
+python examples/run_qwen_intervals.py --video samples/test1.mp4 --mode qwen
+```
+
+The real adapter loads `Qwen/Qwen3-VL-2B-Instruct` and its processor once,
+uses deterministic generation with `max_new_tokens=180`, and retains each raw
+model response alongside its validated intermediate prediction.

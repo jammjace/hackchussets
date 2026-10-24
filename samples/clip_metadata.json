@@ -1,0 +1,18 @@
+[
+  {
+    "video_id": "P22_113",
+    "clip_path": "/kaggle/working/epic_benchmark/clips/P22_113_clip.mp4",
+    "clip_start_original_s": 94.465,
+    "ingredient": "oil",
+    "annotation_start_original_s": 98.29,
+    "annotation_end_original_s": 98.64
+  },
+  {
+    "video_id": "P12_101",
+    "clip_path": "/kaggle/working/epic_benchmark/clips/P12_101_clip.mp4",
+    "clip_start_original_s": 1892.9450000000002,
+    "ingredient": "salt",
+    "annotation_start_original_s": 1896.7,
+    "annotation_end_original_s": 1897.19
+  }
+]
