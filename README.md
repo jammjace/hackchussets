@@ -1,4 +1,29 @@
 # Sodium Tracking AI — Cooking Video Analysis
+## Try NaH — Interactive Demo
+
+Experience how NaH uses AI to identify cooking ingredients and estimate sodium intake.
+
+### How to Use the Demo
+
+**Option 1: Upload a Video**
+
+1. Open the NaH web application.
+2. Click **Upload** and select a video from your device.
+3. Follow the on-screen instructions to process the upload.
+4. Explore the ingredient timeline, estimated quantities, and sodium dashboard.
+
+**Option 2: Try the Demo Without a Video**
+
+1. Open the NaH web application.
+2. Click **"I have no video, try demo"**.
+3. Explore a sample cooking session with prerecorded AI predictions.
+4. Review the detected ingredients, sodium estimates, and timestamped cooking events.
+
+### Important Demo Information
+
+NaH currently uses prerecorded ingredient predictions generated using Qwen3-VL on Kaggle. Both options demonstrate the same prepared analysis rather than running live inference on uploaded videos.
+
+Ingredient quantities are AI estimates and may be uncertain. The results are intended to demonstrate the application, not provide medical or dietary advice.
 
 **Hackathon prototype | Computer vision + sodium estimation + interactive cooking timeline**
 
