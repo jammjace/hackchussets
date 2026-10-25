@@ -200,6 +200,8 @@ export function useJourneyProgress({
             setComplete(true);
           } else if (p >= completeAt) {
             setComplete(true);
+          } else {
+            setComplete(false);
           }
         }
         frame.current = requestAnimationFrame(tick);

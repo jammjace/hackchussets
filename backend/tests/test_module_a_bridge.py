@@ -44,8 +44,8 @@ def test_prerecorded_demo_reassigns_session_without_changing_events(tmp_path):
     assert result["session_id"] == "cooking_123"
     assert result["inference_mode"] == "prerecorded_demo"
     assert result["events"] == source["events"]
-    assert result["events"][1]["quantity"] is None
-    assert result["events"][1]["unit"] is None
+    assert result["events"][1]["quantity"] == 2.0
+    assert result["events"][1]["unit"] == "tablespoon"
 
 
 def test_prerecorded_demo_reports_missing_fixture(monkeypatch, tmp_path):
