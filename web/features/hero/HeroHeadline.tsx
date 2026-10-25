@@ -12,7 +12,7 @@ export function HeroHeadline() {
     <div className="flex justify-center text-center">
       <h1
         aria-label="Say Na(h) to hidden sodium."
-        className="m-0 flex max-w-[1100px] flex-wrap items-center justify-center gap-x-[.25em] gap-y-[.1em] font-display text-[clamp(52px,7.6vw,108px)] font-normal leading-[1.02] tracking-[-.03em]"
+        className="m-0 flex max-w-[1100px] flex-wrap items-center justify-center gap-x-[.25em] gap-y-[.1em] font-display text-[clamp(40px,min(6.4vw,9.5vh),96px)] font-normal leading-[1.02] tracking-[-.03em]"
       >
         <span>Say</span>
         <span className="inline-flex items-center whitespace-nowrap">

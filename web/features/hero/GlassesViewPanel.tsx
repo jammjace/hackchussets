@@ -191,7 +191,14 @@ export function GlassesViewPanel({ povRef }: GlassesViewPanelProps) {
   return (
     <div
       ref={panelRef}
-      className="relative z-[2] aspect-video w-full overflow-hidden rounded-[18px] bg-stone [container-type:inline-size]"
+      className="relative z-[2] mx-auto aspect-video w-full overflow-hidden rounded-[18px] bg-stone [container-type:inline-size]"
+      // Keep the panel 16:9 and centred, but cap its height so the hero fits
+      // the first screen on desktop. `min(100%, …)` means it never exceeds the
+      // column, and `svh` + the 300px floor keep it from collapsing on mobile
+      // (small-viewport height avoids the address-bar overshoot of `vh`).
+      style={{
+        maxWidth: "min(100%, max(300px, calc((100svh - 370px) * 1.778)))",
+      }}
     >
       <video
         ref={videoRef}

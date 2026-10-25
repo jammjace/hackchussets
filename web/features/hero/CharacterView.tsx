@@ -24,7 +24,7 @@ export const CharacterView = forwardRef<HTMLDivElement, CharacterViewProps>(
       <div
         ref={ref}
         aria-hidden
-        className="relative ml-auto min-h-[340px] min-w-[280px] max-w-[620px] flex-[0_1_44%]"
+        className="relative ml-auto min-h-[300px] min-w-[280px] max-w-[620px] flex-[0_1_44%]"
         style={{
           WebkitMaskImage: MASK,
           maskImage: MASK,
