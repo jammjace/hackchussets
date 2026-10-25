@@ -1,6 +1,6 @@
 # Na(h) — AI-Powered Sodium Tracking
 
-### Try Our Demo 
+### Try Our Demo!
 
 1. Open the application.
 2. Click **Start cooking**.
@@ -10,6 +10,7 @@
 
 You can review detected ingredients, estimated quantities, sodium contributions, and cooking events.
 **Live Demo:** [Open Na(h)](https://nah-web.vercel.app/)
+
 <img width="935" height="455" alt="image" src="https://github.com/user-attachments/assets/fb976844-2322-4eec-9d12-2ac0a0ff6cf6" />
 
 **See what goes into your food. Know how much sodium goes into your body.**
