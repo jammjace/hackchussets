@@ -4,9 +4,8 @@
 
 1. Open the application.
 2. Click **Start cooking**.
-3. Navigate to **Upload**.
-4. Select **"I have no video, try demo"**.
-5. Explore the ingredient timeline and sodium dashboard.
+3. Select **"View the 40-second demo"**.
+4. Explore the ingredient timeline and sodium dashboard.
 
 You can review detected ingredients, estimated quantities, sodium contributions, and cooking events.
 **Live Demo:** [Open Na(h)](https://nah-web.vercel.app/)
