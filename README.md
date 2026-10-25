@@ -8,6 +8,7 @@
 4. Explore the ingredient timeline and sodium dashboard.
 
 You can review detected ingredients, estimated quantities, sodium contributions, and cooking events.
+
 **Live Demo:** [Open Na(h)](https://nah-web.vercel.app/)
 
 <img width="935" height="455" alt="image" src="https://github.com/user-attachments/assets/fb976844-2322-4eec-9d12-2ac0a0ff6cf6" />
