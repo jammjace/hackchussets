@@ -4,15 +4,7 @@
 Experience how NaH uses AI to identify cooking ingredients and estimate sodium intake.
 
 ### How to Use the Demo
-
-**Option 1: Upload a Video**
-
-1. Open the NaH web application.
-2. Click **Upload** and select a video from your device.
-3. Follow the on-screen instructions to process the upload.
-4. Explore the ingredient timeline, estimated quantities, and sodium dashboard.
-
-**Option 2: Try the Demo Without a Video**
+**Try the Demo Without a Video**
 
 1. Open the NaH web application.
 2. Click **"I have no video, try demo"**.
