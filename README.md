@@ -1,5 +1,5 @@
 # Na(h) — AI-Powered Sodium Tracking
-
+**Live Demo:** [Open Na(h)](https://nah-web.vercel.app/)
 **See what goes into your food. Know how much sodium goes into your body.**
 
 Na(h) is an AI-powered cooking assistant that helps users understand their sodium intake through cooking videos. By combining computer vision, multimodal AI, and nutritional analysis, Na(h) makes it easier to track ingredients without manually recording every addition.
@@ -56,9 +56,7 @@ Flags ingredients with unknown quantities or incomplete sodium calculations inst
 
 Experience our interactive web application without needing to install anything.
 
-**Live Demo:** [Open Na(h)](https://nah-web.vercel.app/)
-
-### Option 1: Try Our Demo — Recommended
+### Try Our Demo 
 
 1. Open the application.
 2. Click **Start cooking**.
@@ -67,14 +65,6 @@ Experience our interactive web application without needing to install anything.
 5. Explore the ingredient timeline and sodium dashboard.
 
 You can review detected ingredients, estimated quantities, sodium contributions, and cooking events.
-
-### Option 2: Upload a Video
-
-1. Open the application.
-2. Click **Start cooking**.
-3. Select **Upload**.
-4. Choose a supported video from your device.
-5. Continue to the results dashboard.
 
 **Demo note:** The hosted prototype uses previously generated Qwen3-VL analysis to demonstrate the product experience. Uploaded videos in this deployment do not undergo new AI inference, and the displayed analysis does not depend on the uploaded video's contents.
 
