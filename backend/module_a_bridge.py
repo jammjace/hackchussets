@@ -49,8 +49,8 @@ def run_module_a(video_path: Path | None, session_id: str, session_dir: Path) ->
         raise ValueError(f"Unsupported MODULE_A_MODE={mode!r}")
 
 
-def run_prerecorded_demo(session_id: str, session_dir: Path) -> None:
-    """Use the reviewed 40-second Qwen result for every uploaded video."""
+def load_prerecorded_demo_events(session_id: str) -> dict[str, Any]:
+    """Load and validate the reviewed 40-second Qwen result without writing."""
     try:
         doc = json.loads(PRERECORDED_DEMO_FIXTURE.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:
@@ -90,6 +90,12 @@ def run_prerecorded_demo(session_id: str, session_dir: Path) -> None:
 
     doc["session_id"] = session_id
     doc["inference_mode"] = "prerecorded_demo"
+    return doc
+
+
+def run_prerecorded_demo(session_id: str, session_dir: Path) -> None:
+    """Use the reviewed 40-second Qwen result for every uploaded video."""
+    doc = load_prerecorded_demo_events(session_id)
     session_dir.mkdir(parents=True, exist_ok=True)
     (session_dir / "events.json").write_text(
         json.dumps(doc, indent=2) + "\n", encoding="utf-8"

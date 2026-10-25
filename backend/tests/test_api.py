@@ -152,3 +152,50 @@ def test_any_upload_uses_prerecorded_fixture_in_demo_mode(monkeypatch, payload):
     assert results["timeline"][1]["unit"] is None
     assert results["timeline"][1]["status"] == "incomplete_quantity"
     assert results["is_incomplete"] is True
+
+
+def test_serverless_demo_is_stateless_and_uses_reviewed_fixture(monkeypatch):
+    import app as app_module
+
+    monkeypatch.setattr(app_module, "SERVERLESS_DEMO", True)
+    response = client.post("/api/sessions/demo")
+    assert response.status_code == 200
+    assert response.json() == {"session_id": "prerecorded-demo"}
+    assert not (app_module.SESSIONS / "prerecorded-demo").exists()
+
+    results = client.get("/api/sessions/prerecorded-demo/results")
+    assert results.status_code == 200
+    data = results.json()
+    assert data["session_id"] == "prerecorded-demo"
+    assert data["inference_mode"] == "prerecorded_demo"
+    assert data["video_url"] is None
+    assert [row["ingredient"] for row in data["timeline"]] == [
+        "olive oil",
+        "salt",
+    ]
+    assert data["timeline"][1]["quantity"] is None
+    assert data["is_incomplete"] is True
+
+
+def test_serverless_upload_does_not_persist_video(monkeypatch):
+    import app as app_module
+
+    monkeypatch.setattr(app_module, "SERVERLESS_DEMO", True)
+    response = client.post(
+        "/api/sessions",
+        files={"video": ("small.mp4", io.BytesIO(b"demo"), "video/mp4")},
+    )
+    assert response.status_code == 200
+    assert response.json() == {"session_id": "prerecorded-demo"}
+    assert app_module._find_recording("prerecorded-demo") is None
+
+
+def test_serverless_pantry_is_read_only(monkeypatch):
+    import app as app_module
+
+    monkeypatch.setattr(app_module, "SERVERLESS_DEMO", True)
+    pantry = client.get("/api/pantry").json()
+    response = client.put("/api/pantry", json=pantry)
+    assert response.status_code == 503
+    assert "disabled" in response.json()["detail"]
+    assert client.post("/api/pantry/reset").status_code == 200

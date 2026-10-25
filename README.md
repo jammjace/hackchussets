@@ -510,6 +510,37 @@ Preprocessed predictions should be **clearly labeled** as such. Do not imply a l
 
 This repository is a team hackathon prototype. Follow the licensing and redistribution requirements of the source videos and model before publishing artifacts or deploying the application publicly.
 
+## Public Vercel demo
+
+Deploy this monorepo as two Vercel projects:
+
+1. **NaH API** — Root Directory `backend`. Vercel detects `app.py` as a
+   FastAPI application. Set `SERVERLESS_DEMO=true` and set `CORS_ORIGINS` to
+   the final frontend URL.
+2. **NaH web** — Root Directory `web`. Keep the Next.js defaults. Set
+   `NEXT_PUBLIC_API_BASE` to the backend project URL and
+   `NEXT_PUBLIC_DEPLOYMENT_MODE=public_demo`.
+
+Deploy the backend first, copy its production URL into the frontend variable,
+deploy the frontend, then copy the frontend production URL into the backend's
+`CORS_ORIGINS` and redeploy the backend. The public judge flow is:
+
+```text
+Landing → Start cooking → Upload → I have no video, try demo → Results
+```
+
+The public demo is deliberately stateless. `POST /api/sessions/demo` returns
+the fixed `prerecorded-demo` session, and every results request reloads
+`backend/demo_fixtures/cooking_40s/events.json` and runs the normal sodium
+engine. No Qwen model, GPU, API key, database, or persistent filesystem is
+required.
+
+Vercel Function request bodies are limited to 4.5 MB. The frontend therefore
+limits public-demo video selection to 4 MB; accepted uploads use prerecorded
+results and are not retained for playback. Full upload playback and editable
+pantry persistence remain available when running locally or on a backend host
+with durable storage.
+
 ---
 
 ## Module C — Implemented Frontend (Na(h))

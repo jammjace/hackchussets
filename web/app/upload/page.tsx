@@ -10,6 +10,10 @@ import { useVideoFile } from "@/components/upload/video-file-context";
 import { createDemoSession } from "@/lib/api";
 import { formatNumber } from "@/lib/format";
 
+const PUBLIC_DEMO =
+  process.env.NEXT_PUBLIC_DEPLOYMENT_MODE === "public_demo";
+const PUBLIC_UPLOAD_LIMIT_BYTES = 4 * 1024 * 1024;
+
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${formatNumber(bytes / 1024)} KB`;
@@ -49,6 +53,12 @@ export default function UploadPage() {
       if (!isVideoFile(candidate)) {
         setError(
           "That doesn't look like a video. Please choose an .mp4, .mov, .webm or .m4v file.",
+        );
+        return;
+      }
+      if (PUBLIC_DEMO && candidate.size > PUBLIC_UPLOAD_LIMIT_BYTES) {
+        setError(
+          "Public demo uploads must be under 4 MB. Use the no-video demo for the full prerecorded experience.",
         );
         return;
       }
@@ -96,12 +106,20 @@ export default function UploadPage() {
           Upload your cooking video
         </h1>
         <p className="text-muted-foreground">
-          Choose the clip from your head-mounted or overhead camera. We&apos;ll
-          find every seasoning you added.
+          {PUBLIC_DEMO
+            ? "This public deployment shows prerecorded AI results. Uploaded videos are not retained or analysed."
+            : "Choose the clip from your head-mounted or overhead camera. We’ll find every seasoning you added."}
         </p>
       </div>
 
       {/* Drop zone / picker */}
+      {PUBLIC_DEMO && (
+        <div className="rounded-card bg-lavender px-4 py-3 text-sm text-ink ring-1 ring-stone">
+          Public demo — prerecorded AI results. For the most reliable experience,
+          use “I have no video, try demo”.
+        </div>
+      )}
+
       <Card>
         <CardContent>
           <button
@@ -179,7 +197,7 @@ export default function UploadPage() {
           disabled={demoBusy}
           className="text-sm text-muted-foreground underline-offset-4 hover:underline disabled:opacity-50"
         >
-          {demoBusy ? "Starting demo…" : "No video? Try the demo"}
+          {demoBusy ? "Starting demo…" : "I have no video, try demo"}
         </button>
       </div>
     </main>

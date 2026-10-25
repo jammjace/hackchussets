@@ -36,12 +36,23 @@ uploads continue to use the original six-event UI fixture.
 | `MODULE_A_MODE` | `mock` | `mock` uses recorded sample predictions without Qwen/GPU; `real` lazily loads one shared Qwen model |
 | `STORAGE_DIR` | `backend/storage` | Where recordings and sessions live |
 | `CORS_ORIGINS` | `http://localhost:3000` | Comma-separated frontend origins |
+| `CORS_ORIGIN_REGEX` | unset | Optional Python regular expression for allowed preview origins |
+| `SERVERLESS_DEMO` | unset | `true` makes the reviewed demo stateless for Vercel |
 
 For the hackathon prerecorded-inference demonstration, set
 `MODULE_A_MODE=prerecorded_demo`. Every valid uploaded video remains available
 for playback, while ingredient events come from
 `backend/demo_fixtures/cooking_40s/events.json`. The results API identifies
 this mode so the frontend can disclose that the AI results are prerecorded.
+
+### Vercel public-demo mode
+
+Deploy `backend/` as its own Vercel project and set `SERVERLESS_DEMO=true`.
+The fixed `prerecorded-demo` session is rebuilt from the bundled reviewed
+fixture on every results request, so it does not depend on Vercel's ephemeral
+filesystem. Pantry writes are intentionally disabled. Small uploads can enter
+the same prerecorded experience, but the uploaded video is not retained and
+cannot be played back after the request; use the no-video demo for judging.
 
 ## Files
 

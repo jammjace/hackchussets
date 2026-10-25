@@ -17,6 +17,8 @@ const STEPS = [
 ] as const;
 
 const MIN_STEP_MS = 800;
+const PUBLIC_DEMO =
+  process.env.NEXT_PUBLIC_DEPLOYMENT_MODE === "public_demo";
 
 type Phase =
   | { state: "working" }
@@ -112,7 +114,9 @@ export default function ProcessingPage() {
                   Analysing your video
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  This can take a minute or two for a longer clip.
+                  {PUBLIC_DEMO
+                    ? "Loading reviewed prerecorded AI results. This video is not being analysed."
+                    : "This can take a minute or two for a longer clip."}
                 </p>
               </div>
 

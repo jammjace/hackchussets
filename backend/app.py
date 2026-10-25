@@ -22,7 +22,11 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
-from module_a_bridge import PrerecordedDemoFixtureError, run_module_a
+from module_a_bridge import (
+    PrerecordedDemoFixtureError,
+    load_prerecorded_demo_events,
+    run_module_a,
+)
 from sodium_engine import calculate, load_default_pantry
 
 STORAGE = Path(os.environ.get("STORAGE_DIR", Path(__file__).parent / "storage")).resolve()
@@ -34,11 +38,18 @@ SESSION_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 EVIDENCE_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}\.jpg$")
 VIDEO_EXTS = {".mp4", ".mov", ".webm", ".m4v"}
 DAILY_LIMIT_MG = 2300
+PUBLIC_DEMO_SESSION_ID = "prerecorded-demo"
+SERVERLESS_DEMO = os.environ.get("SERVERLESS_DEMO", "").lower() in {
+    "1",
+    "true",
+    "yes",
+}
 
 app = FastAPI(title="Sodium tracker backend")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=os.environ.get("CORS_ORIGINS", "http://localhost:3000").split(","),
+    allow_origin_regex=os.environ.get("CORS_ORIGIN_REGEX"),
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -78,6 +89,8 @@ def _find_recording(session_id: str) -> Path | None:
 
 
 def _load_pantry() -> dict[str, Any]:
+    if SERVERLESS_DEMO:
+        return load_default_pantry()
     if PANTRY_FILE.exists():
         return json.loads(PANTRY_FILE.read_text(encoding="utf-8"))
     return load_default_pantry()
@@ -98,6 +111,11 @@ def get_pantry() -> dict[str, Any]:
 @app.put("/api/pantry")
 def put_pantry(pantry: dict[str, Any]) -> dict[str, Any]:
     """Save the user's edited pantry (add or edit products, change defaults)."""
+    if SERVERLESS_DEMO:
+        raise HTTPException(
+            status_code=503,
+            detail="Pantry edits are disabled in the stateless public demo.",
+        )
     for key in ("categories", "products"):
         if not isinstance(pantry.get(key), list):
             raise HTTPException(status_code=422, detail=f"pantry.{key} must be a list")
@@ -108,6 +126,8 @@ def put_pantry(pantry: dict[str, Any]) -> dict[str, Any]:
 
 @app.post("/api/pantry/reset")
 def reset_pantry() -> dict[str, Any]:
+    if SERVERLESS_DEMO:
+        return load_default_pantry()
     PANTRY_FILE.unlink(missing_ok=True)
     return load_default_pantry()
 
@@ -118,6 +138,9 @@ def create_session(video: UploadFile = File(...)) -> dict[str, str]:
     ext = Path(video.filename or "").suffix.lower() or ".mp4"
     if ext not in VIDEO_EXTS:
         raise HTTPException(status_code=415, detail=f"Unsupported video type {ext}")
+
+    if SERVERLESS_DEMO:
+        return {"session_id": PUBLIC_DEMO_SESSION_ID}
 
     session_id = _next_session_id()
     session_dir = SESSIONS / session_id
@@ -137,6 +160,8 @@ def create_session(video: UploadFile = File(...)) -> dict[str, str]:
 @app.post("/api/sessions/demo")
 def create_demo_session() -> dict[str, str]:
     """A session with mock events and no video: build the results screen with this."""
+    if SERVERLESS_DEMO:
+        return {"session_id": PUBLIC_DEMO_SESSION_ID}
     session_id = _next_session_id()
     session_dir = SESSIONS / session_id
     session_dir.mkdir(parents=True)
@@ -147,11 +172,26 @@ def create_demo_session() -> dict[str, str]:
 @app.get("/api/sessions/{session_id}/results")
 def get_results(session_id: str) -> dict[str, Any]:
     """Join Module A events and Module B sodium by event_id into one timeline."""
-    events_file = _session_dir(session_id) / "events.json"
-    if not events_file.exists():
-        raise HTTPException(status_code=404, detail="No events for this session yet")
+    if SERVERLESS_DEMO and session_id == PUBLIC_DEMO_SESSION_ID:
+        try:
+            events_doc = load_prerecorded_demo_events(session_id)
+        except PrerecordedDemoFixtureError as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        has_video = False
+    else:
+        events_file = _session_dir(session_id) / "events.json"
+        if not events_file.exists():
+            raise HTTPException(status_code=404, detail="No events for this session yet")
+        events_doc = json.loads(events_file.read_text(encoding="utf-8"))
+        has_video = _find_recording(session_id) is not None
 
-    events_doc = json.loads(events_file.read_text(encoding="utf-8"))
+    return _results_from_events(session_id, events_doc, has_video)
+
+
+def _results_from_events(
+    session_id: str, events_doc: dict[str, Any], has_video: bool
+) -> dict[str, Any]:
+    """Join one event document with pantry sodium without session storage."""
     sodium = calculate(events_doc, _load_pantry())
     by_id = {r["event_id"]: r for r in sodium["results"]}
 
@@ -190,7 +230,7 @@ def get_results(session_id: str) -> dict[str, Any]:
     return {
         "session_id": session_id,
         "inference_mode": events_doc.get("inference_mode"),
-        "video_url": f"/api/sessions/{session_id}/video" if _find_recording(session_id) else None,
+        "video_url": f"/api/sessions/{session_id}/video" if has_video else None,
         "timeline": timeline,
         "total_sodium_mg": total,
         "daily_limit_mg": DAILY_LIMIT_MG,
