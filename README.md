@@ -56,7 +56,7 @@ Flags ingredients with unknown quantities or incomplete sodium calculations inst
 
 Experience our interactive web application without needing to install anything.
 
-**Live Demo:** [Open Na(h)](INSERT_VERCEL_URL_HERE)
+**Live Demo:** [Open Na(h)](https://nah-web.vercel.app/)
 
 ### Option 1: Try Our Demo — Recommended
 
