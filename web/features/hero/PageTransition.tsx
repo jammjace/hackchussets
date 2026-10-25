@@ -50,7 +50,9 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
       if (kind === "start") {
         setLeaving(true);
         window.setTimeout(() => {
-          router.push("/upload");
+          // Show the recording instructions first (landing → how-to-record →
+          // upload), per the product flow.
+          router.push("/how-to-record");
           // Release the guard so returning here (Back/bfcache) isn't stuck.
           running.current = false;
         }, FADE_MS);
