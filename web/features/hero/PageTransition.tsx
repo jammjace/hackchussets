@@ -5,6 +5,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -48,7 +49,11 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
 
       if (kind === "start") {
         setLeaving(true);
-        window.setTimeout(() => router.push("/upload"), FADE_MS);
+        window.setTimeout(() => {
+          router.push("/upload");
+          // Release the guard so returning here (Back/bfcache) isn't stuck.
+          running.current = false;
+        }, FADE_MS);
         return;
       }
 
@@ -59,7 +64,10 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
         window.setTimeout(resolve, FADE_MS),
       );
       Promise.all([demo, faded])
-        .then(([{ session_id }]) => router.push(`/results/${session_id}`))
+        .then(([{ session_id }]) => {
+          router.push(`/results/${session_id}`);
+          running.current = false;
+        })
         .catch((err: unknown) => {
           running.current = false;
           setLeaving(false);
@@ -72,6 +80,23 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
     },
     [router],
   );
+
+  // Clear the fade whenever the landing is (re)shown — including a Back/forward
+  // bfcache restore, where React state can come back with `leaving` still true
+  // and leave the opaque overlay covering the page (white screen that hangs).
+  useEffect(() => {
+    const reset = () => {
+      running.current = false;
+      setLeaving(false);
+      setError(null);
+    };
+    reset();
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) reset();
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+  }, []);
 
   const value = useMemo<TransitionContextValue>(
     () => ({ leaving, error, go, busy: leaving }),
