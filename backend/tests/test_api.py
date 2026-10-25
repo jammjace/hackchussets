@@ -143,14 +143,16 @@ def test_any_upload_uses_prerecorded_fixture_in_demo_mode(monkeypatch, payload):
         "olive oil",
         "salt",
     ]
-    assert events["events"][1]["quantity"] is None
+    assert events["events"][1]["quantity"] == 2.0
+    assert events["events"][1]["unit"] == "tablespoon"
 
     results = client.get(f"/api/sessions/{session_id}/results").json()
     assert results["inference_mode"] == "prerecorded_demo"
     assert results["video_url"] == f"/api/sessions/{session_id}/video"
-    assert results["timeline"][1]["quantity"] is None
-    assert results["timeline"][1]["unit"] is None
-    assert results["timeline"][1]["status"] == "incomplete_quantity"
+    assert results["timeline"][1]["quantity"] == 2.0
+    assert results["timeline"][1]["unit"] == "tablespoon"
+    assert results["timeline"][1]["status"] == "ok"
+    assert results["total_sodium_mg"] == 13950.0
     assert results["is_incomplete"] is True
 
 
@@ -173,7 +175,9 @@ def test_serverless_demo_is_stateless_and_uses_reviewed_fixture(monkeypatch):
         "olive oil",
         "salt",
     ]
-    assert data["timeline"][1]["quantity"] is None
+    assert data["timeline"][1]["quantity"] == 2.0
+    assert data["timeline"][1]["unit"] == "tablespoon"
+    assert data["total_sodium_mg"] == 13950.0
     assert data["is_incomplete"] is True
 
 

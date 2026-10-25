@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Film, Upload as UploadIcon } from "lucide-react";
@@ -101,26 +102,23 @@ export default function UploadPage() {
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 space-y-6 p-4 sm:p-6">
+      <Button variant="outline" render={<Link href="/" />}>
+        Back to home
+      </Button>
+
       <div className="space-y-1">
         <h1 className="font-heading text-3xl font-normal tracking-tight sm:text-4xl">
-          Upload your cooking video
+          {PUBLIC_DEMO ? "Try the Na(h) demo" : "Upload your cooking video"}
         </h1>
         <p className="text-muted-foreground">
           {PUBLIC_DEMO
-            ? "This public deployment shows prerecorded AI results. Uploaded videos are not retained or analysed."
+            ? "See how Na(h) analyses a 40-second cooking video from upload to results."
             : "Choose the clip from your head-mounted or overhead camera. We’ll find every seasoning you added."}
         </p>
       </div>
 
       {/* Drop zone / picker */}
-      {PUBLIC_DEMO && (
-        <div className="rounded-card bg-lavender px-4 py-3 text-sm text-ink ring-1 ring-stone">
-          Public demo — prerecorded AI results. For the most reliable experience,
-          use “I have no video, try demo”.
-        </div>
-      )}
-
-      <Card>
+      {!PUBLIC_DEMO && <Card>
         <CardContent>
           <button
             type="button"
@@ -160,10 +158,16 @@ export default function UploadPage() {
             </p>
           )}
         </CardContent>
-      </Card>
+      </Card>}
+
+      {PUBLIC_DEMO && error && (
+        <p className="text-sm text-chilli" role="alert">
+          {error}
+        </p>
+      )}
 
       {/* Selected file + preview */}
-      {file && previewUrl && (
+      {!PUBLIC_DEMO && file && previewUrl && (
         <Card>
           <CardContent className="space-y-3">
             <div className="flex items-center gap-3">
@@ -188,17 +192,25 @@ export default function UploadPage() {
 
       {/* Actions */}
       <div className="flex flex-wrap items-center gap-3">
-        <Button onClick={analyse} disabled={!file}>
-          Analyse
-        </Button>
-        <button
-          type="button"
-          onClick={startDemo}
-          disabled={demoBusy}
-          className="text-sm text-muted-foreground underline-offset-4 hover:underline disabled:opacity-50"
-        >
-          {demoBusy ? "Starting demo…" : "I have no video, try demo"}
-        </button>
+        {PUBLIC_DEMO ? (
+          <Button onClick={startDemo} disabled={demoBusy}>
+            {demoBusy ? "Starting demo…" : "View the 40-second demo"}
+          </Button>
+        ) : (
+          <>
+            <Button onClick={analyse} disabled={!file}>
+              Analyse
+            </Button>
+            <button
+              type="button"
+              onClick={startDemo}
+              disabled={demoBusy}
+              className="text-sm text-muted-foreground underline-offset-4 hover:underline disabled:opacity-50"
+            >
+              {demoBusy ? "Starting demo…" : "I have no video, try demo"}
+            </button>
+          </>
+        )}
       </div>
     </main>
   );

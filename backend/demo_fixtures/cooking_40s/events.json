@@ -15,8 +15,8 @@
     {
       "event_id": "demo-event-002",
       "ingredient": "salt",
-      "quantity": null,
-      "unit": null,
+      "quantity": 2.0,
+      "unit": "tablespoon",
       "timestamp_start": 21.0,
       "timestamp_end": 24.0,
       "timestamp": 22.5,

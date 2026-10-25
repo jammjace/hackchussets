@@ -24,6 +24,10 @@ type LoadState =
   | { state: "not_found" }
   | { state: "error"; message: string };
 
+const PUBLIC_DEMO =
+  process.env.NEXT_PUBLIC_DEPLOYMENT_MODE === "public_demo";
+const PUBLIC_DEMO_VIDEO = "/demo/cooking-40s.mp4";
+
 export function ResultsView({
   params,
 }: {
@@ -59,6 +63,13 @@ export function ResultsView({
   }, [fetchResults]);
 
   const results = load.state === "ok" ? load.results : null;
+  const revealPublicDemoDashboard =
+    PUBLIC_DEMO && sessionId === "prerecorded-demo";
+  const videoSrc = results?.video_url
+    ? apiUrl(results.video_url)
+    : revealPublicDemoDashboard
+      ? PUBLIC_DEMO_VIDEO
+      : null;
 
   // Track length: video duration when known, else last timestamp + 10s.
   const trackDuration = useMemo(() => {
@@ -77,7 +88,7 @@ export function ResultsView({
   // self-driving for demo sessions), popping each addition in turn. Once it
   // finishes, the total counts up, then the rest of the analysis fades in.
   const reduced = useReducedMotion();
-  const hasVideo = !!results?.video_url;
+  const hasVideo = !!videoSrc;
   const timestamps = useMemo(
     () => (results ? results.timeline.map((r) => r.timestamp) : []),
     [results],
@@ -92,9 +103,13 @@ export function ResultsView({
   });
 
   // The journey finishing gates the total; a short beat later the rest shows.
-  const timelineReady = complete;
+  const timelineReady = revealPublicDemoDashboard || complete;
   const [analysisReady, setAnalysisReady] = useState(false);
   useEffect(() => {
+    if (revealPublicDemoDashboard) {
+      setAnalysisReady(true);
+      return;
+    }
     if (!complete) {
       setAnalysisReady(false);
       return;
@@ -105,7 +120,7 @@ export function ResultsView({
     }
     const t = setTimeout(() => setAnalysisReady(true), 1100);
     return () => clearTimeout(t);
-  }, [complete, reduced]);
+  }, [complete, reduced, revealPublicDemoDashboard]);
 
   // When a real video loads, start it muted so the journey plays through on
   // its own. If the browser blocks autoplay, the playhead simply waits for the
@@ -130,6 +145,17 @@ export function ResultsView({
       });
       video.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
+  }, []);
+
+  const handleReplay = useCallback(() => {
+    setSelectedEventId(null);
+    const video = videoRef.current;
+    if (!video) return;
+    video.currentTime = 0;
+    void video.play().catch(() => {
+      // A user gesture normally permits playback; seeking still succeeds if blocked.
+    });
+    video.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, []);
 
   return (
@@ -158,6 +184,15 @@ export function ResultsView({
 
       {load.state === "ok" && results && (
         <>
+          {revealPublicDemoDashboard && (
+            <div className="flex flex-wrap gap-3">
+              <Button variant="outline" render={<Link href="/upload" />}>
+                Back to demo
+              </Button>
+              <Button onClick={handleReplay}>Replay demo</Button>
+            </div>
+          )}
+
           {results.inference_mode === "prerecorded_demo" && (
             <div className="rounded-pill bg-lavender px-3 py-2 text-center text-xs font-medium text-ink ring-1 ring-stone">
               Demo Mode — Prerecorded AI Results
@@ -169,10 +204,10 @@ export function ResultsView({
             </div>
           )}
           {/* Video player (the source) shows first (or a placeholder). */}
-          {results.video_url ? (
+          {videoSrc ? (
             <SessionVideo
               ref={videoRef}
-              src={apiUrl(results.video_url)}
+              src={videoSrc}
               onDuration={setVideoDuration}
             />
           ) : (
